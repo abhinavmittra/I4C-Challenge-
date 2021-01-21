@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-
+import { NgForm } from '@angular/forms';
 @Component({
   selector: 'app-app-login',
   templateUrl: './app-login.component.html',
@@ -12,4 +12,7 @@ export class AppLoginComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  onSubmit(form:NgForm){
+    //add logic for sending data to backend for auth
+  }
 }
