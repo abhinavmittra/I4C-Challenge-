@@ -3,6 +3,7 @@ import { NgForm } from '@angular/forms';
 import {Router} from '@angular/router';
 import {Donee} from '../../model/donee';
 import {Donor} from '../../model/donor';
+import {AuthService} from '../auth.service';
 @Component({
   selector: 'app-app-register',
   templateUrl: './app-register.component.html',
@@ -10,7 +11,7 @@ import {Donor} from '../../model/donor';
 })
 export class AppRegisterComponent implements OnInit {
 
-  constructor(private router:Router) { }
+  constructor(private router:Router,private authService:AuthService) { }
 
   registerType:string=null;
 
@@ -38,6 +39,8 @@ export class AppRegisterComponent implements OnInit {
       const phone = form.value.phone;
       const pincode = form.value.pincode;
       var donor:Donor = new Donor(name,address,pincode,phone,email,pass);
+        
+      //send post request to server to save data
     }
     else if(this.registerType=="donee"){
       const email = form.value.email;
@@ -49,6 +52,7 @@ export class AppRegisterComponent implements OnInit {
       const website = form.value.website;
       const panno = form.value.panno;
       var donee:Donee = new Donee(name,address,pincode,phone,panno,website,email,pass);
+      //send post request to server to save data
     }
   }
 

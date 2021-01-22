@@ -5,7 +5,7 @@ import { Donor } from '../model/donor';
 @Injectable({
   providedIn: 'root'
 })
-export class AppService {
+export class AuthService {
 
   constructor(private httpClient: HttpClient) { }
   public loginUrl = "login-endpoint";
@@ -14,7 +14,8 @@ export class AppService {
   public httpHeaders = new HttpHeaders({
     'Content-Type' : 'application/json; charset=utf-8'
     
-       });    
+       }); 
+   
   public headerOptions = {
     headers: this.httpHeaders
        };    
