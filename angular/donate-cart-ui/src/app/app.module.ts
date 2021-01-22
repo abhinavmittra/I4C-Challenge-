@@ -7,12 +7,14 @@ import { AppLoginComponent } from './auth/app-login/app-login.component';
 import { AppRegisterComponent } from './auth/app-register/app-register.component';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { AdminComponent } from './admin/admin/admin.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     AppLoginComponent,
-    AppRegisterComponent
+    AppRegisterComponent,
+    AdminComponent
   ],
   imports: [
     BrowserModule,
