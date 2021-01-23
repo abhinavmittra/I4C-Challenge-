@@ -1,1 +1,41 @@
-<p>admin works!</p>
+<div class="container">
+    <h3>Registrations waiting for Approval</h3>
+<table class="table">
+    <thead>
+        <tr>  
+            <th>NGO</th> 
+            <th>PAN No.</th>
+            <th>Contact No.</th>                
+            <th>Accept/Reject</th>                                                  
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let item of ngoRegRequests;let i = index;"> 
+            <td> <div class="form-group">
+                <div class="form-group__text">
+                    <span>{{item.name}}</span>                                               
+                </div>
+            </div>
+          </td>     
+          <td> <div class="form-group">
+            <div class="form-group__text">
+                <span>{{item.panno}}</span>                                               
+            </div>
+        </div>
+      </td>  
+      <td> <div class="form-group">
+        <div class="form-group__text">
+            <span>{{item.phone}}</span>                                               
+        </div>
+    </div>
+  </td>                       
+          <td> <div class="form-group">
+            <div class="form-group__text">
+                <button class="btn btn-secondary" (click)="approveRequest(i)">Accept</button> | <button class="btn btn-secondary" (click)="rejectRequest(i)">Reject</button>                                              
+            </div>
+        </div>
+      </td>  
+    </tr>
+</tbody>
+</table>
+</div>
