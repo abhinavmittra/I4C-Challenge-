@@ -8,13 +8,15 @@ import { AppRegisterComponent } from './auth/app-register/app-register.component
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { AdminComponent } from './admin/admin/admin.component';
+import { DonorComponent } from './donor/donor/donor.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     AppLoginComponent,
     AppRegisterComponent,
-    AdminComponent
+    AdminComponent,
+    DonorComponent
   ],
   imports: [
     BrowserModule,

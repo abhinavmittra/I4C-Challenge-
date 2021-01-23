@@ -3,11 +3,13 @@ import { Routes, RouterModule } from '@angular/router';
 import { AdminComponent } from './admin/admin/admin.component';
 import { AppLoginComponent } from './auth/app-login/app-login.component';
 import { AppRegisterComponent } from './auth/app-register/app-register.component';
+import { DonorComponent } from './donor/donor/donor.component';
 
 const routes: Routes = [
   {path:'login',component:AppLoginComponent},
   {path:'register',component:AppRegisterComponent},
   {path:'admin',component:AdminComponent},
+  {path:'donor',component:DonorComponent},
 {path:'',redirectTo:'login',pathMatch:'full'}];
 
 @NgModule({

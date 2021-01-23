@@ -1,0 +1,45 @@
+<div class="container">
+<button class="btn btn-secondary">Donate Item</button>
+<button class="btn btn-secondary">Updates</button>
+
+<h3>Requirements given by NGOs in your city</h3>
+
+<table class="table">
+    <thead>
+        <tr>  
+            <th>NGO</th> 
+            <th>Item</th>
+            <th>Quantity</th>                
+            <th>View Item</th>                                                  
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let item of ngoRegRequests;let i = index;"> 
+            <td> <div class="form-group">
+                <div class="form-group__text">
+                    <span>{{item.name}}</span>                                               
+                </div>
+            </div>
+          </td>     
+          <td> <div class="form-group">
+            <div class="form-group__text">
+                <span>{{item.panno}}</span>                                               
+            </div>
+        </div>
+      </td>  
+      <td> <div class="form-group">
+        <div class="form-group__text">
+            <span>{{item.phone}}</span>                                               
+        </div>
+    </div>
+  </td>                       
+          <td> <div class="form-group">
+            <div class="form-group__text">
+                <button class="btn btn-secondary" (click)="approveRequest(i)">Accept</button> | <button class="btn btn-secondary" (click)="rejectRequest(i)">Reject</button>                                              
+            </div>
+        </div>
+      </td>  
+    </tr>
+</tbody>
+</table>
+</div>
