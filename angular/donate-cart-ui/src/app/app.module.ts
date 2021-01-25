@@ -16,6 +16,8 @@ import { DoneeComponent } from './donee/donee.component';
 import { DoneeCreateItemComponent } from './donee/donee-create-item/donee-create-item.component';
 import { DoneeViewUpdatesComponent } from './donee/donee-view-updates/donee-view-updates.component';
 import { DoneeViewDonationsComponent } from './donee/donee-view-donations/donee-view-donations.component';
+import { DoneeViewDonationDetailsComponent } from './donee/donee-view-donations/donee-view-donation-details/donee-view-donation-details.component';
+import { DonorViewRequirementDetailsComponent } from './donor/donor/donor-view-requirements/donor-view-requirement-details/donor-view-requirement-details.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +32,9 @@ import { DoneeViewDonationsComponent } from './donee/donee-view-donations/donee-
     DoneeComponent,
     DoneeCreateItemComponent,
     DoneeViewUpdatesComponent,
-    DoneeViewDonationsComponent
+    DoneeViewDonationsComponent,
+    DoneeViewDonationDetailsComponent,
+    DonorViewRequirementDetailsComponent
   ],
   imports: [
     BrowserModule,

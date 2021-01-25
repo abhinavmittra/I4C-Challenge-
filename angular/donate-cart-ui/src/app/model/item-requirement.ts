@@ -6,8 +6,9 @@ export class ItemRequirement {
     quantity:number;
     neededFor:string;
     ngo:string;
+    ngoId:string;
 
-    constructor(name:string,category:string,subcategory:string,details:string,quantity:number,neededFor:string,ngo:string){
+    constructor(name:string,category:string,subcategory:string,details:string,quantity:number,neededFor:string,ngo:string,ngoId:string){
         this.name = name;
         this.category=category;
         this.subcategory=subcategory;
@@ -15,5 +16,6 @@ export class ItemRequirement {
         this.quantity=quantity;
         this.neededFor=neededFor;
         this.ngo=ngo;
+        this.ngoId=ngoId;
     }
 }

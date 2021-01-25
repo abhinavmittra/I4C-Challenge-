@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import {Router} from '@angular/router';
+import { AuthService } from '../auth.service';
 @Component({
   selector: 'app-app-login',
   templateUrl: './app-login.component.html',
@@ -8,13 +9,35 @@ import {Router} from '@angular/router';
 })
 export class AppLoginComponent implements OnInit {
 
-  constructor(private router: Router) { }
+  constructor(private router: Router,private authService:AuthService) { }
 
   ngOnInit(): void {
   }
 
   onSubmit(form:NgForm){
-    //send post req to server with auth details and navigate user to admin/ngo/donor views based on role
+  
+    this.authService.loginUser(form.value.email,form.value.password).subscribe((data)=>{
+      if(data['role']=="donor"){
+        if(data['pass']=true){
+          this.authService.setUserId(data['id']);
+          this.router.navigate(['donor']);
+        }
+
+      }
+      else if(data['role']=="ngo"){
+        if(data['pass']==true&&data['verified']==true){
+          this.authService.setUserId(data['id']);
+          this.router.navigate(['donee']);
+        }
+      }
+      else if(data['role']=="admin"){
+        if(data['pass']==true){
+          this.authService.setUserId(data['id']);
+          this.router.navigate(['admin']);
+        }
+      }
+    console.log(data);
+  });
   }
 
   routeToRegister(){

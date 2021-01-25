@@ -20,9 +20,6 @@ except Exception as e:
     print ("Error in connection")
 
 
-@app.route("/")
-def hello():
-    return "Hello World!"
 
 
 #function to get all accounts (NGO & Donor accounts)
@@ -92,9 +89,9 @@ def createNgoAccount():
 
 
 #function for user/ngo authentication
-@app.route("/authenticate",methods=['POST','GET'])
+@app.route("/authenticate",methods=['POST'])
 def authentication():
-    if request.method == "GET":
+    if request.method == "POST": #Changed to only allow post reqs by Abhinav -> passwords to be sent inside body of post req's since that is the most secure way.
         try:
             data = json.loads(request.data)
             email = data['email']

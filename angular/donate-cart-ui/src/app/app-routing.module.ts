@@ -11,6 +11,8 @@ import{DoneeComponent} from './donee/donee.component';
 import {DoneeCreateItemComponent} from './donee/donee-create-item/donee-create-item.component';
 import {DoneeViewDonationsComponent} from './donee/donee-view-donations/donee-view-donations.component';
 import {DoneeViewUpdatesComponent} from './donee/donee-view-updates/donee-view-updates.component';
+import { DoneeViewDonationDetailsComponent } from './donee/donee-view-donations/donee-view-donation-details/donee-view-donation-details.component';
+import { DonorViewRequirementDetailsComponent } from './donor/donor/donor-view-requirements/donor-view-requirement-details/donor-view-requirement-details.component';
 const routes: Routes = [
   {path:'login',component:AppLoginComponent},
   {path:'register',component:AppRegisterComponent},
@@ -18,13 +20,18 @@ const routes: Routes = [
   {path:'donor',component:DonorComponent,children:
 [
   {path:'updates',component:DonorViewUpdatesComponent},
-  {path:'requirements',component:DonorViewRequirementsComponent},
+  {path:'requirements',component:DonorViewRequirementsComponent,children:[
+    {path:'details',component:DonorViewRequirementDetailsComponent}
+  ]},
   {path:'donate',component:DonorCreateItemComponent}
 ]
 },
 {path:'donee',component:DoneeComponent,children:[
   {path:'create',component:DoneeCreateItemComponent},
-  {path:'requirements',component:DoneeViewUpdatesComponent},
+  {path:'requirements',component:DoneeViewUpdatesComponent,children:[
+    {path:'details',component:DoneeViewDonationDetailsComponent}
+  ]
+},
   {path:'allrequirements',component:DoneeViewDonationsComponent}
 ]},
 {path:'',redirectTo:'login',pathMatch:'full'}];

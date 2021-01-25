@@ -29,8 +29,6 @@ export class AppRegisterComponent implements OnInit {
   }
 
   onSubmit(form:NgForm){
-    console.log(form)
-
     if(this.registerType=="donor"){
       const email = form.value.email;
       const pass = form.value.password;
@@ -39,8 +37,10 @@ export class AppRegisterComponent implements OnInit {
       const phone = form.value.phone;
       const pincode = form.value.pincode;
       var donor:Donor = new Donor(name,address,pincode,phone,email,pass);
-        
-      //send post request to server to save data
+      this.authService.registerDonor(donor).subscribe((data)=>{
+        console.log(data)
+      });
+     
     }
     else if(this.registerType=="donee"){
       const email = form.value.email;
@@ -52,6 +52,9 @@ export class AppRegisterComponent implements OnInit {
       const website = form.value.website;
       const panno = form.value.panno;
       var donee:Donee = new Donee(name,address,pincode,phone,panno,website,email,pass);
+      this.authService.registerDonee(donee).subscribe((data)=>{
+        console.log(data)
+      });
       //send post request to server to save data
     }
   }
