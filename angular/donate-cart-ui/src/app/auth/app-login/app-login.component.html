@@ -1,0 +1,22 @@
+<form #authForm="ngForm" (ngSubmit)="onSubmit(authForm)">
+    <div class="form-group">
+        <label for="email">E-mail</label>
+        <input type="email" id="email" class="form-control" 
+        ngModel
+        name="email"
+        required
+        email>
+    </div>
+    <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" class="form-control"
+        ngModel
+        name="password"
+        required
+        pattern=".{6,}">
+    </div>
+    <div>
+        <button class="btn btn-secondary" type="submit" [disabled]="!authForm.valid">Login</button> | 
+        <button class="btn btn-secondary" (click)="routeToRegister()" type="button">Sign Up</button>
+    </div>
+    </form>

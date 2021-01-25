@@ -1,0 +1,58 @@
+
+<div class="container">
+    <h3>Enter the item details</h3>
+    <form #itemRequirementForm="ngForm" (ngSubmit)="onSubmit(itemRequirementForm)">
+        <div class="form-group">
+            <label for="itemName">Name</label>
+            <input type="text" id="itemName" class="form-control" 
+            ngModel
+            name="name"
+            required
+            >
+        </div>
+        <div class="form-group">
+            <label for="itemCategory">Category</label>
+            <input type="text" id="itemCategory" class="form-control" 
+            ngModel
+            name="category"
+            required
+            >
+        </div>
+        <div class="form-group">
+            <label for="itemSubcategory">Sub Category</label>
+            <input type="text" id="itemSubcategory" class="form-control" 
+            ngModel
+            name="subcategory"
+            required
+            >
+        </div>
+        <div class="form-group">
+            <label for="itemQuantity">Quantity</label>
+            <input type="number" id="itemQuantity" class="form-control" 
+            ngModel
+            name="quantity"
+            required
+           
+            >
+        </div>
+        <div class="form-group">
+        <label for="itemDetails">Details</label>
+                <input type="text" id="itemDetails" class="form-control" 
+                ngModel
+                name="details"
+                required
+                >
+        </div>
+        <div class="form-group">
+            <label for="itemNeedFor">Needed For?</label>
+                    <input type="text" id="itemNeededFor" class="form-control" 
+                    ngModel
+                    name="neededFor"
+                    required
+                    >
+            </div>
+        <div>
+            <button class="btn btn-secondary" type="submit" [disabled]="!itemRequirementForm.valid">Submit</button>            
+        </div>
+        </form>
+    </div>

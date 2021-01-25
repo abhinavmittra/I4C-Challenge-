@@ -1,0 +1,154 @@
+
+<div class="container">
+<div class="row">
+    <div class="col-lg-6">
+    <button class="btn btn-secondary" *ngIf="registerType=='none'" (click)="setRegisterType('donor')">Donor</button> 
+    <span *ngIf="registerType=='none'"> | </span>
+    <button class="btn btn-secondary" *ngIf="registerType=='none'" (click)="setRegisterType('donee')">NGO</button>  
+    
+    <button class="btn btn-secondary" *ngIf="registerType!='none'" (click)="routeToLogin()">Back to Login</button>
+    <h3 *ngIf="registerType=='donor'">Donor Registration</h3>   
+<h3 *ngIf="registerType=='donee'">NGO Registration</h3> 
+
+</div>
+
+</div>
+
+<div class="row">
+    <div class="col-lg-6">
+        <div *ngIf="registerType=='donor'">
+<form #donorRegForm="ngForm" (ngSubmit)="onSubmit(donorRegForm)">
+    <div class="form-group">
+        <label for="donorName">Name</label>
+        <input type="text" id="donorName" class="form-control" 
+        ngModel
+        name="name"
+        required
+        >
+    </div>
+    <div class="form-group">
+        <label for="donorAddress">Address</label>
+        <input type="text" id="donorAddress" class="form-control" 
+        ngModel
+        name="address"
+        required
+        >
+    </div>
+    <div class="form-group">
+        <label for="donorPincode">Pincode</label>
+        <input type="number" id="donorPincode" class="form-control" 
+        ngModel
+        name="pincode"
+        required
+        >
+    </div>
+    <div class="form-group">
+        <label for="donorPhone">Contact No.</label>
+        <input type="number" id="donorPhone" class="form-control" 
+        ngModel
+        name="phone"
+        required
+        pattern=".{10,}"
+        >
+    </div>
+    <div class="form-group">
+    <label for="donorEmail">E-mail</label>
+            <input type="email" id="donorEmail" class="form-control" 
+            ngModel
+            name="email"
+            required
+            email>
+    </div>
+    <div class="form-group">
+        <label for="donorPassword">Password</label>
+        <input type="password" id="donorPassword" class="form-control"
+        ngModel
+        name="password"
+        required
+        pattern=".{6,}">
+    </div>
+    <div>
+        <button class="btn btn-secondary" type="submit" [disabled]="!donorRegForm.valid">Register</button> 
+        
+    </div>
+    </form>
+</div>
+    <div *ngIf="registerType=='donee'">
+    <form #doneeRegForm="ngForm" (ngSubmit)="onSubmit(doneeRegForm)" >
+        <div class="form-group">
+            <label for="doneeName">NGO Name</label>
+            <input type="text" id="doneeName" class="form-control" 
+            ngModel
+            name="name"
+            required
+            >
+        </div>
+        <div class="form-group">
+            <label for="doneeWebsite">Website Link</label>
+            <input type="text" id="doneeWebsite" class="form-control" 
+            ngModel
+            name="name"
+            
+            >
+        </div>
+        <div class="form-group">
+            <label for="doneeAddress">Address</label>
+            <input type="text" id="doneeAddress" class="form-control" 
+            ngModel
+            name="address"
+            required
+            >
+        </div>
+        <div class="form-group">
+            <label for="doneePincode">Pincode</label>
+            <input type="number" id="doneePincode" class="form-control" 
+            ngModel
+            name="pincode"
+            required
+            >
+        </div>
+        <div class="form-group">
+            <label for="doneePhone">Contact No.</label>
+            <input type="number" id="doneePhone" class="form-control" 
+            ngModel
+            name="phone"
+            required
+            pattern=".{10,}"
+            >
+        </div>
+        <div class="form-group">
+            <label for="doneePan">Pan No.</label>
+            <input type="text" id="doneePan" class="form-control" 
+            ngModel
+            name="panno"
+            required
+            pattern=".{10}"
+            >
+        </div>
+        <div class="form-group">
+            <label for="doneeEmail">E-mail</label>
+            <input type="email" id="doneeEmail" class="form-control" 
+            ngModel
+            name="email"
+            required
+            email>
+        </div>
+        <div class="form-group">
+            <label for="doneePassword">Password</label>
+            <input type="password" id="doneePassword" class="form-control"
+            ngModel
+            name="password"
+            required
+            pattern=".{6,}">
+        </div>
+        <div>
+            <button class="btn btn-secondary" type="submit" [disabled]="!doneeRegForm.valid">Register</button> 
+            
+        </div>
+        </form>
+    </div>
+
+
+</div>
+</div>
+</div>
