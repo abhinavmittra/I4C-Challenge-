@@ -117,17 +117,26 @@ def authentication():
                     result = {
                         "role" : userType,
                         "id" : userId,
-                        "verified" : verified
+                        "verified" : verified,
+                        "pass" : True
                         } 
                     result = json.dumps(result)
                 else:
-                    return "Incorrect password"
+                    result = {
+                        "role" : None,
+                        "id" : None,
+                        "verified" : None,
+                        "pass" : False
+                        } 
+                    result = json.dumps(result)
+                    return result
             else: 
                 print("No data found")
                 result = {
                         "role" : None,
                         "id" : None,
-                        "verified" : None
+                        "verified" : None,
+                        "pass" : None
                         } 
                 return result
         except Exception as e: 
