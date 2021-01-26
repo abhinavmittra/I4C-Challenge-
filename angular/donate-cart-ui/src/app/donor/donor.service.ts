@@ -32,8 +32,8 @@ export class DonorService {
   public donateItem(){
     return this.httpClient.post<any>(this.donateItemUrl,{"type":"donate-requirement"});
   }
-  public createDonationItem(item:DonationItem){
-    return this.httpClient.post<any>(this.createDonationItemUrl,JSON.stringify(item));
+  public createDonationItem(form:FormData){
+    return this.httpClient.post<any>(this.createDonationItemUrl,form);
   }
   public viewItemUpdates(){
     return this.httpClient.get(this.viewItemUpdatesUrl)

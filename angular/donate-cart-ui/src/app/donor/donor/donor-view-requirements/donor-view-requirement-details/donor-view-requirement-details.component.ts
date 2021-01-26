@@ -13,18 +13,26 @@ export class DonorViewRequirementDetailsComponent implements OnInit {
   constructor(private router:Router,private route:ActivatedRoute) { }
   item:ItemRequirement=null;
   donateMode:boolean = null;
-
+  selectedImage:File = null;
   ngOnInit(): void {
     this.donateMode = false;
     this.item= new ItemRequirement("science class 10 ncert","Education","books","Need 5 text books for children",50,"class 10 unprivileged children","U&I","some ngo id");
   }
 
   onSubmit(form:NgForm){
-    console.log(form);
+    const submitForm = new FormData();
+    submitForm.append('image',this.selectedImage,this.selectedImage.name);
+    submitForm.append('quantity',form.value.quantity);
+    submitForm.append('quality',form.value.quality);
+    submitForm.append('details',form.value.details);
+    console.log(submitForm.get('image'));
+    //send post req with submitForm attached to server to create new item in db
   }
 
   toggleDonateMode(){
     this.donateMode = !this.donateMode;
   }
-  
+  onFileSelected(event){
+    this.selectedImage = <File>event.target.files[0];
+  }
 }

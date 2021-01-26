@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import {DonationItem} from '../../../model/donation-item';
+import { DonorService } from '../../donor.service';
 @Component({
   selector: 'app-donor-create-item',
   templateUrl: './donor-create-item.component.html',
@@ -8,13 +9,31 @@ import {DonationItem} from '../../../model/donation-item';
 })
 export class DonorCreateItemComponent implements OnInit {
 
-  constructor() { }
-
+  constructor(private donorService:DonorService) { }
+  selectedImage:File = null;
   ngOnInit(): void {
+    
+
   }
+
   onSubmit(form:NgForm){
     console.log(form);
-    //send post req to server to create new item in db
+    const submitForm = new FormData();
+    submitForm.append('image',this.selectedImage,this.selectedImage.name);
+    submitForm.append('name',form.value.name);
+    submitForm.append('category',form.value.category);
+    submitForm.append('subcategory',form.value.subcategory);
+    submitForm.append('quantity',form.value.quantity);
+    submitForm.append('quality',form.value.quality);
+    submitForm.append('details',form.value.details);
+
+    console.log(submitForm.get('image'));
+    //send post req with submitForm attached to server to create new item in db
+    
+  }
+
+  onFileSelected(event){
+    this.selectedImage = <File>event.target.files[0];
   }
 
 }

@@ -51,6 +51,14 @@
                 required
                 >
         </div>
+        <div class="form-group">
+        <label for="itemImage">Upload an Image</label>
+        <input type="file" id="itemImage" class="form-control" (change)="onFileSelected($event)"
+        ngModel
+        name="image"
+        required
+        >
+        </div>
         <div>
             <button class="btn btn-secondary" type="submit" [disabled]="!itemDonationForm.valid">Submit</button> 
             
