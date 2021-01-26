@@ -1,1 +1,55 @@
-<p>donee-view-donation-details works!</p>
+<button class="btn btn-secondary" *ngIf="!requestMode" (click)="toggleRequestMode()">Want to Request?</button>
+<button class="btn btn-secondary" (click)="toggleRequestMode()" *ngIf="requestMode">Cancel</button>
+<div id="donateRequestFormContainer" class="container" *ngIf="requestMode">
+    <h5>Enter quantity & details</h5>
+<form #donateReqForm="ngForm" (ngSubmit)="onSubmit(donateReqForm)">
+
+    <div class="form-group">
+        <label for="itemQuantity">Quantity</label>
+        <input type="number" id="itemQuantity" class="form-control" 
+        ngModel
+        name="quantity"
+        required       
+        >
+    </div>
+    <div class="form-group">
+    <label for="itemDetails">Details</label>
+            <input type="text" id="itemDetails" class="form-control" 
+            ngModel
+            name="details"
+            required
+            >
+    </div>
+    <div>
+        <button class="btn btn-secondary" type="submit" [disabled]="!donateReqForm.valid">Donate</button> 
+        
+    </div>
+</form>
+</div>
+<div class = "row">
+    <div class="col">
+        <label>Item Name: </label><span>{{item.name}}</span>
+    </div>
+    <div class="col">
+        <label>Details: </label><span>{{item.details}}</span>
+    </div>
+</div>
+<div class = "row">
+    <div class="col">
+        <label>Category: </label><span>{{item.category}}</span>
+    </div>
+    <div class="col">
+        <label>SubCategory: </label><span>{{item.subcategory}}</span>
+    </div>
+    
+</div>
+<div class = "row">
+    <div class="col">
+        <label>Quantity:</label><span>{{item.quantity}}</span>
+    </div>
+    <div class="col">
+        <label>Quality:</label><span>{{item.quality}}</span>
+    </div>
+</div>
+
+            

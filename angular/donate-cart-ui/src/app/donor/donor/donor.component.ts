@@ -20,7 +20,7 @@ export class DonorComponent implements OnInit {
   }
 
   viewRequirements(){
-    this.router.navigate(['requirements'],{relativeTo:this.route})
+    this.router.navigate(['requirements/list'],{relativeTo:this.route})
   }
 
   viewUpdates(){

@@ -91,7 +91,8 @@ def createNgoAccount():
 #function for user/ngo authentication
 @app.route("/authenticate",methods=['POST'])
 def authentication():
-    if request.method == "POST": #Changed to only allow post reqs by Abhinav -> passwords to be sent inside body of post req's since that is the most secure way.
+    if request.method == "POST": 
+    #Changed to only allow post reqs by Abhinav -> passwords to be sent inside body of post req's since that is better than sending it in the URI itself.
         try:
             data = json.loads(request.data)
             email = data['email']

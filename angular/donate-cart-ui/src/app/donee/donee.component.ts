@@ -17,12 +17,12 @@ export class DoneeComponent implements OnInit {
   //disable My Requirements button until data is fetched
   }
   viewDonations(){
-    this.router.navigate(['allrequirements'],{relativeTo:this.route})
+    this.router.navigate(['donations/list'],{relativeTo:this.route})
   }
   createItemRequirement(){
     this.router.navigate(['create'],{relativeTo:this.route})
   }
   viewMyRequirements(){
-    this.router.navigate(['requirements'],{relativeTo:this.route})
+    this.router.navigate(['allrequirements'],{relativeTo:this.route})
   }
 }

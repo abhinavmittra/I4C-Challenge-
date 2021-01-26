@@ -13,6 +13,8 @@ import {DoneeViewDonationsComponent} from './donee/donee-view-donations/donee-vi
 import {DoneeViewUpdatesComponent} from './donee/donee-view-updates/donee-view-updates.component';
 import { DoneeViewDonationDetailsComponent } from './donee/donee-view-donations/donee-view-donation-details/donee-view-donation-details.component';
 import { DonorViewRequirementDetailsComponent } from './donor/donor/donor-view-requirements/donor-view-requirement-details/donor-view-requirement-details.component';
+import { DonorViewRequirementsListComponent } from './donor/donor/donor-view-requirements/donor-view-requirements-list/donor-view-requirements-list.component';
+import { DoneeViewDonationListComponent } from './donee/donee-view-donations/donee-view-donation-list/donee-view-donation-list.component';
 const routes: Routes = [
   {path:'login',component:AppLoginComponent},
   {path:'register',component:AppRegisterComponent},
@@ -21,18 +23,20 @@ const routes: Routes = [
 [
   {path:'updates',component:DonorViewUpdatesComponent},
   {path:'requirements',component:DonorViewRequirementsComponent,children:[
-    {path:'details',component:DonorViewRequirementDetailsComponent}
+    {path:'details',component:DonorViewRequirementDetailsComponent},
+    {path:'list',component:DonorViewRequirementsListComponent}
   ]},
   {path:'donate',component:DonorCreateItemComponent}
 ]
 },
 {path:'donee',component:DoneeComponent,children:[
   {path:'create',component:DoneeCreateItemComponent},
-  {path:'requirements',component:DoneeViewUpdatesComponent,children:[
-    {path:'details',component:DoneeViewDonationDetailsComponent}
+  {path:'donations',component:DoneeViewDonationsComponent,children:[
+    {path:'details',component:DoneeViewDonationDetailsComponent},
+    {path:'list',component:DoneeViewDonationListComponent}
   ]
 },
-  {path:'allrequirements',component:DoneeViewDonationsComponent}
+  {path:'allrequirements',component:DoneeViewUpdatesComponent}
 ]},
 {path:'',redirectTo:'login',pathMatch:'full'}];
 

@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 })
 export class AdminService {
   public getNgoRegReqsUrl = "replace with endpoint here";
-  public adminActionForRegUrl = "replace with endpoint here"
+  public adminActionForRegUrl = "http://127.0.0.1:5000/endpoint"
   public httpHeaders = new HttpHeaders({
     'Content-Type' : 'application/json; charset=utf-8'
     
