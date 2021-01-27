@@ -3,6 +3,7 @@ from flask_cors import CORS
 from ssl import create_default_context
 from elasticsearch import Elasticsearch
 import json
+import jsonpickle
 app = Flask(__name__)
 
 CORS(app) #Used to disable cross origin policy to test app in local
@@ -19,30 +20,61 @@ except Exception as e:
     print(e) 
     print ("Error in connection")
 
+#class to define a donation Item object
+class donationItem:
+    def __init__(self,name,category,subcategory,details,quantity,quality):
+        self.name = name
+        self.category = category
+        self.subcategory = subcategory
+        self.details = details
+        self.quantity = quantity
+        self.quality = quality
+
+#class to define an item requirement object
+class itemRequirement:
+     def __init__(self,name,category,subcategory,details,quantity,ngoId):
+        self.name = name
+        self.category = category
+        self.subcategory = subcategory
+        self.details = details
+        self.quantity = quantity
+        self.ngoId = ngoId
+
+class donationItemPackage:
+    def __init__(self,donationItem,status,message):
+        self.donationItem = donateItem
+        self.status = status
+        self.message = message
+
+class itemRequirementPackage:
+    def __init__(self,itemRequirement,status,message):
+        self.itemRequirement = itemRequirement
+        self.status = status
+        self.message = message
 
 
 
 #function to get all accounts (NGO & Donor accounts)
-@app.route("/get_accounts",methods=['POST','GET'])
-def getAccounts():
-    if request.method == "GET":
-        try:
-            res = es.search(index="accounts", body={"query": {"match_all": {}}})
-        except Exception as e: 
-            print(e)
-            return "Error in getAccounts function"
-        return res
+# @app.route("/get_accounts",methods=['POST','GET'])
+# def getAccounts():
+#     if request.method == "GET":
+#         try:
+#             res = es.search(index="accounts", body={"query": {"match_all": {}}})
+#         except Exception as e: 
+#             print(e)
+#             return "Error in getAccounts function"
+#         return res
 
 #function to get donation details
-@app.route("/get_donations",methods=['POST','GET'])
-def getDonation():
-    if request.method == "GET":
-        try:
-            res = es.search(index="donations", body={"query": {"match_all": {}}})
-        except Exception as e: 
-            print(e)
-            return "Error in getDonation function"
-        return res
+# @app.route("/get_donations",methods=['POST','GET'])
+# def getDonation():
+#     if request.method == "GET":
+#         try:
+#             res = es.search(index="donations", body={"query": {"match_all": {}}})
+#         except Exception as e: 
+#             print(e)
+#             return "Error in getDonation function"
+#         return res
 
 #function to create a Donor account
 @app.route("/createUserAccount",methods=['POST','GET'])
@@ -57,13 +89,21 @@ def createUserAccount():
             emailExists = es.search(index="accounts", body=query)
             value = emailExists["hits"]["total"]["value"]
             if value >= 1:
-                return "Email id already exists"
+                result = {"status" : "failure"}
+                result = json.dumps(result)
+                return result
             else: 
                 res = es.index(index = "accounts", body = data)
+                res = es.index(index = "accounts", body = data)
+                result = {"status" : "success"}
+                result = json.dumps(result)
         except Exception as e: 
             print(e)
-            return "Error in create User function"
-        return res
+            print("Error in create user account function")
+            result = {"status" : "failure"}
+            result = json.dumps(result)
+            return result
+        return result
 
 #function to create an NGO account
 @app.route("/createNgoAccount",methods=['POST','GET'])
@@ -78,14 +118,20 @@ def createNgoAccount():
             emailExists = es.search(index="accounts", body=query)
             value = emailExists["hits"]["total"]["value"]
             if value >= 1:
-                return "Email id already exists"
+                result = {"status" : "failure"}
+                result = json.dumps(result)
+                return result
             else :
                 res = es.index(index = "accounts", body = data)
-                print("test")
+                result = {"status" : "success"}
+                result = json.dumps(result)
         except Exception as e: 
             print(e)
-            return "Error in create NGO function"
-        return res
+            print("Error in create NGO function")
+            result = {"status" : "failure"}
+            result = json.dumps(result)
+            return result
+        return result
 
 
 #function for user/ngo authentication
@@ -143,7 +189,7 @@ def authentication():
         return str(result)
 
 #function to get all unverififed NGOs
-@app.route("/getNgoList",methods=['POST','GET'])
+@app.route("/getUnverifiedNgoList",methods=['POST','GET'])
 def getNgoList():
     if request.method == "GET":
         try:
@@ -153,32 +199,86 @@ def getNgoList():
             return "Error in getNgoList function"
         return res
 
-#function to mark NGO as verified
-@app.route("/approveNGO",methods=['POST','GET'])
-def approveNGO():
+#function to approve or reject an NGO by admin
+@app.route("/approve_reject_NGO",methods=['POST'])
+def approveRejectNGO():
     if request.method == "POST":
         try:
             data = json.loads(request.data)
-            ngoId = data["id"]
-            print (ngoId)
-            res = es.update(index = "accounts", id = ngoId, body = {"doc": {"VerifiedNGOFlag": "true"}})
+            actionToken = data["actionToken"]
+            ngoId = data ["id"]
+            print (actionToken)
+            if actionToken == 'accept':
+                res = es.update(index = "accounts", id = ngoId, body = {"doc": {"VerifiedNGOFlag": "true"}})
+            elif actionToken == 'reject':
+                res = es.delete(index = "accounts", id = ngoId)
         except Exception as e:
             print (e)
-            return "Error in approve NGO function"
+            return "Error in approve-reject NGO function"
         return res
 
-#function to reject(delete) an NGO 
-@app.route("/rejectNGO",methods=['POST','GET'])
-def rejectNGO():
+#function to create a requirement
+@app.route("/createPublicRequirement",methods=['POST'])
+def createRequirements():
     if request.method == "POST":
         try:
             data = json.loads(request.data)
-            ngoId = data["id"]
-            print (ngoId)
-            res = es.delete(index = "accounts", id = ngoId)
-        except Exception as e:
-            print (e)
-            return "Error in Reject NGO function"
+            data["public"] = "true"
+            res = es.index(index="donations", body=(data))
+        except Exception as e: 
+            print(e)
+            return "Error in create Requirements function"
+        return res
+
+#function to get all requirements
+@app.route("/getRequirements",methods=['POST','GET'])
+def getRequirements():
+    if request.method == "GET":
+        try:
+            res = es.search(index="donations", body={"query":{"bool":{"must": [{"term" : {"doctype" : "requirement" }},{"range" : {"quantity" : { "gte" : 0}}}]}}})
+            print(res["hits"]['hits'][0]['_source']['details'])
+            dataList = []
+            for item in res["hits"]['hits']:
+                dataList.append(itemRequirement(item['_source']['itemname'],item['_source']['category'],item['_source']['subcategory'],item['_source']['details'],item['_source']['quantity'],item['_source']['NGOID']))
+            for obj in dataList:
+                print(obj.name)
+            result = itemRequirementPackage(dataList,"success","object contains list of requirements")
+        except Exception as e: 
+            print(e)
+            result = itemRequirementPackage("","failure","")
+        result = jsonpickle.encode(result,unpicklable=False)
+        return result
+
+#function to get all items (For NGO)
+@app.route("/getItems",methods=['POST','GET'])
+def getItems():
+    if request.method == "GET":
+        try:
+            res = es.search(index="donations", body={"query":{"bool":{"must": [{"term" : {"doctype" : "item" }}],"must_not": [{"term" : {"donatedFlag": "true" }}]}}})
+            print(res["hits"]['hits'])
+            dataList = []
+            for item in res["hits"]['hits']:
+                dataList.append(donationItem(item['_source']['itemname'],item['_source']['category'],item['_source']['subcategory'],item['_source']['details'],item['_source']['quantity'],item['_source']['quality']))
+            for obj in dataList:
+                print(obj.name)
+            result = donationItemPackage(dataList,"success","object contains list of items up for donation")
+        except Exception as e: 
+            print(e)
+            result = donationItemPackage("","failure","")
+        result = jsonpickle.encode(result,unpicklable=False)
+        return result
+
+#function to donate an item 
+@app.route("/donateItemPublic",methods=['POST'])
+def donateItem():
+    if request.method == "POST":
+        try:
+            data = json.loads(request.data)
+            data["public"] = "true"
+            res = es.index(index="donations", body=(data))
+        except Exception as e: 
+            print(e)
+            return "Error in donate item function"
         return res
 
 if __name__ == "__main__":
