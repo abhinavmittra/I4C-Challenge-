@@ -25,7 +25,9 @@ export class DonorViewRequirementDetailsComponent implements OnInit {
     submitForm.append('quantity',form.value.quantity);
     submitForm.append('quality',form.value.quality);
     submitForm.append('details',form.value.details);
+    submitForm.append('public',form.value.publicFlag);
     console.log(submitForm.get('image'));
+    console.log(submitForm.get('public'));
     //send post req with submitForm attached to server to create new item in db
   }
 

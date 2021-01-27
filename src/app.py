@@ -40,6 +40,16 @@ class itemRequirement:
         self.quantity = quantity
         self.ngoId = ngoId
 
+#class to define unverifiedNgo object
+class ngo:
+    def __init__(self,ngoId,name,email,phone,pan,address,pincode):
+        self.ngoId = ngoId;
+        self.name = name;
+        self.email = email;
+        self.phone = phone;
+        self.pan = pan;
+        self.address = address;
+        self.pincode = pincode;
 class donationItemPackage:
     def __init__(self,donationItem,status,message):
         self.donationItem = donateItem
@@ -52,7 +62,11 @@ class itemRequirementPackage:
         self.status = status
         self.message = message
 
-
+class ngoPackage:
+    def __init__(self,ngoList,status,message):
+        self.ngoList = ngoList;
+        self.status = status;
+        self.message = message;
 
 #function to get all accounts (NGO & Donor accounts)
 # @app.route("/get_accounts",methods=['POST','GET'])
@@ -194,10 +208,17 @@ def getNgoList():
     if request.method == "GET":
         try:
             res = es.search(index="accounts", body={"query":{"bool":{"must":{"term" : {"UserType" : "NGO"  }},"must_not":{"term" : { "VerifiedNGOFlag" : "true" }}}}})
+            
+            ngoList = []
+            for item in res["hits"]['hits']:
+                ngoList.append(ngo(item['_id'],item['_source']['NGOName'],item['_source']['Email'],item['_source']['Phone'],item['_source']['PAN'],item['_source']['Address'],item['_source']['Pincode']))
+            
+            
+            res = ngoPackage(ngoList,"Success","Fetched all items")
         except Exception as e: 
             print(e)
-            return "Error in getNgoList function"
-        return res
+            return jsonpickle.encode(ngoPackage([],"Failure","error occured"),unpicklable=False)
+        return jsonpickle.encode(res,unpicklable=False)
 
 #function to approve or reject an NGO by admin
 @app.route("/approve_reject_NGO",methods=['POST'])
@@ -205,7 +226,7 @@ def approveRejectNGO():
     if request.method == "POST":
         try:
             data = json.loads(request.data)
-            actionToken = data["actionToken"]
+            actionToken = data["actionTaken"]
             ngoId = data ["id"]
             print (actionToken)
             if actionToken == 'accept':
