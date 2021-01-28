@@ -14,7 +14,7 @@ export class DonorViewRequirementsComponent implements OnInit {
   ngOnInit(): void {
     //fetch item requirement list from service
 
-    this.itemRequirementList.push(new ItemRequirement("science class 10 ncert","Education","books","Need 5 text books for children",50,"class 10 unprivileged children","U&I","some ngo id"));
+    this.itemRequirementList.push(new ItemRequirement("science class 10 ncert","Education","books","Need 5 text books for children",50,"U&I","some ngo id"));
   }
   viewDetails(index:number){
     

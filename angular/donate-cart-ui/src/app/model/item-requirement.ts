@@ -4,17 +4,15 @@ export class ItemRequirement {
     subcategory:string;
     details:string;
     quantity:number;
-    neededFor:string;
     ngo:string;
     ngoId:string;
 
-    constructor(name:string,category:string,subcategory:string,details:string,quantity:number,neededFor:string,ngo:string,ngoId:string){
+    constructor(name:string,category:string,subcategory:string,details:string,quantity:number,ngo:string,ngoId:string){
         this.name = name;
         this.category=category;
         this.subcategory=subcategory;
         this.details=details
         this.quantity=quantity;
-        this.neededFor=neededFor;
         this.ngo=ngo;
         this.ngoId=ngoId;
     }

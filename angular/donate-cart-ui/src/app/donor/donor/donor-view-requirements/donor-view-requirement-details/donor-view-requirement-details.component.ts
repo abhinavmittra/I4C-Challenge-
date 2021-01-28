@@ -16,7 +16,7 @@ export class DonorViewRequirementDetailsComponent implements OnInit {
   selectedImage:File = null;
   ngOnInit(): void {
     this.donateMode = false;
-    this.item= new ItemRequirement("science class 10 ncert","Education","books","Need 5 text books for children",50,"class 10 unprivileged children","U&I","some ngo id");
+    this.item= new ItemRequirement("science class 10 ncert","Education","books","Need 5 text books for children",50,"U&I","some ngo id");
   }
 
   onSubmit(form:NgForm){

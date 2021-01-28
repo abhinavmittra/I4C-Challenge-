@@ -23,6 +23,6 @@ export class DoneeComponent implements OnInit {
     this.router.navigate(['create'],{relativeTo:this.route})
   }
   viewMyRequirements(){
-    this.router.navigate(['allrequirements'],{relativeTo:this.route})
+    this.router.navigate(['updates'],{relativeTo:this.route})
   }
 }

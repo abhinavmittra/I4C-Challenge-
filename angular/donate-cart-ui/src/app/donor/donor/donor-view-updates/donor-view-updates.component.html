@@ -1,1 +1,89 @@
-<p>donor-view-updates works!</p>
+<div class="d-flex justify-content-center" *ngIf="loadingFlag">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+<div class="container" *ngIf="!loadingFlag">
+
+<div id = "updateList" *ngIf="itemListMode">
+    <h3>Donations offered by you</h3>
+    
+    <table class="table">
+        <thead>
+            <tr>  
+                <th>Item Name</th> 
+                <th>Quantity</th>   
+                <th>Status</th>                             
+                <th>More Details</th>                                               
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of donorItemsList;let i = index;"> 
+                <td> <div class="form-group">
+                    <div class="form-group__text">
+                        <span>{{item.name}}</span>                                               
+                    </div>
+                </div>
+              </td>     
+              <td> <div class="form-group">
+                <div class="form-group__text">
+                    <span>{{item.quantity}}</span>                                               
+                </div>
+            </div>
+          </td>  
+          <td> <div class="form-group">
+            <div class="form-group__text">
+                <span>{{item.status}}</span>                                               
+            </div>
+        </div>
+      </td> 
+      <td> 
+          <div class="form-group">
+        <div class="form-group__text">
+            <button class="btn btn-secondary" (click)="viewItemDetails(i)">View</button>                                            
+            </div>
+        </div>
+    </td>   
+</tr>
+    </tbody>
+    </table>
+</div>
+<div id = "viewItemDetail" *ngIf="!itemListMode">
+    <div class = "row">
+        <div class="col">
+            <label>Item Name:</label><span>{{selectedItem.name}}</span>
+        </div>
+        <div class="col">
+            <label>Status: </label><span>{{selectedItem.status}}</span>
+        </div>
+        
+    </div>
+    <div class = "row">
+        <div class="col">
+            <label>Category: </label><span>{{selectedItem.category}}</span>
+        </div>
+        <div class="col">
+            <label>Subcategory: </label><span>{{selectedItem.subcategory}}</span>
+        </div>
+        
+    </div>
+    <div class = "row">
+        <div class="col">
+            <label>Quantity:</label><span>{{selectedItem.quantity}}</span>
+        </div>
+        <div class="col">
+            <label>Quality: </label><span>{{selectedItem.quality}}</span>
+        </div>
+        
+    </div>
+    <div class = "row">
+        <div class="col">
+            <label>Details:</label><span>{{selectedItem.details}}</span>
+        </div>
+        <div class="col">
+            <button class="btn btn-secondary" (click)="viewImage()">View Image</button>        </div>
+                    
+    </div>
+<button class="btn btn-secondary" (click)="viewList()">Back</button>
+</div>
+</div>

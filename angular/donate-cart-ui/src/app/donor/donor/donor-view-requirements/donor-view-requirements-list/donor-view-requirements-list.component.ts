@@ -12,7 +12,7 @@ export class DonorViewRequirementsListComponent implements OnInit {
   constructor(private router:Router,private route:ActivatedRoute) { }
   itemRequirementList:ItemRequirement[] = [];
   ngOnInit(): void {
-    this.itemRequirementList.push(new ItemRequirement("science class 10 ncert","Education","books","Need 5 text books for children",50,"class 10 unprivileged children","U&I","some ngo id"));
+    this.itemRequirementList.push(new ItemRequirement("science class 10 ncert","Education","books","Need 5 text books for children",50,"U&I","some ngo id"));
   }
   viewDetails(index:number){
     

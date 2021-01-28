@@ -16,7 +16,7 @@ export class DonorService {
     headers: this.httpHeaders
        };    
 
-
+  
   public viewItemReqsUrl = "endpoint";
   public donateItemUrl = "endpoint"
   public createDonationItemUrl = "endpoint";
@@ -26,6 +26,8 @@ export class DonorService {
   constructor(private httpClient:HttpClient) { }
 
 
+  
+  
   public getItemRequests(){
     return this.httpClient.get(this.viewItemReqsUrl);
   }
@@ -35,7 +37,7 @@ export class DonorService {
   public createDonationItem(form:FormData){
     return this.httpClient.post<any>(this.createDonationItemUrl,form);
   }
-  public viewItemUpdates(){
-    return this.httpClient.get(this.viewItemUpdatesUrl)
+  public viewItemUpdates(donorId:string){
+    return this.httpClient.post<any>(this.viewItemUpdatesUrl,{"id":donorId},this.headerOptions);
   }
 }
