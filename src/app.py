@@ -155,7 +155,6 @@ def authentication():
             password = data['password']
             query = '{"query":{"term":{"Email": "%s"}}}'%(email)
             res = es.search(index="accounts", body=query)
-            # res = json.loads(res)
             if res["hits"]['total']['value'] > 0:
                 passwordActual = res["hits"]['hits'][0]['_source']['PasswordHash']
                 if password == passwordActual:
@@ -163,16 +162,34 @@ def authentication():
                     userId = res["hits"]['hits'][0]['_id']
                     if userType == 'donor':
                         verified = True
+                        result = {
+                        "role" : userType,
+                        "id" : userId,
+                        "verified" : verified,
+                        "pass" : True,
+                        "name": res["hits"]['hits'][0]['_source']['Name'],
+                        "email":res["hits"]['hits'][0]['_source']['Email'],
+                        "address":res["hits"]['hits'][0]['_source']['Address'],
+                        "phone":res["hits"]['hits'][0]['_source']['Phone'],
+                        "pincode":res["hits"]['hits'][0]['_source']['Pincode']
+                        } 
                     else:
                         if 'VerifiedNGOFlag' in res["hits"]['hits'][0]['_source'] and res["hits"]['hits'][0]['_source']['VerifiedNGOFlag'] == "true":
                             verified = True
                         else:
                             verified = False
-                    result = {
-                        "role" : userType,
-                        "id" : userId,
-                        "verified" : verified,
-                        "pass" : True
+                        result = {
+                            "role" : userType,
+                            "id" : userId,
+                            "verified" : verified,
+                            "pass" : True,
+                            "NGOName" : res["hits"]['hits'][0]['_source']['NGOName'],
+                            "email":res["hits"]['hits'][0]['_source']['Email'],
+                            "PAN":res["hits"]['hits'][0]['_source']['PAN'],
+                            "address":res["hits"]['hits'][0]['_source']['Address'],
+                            "website":res["hits"]['hits'][0]['_source']['Website'],
+                            "phone":res["hits"]['hits'][0]['_source']['Phone'],
+                            "Description":res["hits"]['hits'][0]['_source']['Description']
                         } 
                     result = json.dumps(result)
                 else:
@@ -292,8 +309,6 @@ def deleteRequirement():
             print(e)
             return jsonpickle.encode(responsePackage("Error","Couldn't delete requirement"),unpicklable=False)
         return jsonpickle.encode(responsePackage("Success","Deleted Requirement Successfully"),unpicklable=False)
-
-
 
 ##DONOR Utilities
 #function to get all items (For NGO)
