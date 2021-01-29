@@ -15,7 +15,7 @@ export class DoneeViewDonationDetailsComponent implements OnInit {
   requestMode:boolean = null;
   ngOnInit(): void {
     this.requestMode = false;
-    this.item = new DonationItem("Canvas Shoes","Clothing","Shoes","I have 2 pairs of shoes which i dont need",2,7,"some id")
+    this.item = new DonationItem("1","Canvas Shoes","Clothing","Shoes","I have 2 pairs of shoes which i dont need",2,7,"some id")
   }
 
   toggleRequestMode(){

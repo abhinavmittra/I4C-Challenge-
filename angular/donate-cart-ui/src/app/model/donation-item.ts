@@ -1,4 +1,5 @@
 export class DonationItem {
+    itemId:string;
     name:string;
     category:string;
     subcategory:string;
@@ -7,7 +8,8 @@ export class DonationItem {
     quality:number;
     donorId:string
 
-    constructor(name:string,category:string,subcat:string,details:string,quantity:number,quality:number,donorId:string){
+    constructor(itemId:string,name:string,category:string,subcat:string,details:string,quantity:number,quality:number,donorId:string){
+        this.itemId = itemId;
         this.name=name;
         this.category=category;
         this.subcategory=subcat;

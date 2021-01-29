@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {DonorViewUpdateItem} from '../../../model/donor-view-update-item';
+import {RequestItem} from '../../../model/request-item';
 @Component({
   selector: 'app-donor-view-updates',
   templateUrl: './donor-view-updates.component.html',
@@ -12,6 +13,7 @@ export class DonorViewUpdatesComponent implements OnInit {
   itemListMode:boolean=null;
   loadingFlag:boolean = null;
   donorItemsList : DonorViewUpdateItem[] = [];
+  selectedDonationRequestList :RequestItem[]=[];
   selectedItem:DonorViewUpdateItem = null;
   ngOnInit(): void {
     
@@ -25,6 +27,12 @@ export class DonorViewUpdatesComponent implements OnInit {
   viewItemDetails(index:number){
     this.itemListMode = false;
     this.selectedItem = this.donorItemsList[index];
+    if(this.selectedItem.status =="Available"){
+      //send post req to server to fetch all the donate update types for this reqId
+      this.selectedDonationRequestList.length=0;
+      this.selectedDonationRequestList.push(new RequestItem("1","30","I have a bookstore so I can offer you 30 books"));
+      this.selectedDonationRequestList.push(new RequestItem("2","10","I have an electronics shop so I can offer you 10 low budget laptops"));
+    }
   }
 
   viewList(index){
@@ -33,6 +41,22 @@ export class DonorViewUpdatesComponent implements OnInit {
 
   viewImage(){
     
+  }
+  approveRequest(index:number){
+
+  }
+  rejectRequest(index:number){
+    
+  }
+
+  deleteItem(){
+    const id = this.selectedItem.itemId;
+
+    console.log("deleted id"+id);
+    //call service to delete item and return a new copy.
+    this.itemListMode = true;
+
+    //send post req with id to delete
   }
 
 

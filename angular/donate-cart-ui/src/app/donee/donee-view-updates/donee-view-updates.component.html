@@ -7,7 +7,6 @@
 
 <div id = "updateList" *ngIf="itemListMode">
     <h3>Requirements put by you</h3>
-    
     <table class="table">
         <thead>
             <tr>  
@@ -51,6 +50,30 @@
 <div id = "viewItemDetail" *ngIf="!itemListMode">
 
     <div id="reqDetails">
+        <h4>Requirement Details</h4>
+        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            Delete
+          </button>
+          
+          <!-- Modal -->
+          <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  You want to delete this item.
+                </div>
+                <p></p>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                  <button type="button" class="btn btn-primary" (click)="deleteRequirement()">Yes</button>
+                </div>
+              </div>
+            </div>
+          </div>
     <div class = "row">
         <div class="col">
             <label>Item Name:</label><span>{{selectedItem.name}}</span>

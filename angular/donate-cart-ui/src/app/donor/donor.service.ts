@@ -1,6 +1,8 @@
 import { HttpClient,HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import {DonationItem} from '../model/donation-item';
+import { ItemRequirement } from '../model/item-requirement';
+import {tap} from 'rxjs/operators'
+import {Subject} from 'rxjs'
 
 @Injectable({
   providedIn: 'root'
@@ -17,19 +19,32 @@ export class DonorService {
        };    
 
   
-  public viewItemReqsUrl = "endpoint";
+  public getRequirementsUrl = "http://127.0.0.1:5000/getRequirements";
   public donateItemUrl = "endpoint"
   public createDonationItemUrl = "endpoint";
   public viewItemUpdatesUrl = "endpoint";
   
 
+  publicItemRequirements:ItemRequirement[]=[];
+
   constructor(private httpClient:HttpClient) { }
 
+  getItemRequirements(){
 
+    return this.publicItemRequirements.slice();
+  }
+  setItemRequirements(data:any){
+    this.publicItemRequirements = data["itemRequirements"]
+    console.log("hi from set req")
+    console.log(data["itemRequirements"])
+    console.log(this.publicItemRequirements);
+  }
   
   
-  public getItemRequests(){
-    return this.httpClient.get(this.viewItemReqsUrl);
+  public getRequirementsFromServer(){
+    return this.httpClient.get(this.getRequirementsUrl).pipe(tap((data)=>{
+      this.setItemRequirements(data);
+    }));;
   }
   public donateItem(){
     return this.httpClient.post<any>(this.donateItemUrl,{"type":"donate-requirement"});

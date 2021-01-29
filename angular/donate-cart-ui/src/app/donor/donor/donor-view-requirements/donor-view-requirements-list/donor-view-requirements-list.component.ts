@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { DonorService} from 'src/app/donor/donor.service';
 import { ItemRequirement } from 'src/app/model/item-requirement';
 
 @Component({
@@ -9,13 +11,22 @@ import { ItemRequirement } from 'src/app/model/item-requirement';
 })
 export class DonorViewRequirementsListComponent implements OnInit {
 
-  constructor(private router:Router,private route:ActivatedRoute) { }
+  constructor(private router:Router,private route:ActivatedRoute,private donorService:DonorService) { }
   itemRequirementList:ItemRequirement[] = [];
+  itemRequirementsChangedSubscription:Subscription;
+  
   ngOnInit(): void {
-    this.itemRequirementList.push(new ItemRequirement("science class 10 ncert","Education","books","Need 5 text books for children",50,"U&I","some ngo id"));
+  
+    this.itemRequirementsChangedSubscription=this.donorService.publicItemRequirementsChanged.subscribe((data:ItemRequirement[])=>{
+      this.itemRequirementList = data;
+    });  
+  
   }
   viewDetails(index:number){
     
     this.router.navigate(['../details'],{relativeTo:this.route});
+  }
+  ngOnDestroy(){
+    this.itemRequirementsChangedSubscription.unsubscribe();
   }
 }

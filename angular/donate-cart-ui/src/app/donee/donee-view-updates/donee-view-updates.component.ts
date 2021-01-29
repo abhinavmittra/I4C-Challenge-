@@ -48,4 +48,10 @@ export class DoneeViewUpdatesComponent implements OnInit {
 
   }
 
+  deleteRequirement(){
+    const id = this.selectedItem.requirementId;
+    //send post req with id to delete
+    //delete item in service and get updated copy of doneeReqsList
+    
+  } 
 }

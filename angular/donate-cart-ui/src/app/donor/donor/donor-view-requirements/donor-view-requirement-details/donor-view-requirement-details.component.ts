@@ -16,7 +16,7 @@ export class DonorViewRequirementDetailsComponent implements OnInit {
   selectedImage:File = null;
   ngOnInit(): void {
     this.donateMode = false;
-    this.item= new ItemRequirement("science class 10 ncert","Education","books","Need 5 text books for children",50,"U&I","some ngo id");
+    this.item= new ItemRequirement("1","science class 10 ncert","Education","books","Need 5 text books for children","50","U&I","some ngo id");
   }
 
   onSubmit(form:NgForm){
@@ -26,6 +26,8 @@ export class DonorViewRequirementDetailsComponent implements OnInit {
     submitForm.append('quality',form.value.quality);
     submitForm.append('details',form.value.details);
     submitForm.append('public',form.value.publicFlag);
+    submitForm.append('name',this.item.name);
+    submitForm.append('requirementId',this.item.subcategory)
     console.log(submitForm.get('image'));
     console.log(submitForm.get('public'));
     //send post req with submitForm attached to server to create new item in db
