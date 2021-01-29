@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 from flask import Flask, request, url_for , redirect , send_from_directory
-=======
-from flask import Flask, request, url_for,jsonify
->>>>>>> 6e80fb62d3c688298d554c10b8d125c0305520db
 from flask_cors import CORS
 from ssl import create_default_context
 from elasticsearch import Elasticsearch
@@ -11,6 +7,8 @@ import jsonpickle
 import datetime
 from werkzeug.utils import secure_filename
 import os
+from os import listdir
+from os.path import isfile, join
 app = Flask(__name__)
 
 #defining the default temporary upload folder
@@ -38,17 +36,20 @@ except Exception as e:
 
 #class to define a donation Item object
 class donationItem:
-    def __init__(self,name,category,subcategory,details,quantity,quality):
+    def __init__(self,ID,name,category,subcategory,details,quantity,quality,imglink):
+        self.ID = ID
         self.name = name
         self.category = category
         self.subcategory = subcategory
         self.details = details
         self.quantity = quantity
         self.quality = quality
+        self.imglink = imglink
 
 #class to define an item requirement object
 class itemRequirement:
-     def __init__(self,name,category,subcategory,details,quantity,ngoId,ngo):
+     def __init__(self,ID,name,category,subcategory,details,quantity,ngoId,ngo):
+        self.ID =ID
         self.name = name
         self.category = category
         self.subcategory = subcategory
@@ -66,9 +67,16 @@ class ngo:
         self.pan = pan
         self.address = address
         self.pincode = pincode
+
+class ngoPackage:
+    def __init__(self,ngoList,status,message):
+        self.ngoList = ngoList
+        self.status = status
+        self.message = message
+
 class donationItemPackage:
     def __init__(self,donationItem,status,message):
-        self.donationItem = donateItem
+        self.donationItem = donationItem
         self.status = status
         self.message = message
 
@@ -78,38 +86,10 @@ class itemRequirementPackage:
         self.status = status
         self.message = message
 
-class ngoPackage:
-    def __init__(self,ngoList,status,message):
-        self.ngoList = ngoList
-        self.status = status
-        self.message = message
 class responsePackage:
     def __init__(self,status,message):
         self.status = status
         self.message = message
-
-#function to get all accounts (NGO & Donor accounts)
-# @app.route("/get_accounts",methods=['POST','GET'])
-# def getAccounts():
-#     if request.method == "GET":
-#         try:
-#             res = es.search(index="accounts", body={"query": {"match_all": {}}})
-#         except Exception as e: 
-#             print(e)
-#             return "Error in getAccounts function"
-#         return res
-
-#function to get donation details
-# @app.route("/get_donations",methods=['POST','GET'])
-# def getDonation():
-#     if request.method == "GET":
-#         try:
-#             res = es.search(index="donations", body={"query": {"match_all": {}}})
-#         except Exception as e: 
-#             print(e)
-#             return "Error in getDonation function"
-#         return res
-
 
 #AUTH Utilities
 #function to create a Donor account
@@ -288,7 +268,7 @@ def getRequirements():
             print(res["hits"]['hits'][0]['_source']['details'])
             dataList = []
             for item in res["hits"]['hits']:
-                dataList.append(itemRequirement(item['_source']['name'],item['_source']['category'],item['_source']['subcategory'],item['_source']['details'],item['_source']['quantity'],item['_source']['ngoId'],item['_source']['ngo']))
+                dataList.append(itemRequirement(item['_id'],item['_source']['name'],item['_source']['category'],item['_source']['subcategory'],item['_source']['details'],item['_source']['quantity'],item['_source']['ngoId'],item['_source']['ngo']))
             for obj in dataList:
                 print(obj.name)
             result = itemRequirementPackage(dataList,"success","object contains list of requirements")
@@ -325,7 +305,20 @@ def getItems():
             print(res["hits"]['hits'])
             dataList = []
             for item in res["hits"]['hits']:
-                dataList.append(donationItem(item['_source']['itemname'],item['_source']['category'],item['_source']['subcategory'],item['_source']['details'],item['_source']['quantity'],item['_source']['quality']))
+                ID = item['_id']
+                imglink = ""
+                try:
+                    path = './Upload_folder'
+                    fileist = [f for f in listdir(path) if isfile(join(path, f))]
+                    for f in fileist:
+                        if f.split('.')[0] == ID:
+                            imglink = "/uploads/" + f
+                            break
+                    print(imglink)
+                except Exception as e:
+                    print("error in finding file")
+                    print(e)
+                dataList.append(donationItem(item['_id'],item['_source']['itemname'],item['_source']['category'],item['_source']['subcategory'],item['_source']['details'],item['_source']['quantity'],item['_source']['quality'],imglink))
             for obj in dataList:
                 print(obj.name)
             result = donationItemPackage(dataList,"success","object contains list of items up for donation")
@@ -340,15 +333,42 @@ def getItems():
 def donateItem():
     if request.method == "POST":
         try:
-            data = json.loads(request.data)
-            data["public"] = "true"
-            res = es.index(index="donations", body=(data))
+            category = request.form["category"]
+            subcategory = request.form["subcategory"]
+            itemname = request.form["itemname"]
+            details = request.form["details"]
+            quantity = request.form["quantity"]
+            quality = request.form["quality"]
+            donorID = request.form["donorID"]
+            pincode = request.form["pincode"]
+            query = {
+                        "doctype":"item",
+                        "category":category,
+                        "subcategory":subcategory,
+                        "itemname":itemname,
+                        "details":details,
+                        "quantity":quantity,
+                        "quality":quality,
+                        "donorID":donorID,
+                        "pincode":pincode,
+                        "public":"true"
+                    }
+            # data["public"] = "true"
+            res = es.index(index="donations", body=(query))
+            ID = res["_id"]
+            try:
+                f = request.files['file']
+                filename = ID + '.' + f.filename.split('.')[1]
+                f.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
+            except:
+                print("error in image upload")
+                return jsonpickle.encode(responsePackage("Failure","Error in image upload"),unpicklable=False)
         except Exception as e: 
             print(e)
-            return jsonpickle.encode(responsePackage("Failure","Could not create an item"))
-        return res
+            return jsonpickle.encode(responsePackage("Failure","Could not create an item"),unpicklable=False)
+        return jsonpickle.encode(responsePackage("success","Item created"),unpicklable=False)
+        # return res
 
-<<<<<<< HEAD
 #function to request an item
 @app.route("/requestItem",methods=['POST'])
 def requestItem():
@@ -372,22 +392,69 @@ def requestItem():
         response =json.dumps(response)
         return response
 
-        
-#function to upload a file
-
-@app.route("/uploadFile",methods=['POST'])
-def uploadFile():
+#function to respond to a requirement
+@app.route("/respondToRequirement",methods=['POST'])
+def respondToRequirement():
     if request.method == "POST":
         try:
-            f = request.files['file']
-            filename = secure_filename(f.filename)
-            f.save(os.path.join(app.config['UPLOAD_FOLDER'],secure_filename(f.filename)))
-            print('file uploaded successfully')
-            print(url_for('uploaded_file',filename=filename))
-            return redirect(url_for('uploaded_file',filename=filename))
+            donorID = request.form['donorID']
+            category = request.form['category']
+            subcategory = request.form['subcategory']
+            itemname = request.form['itemname']
+            requirementID = request.form['requirementID']
+            NGOID = request.form['NGOID']
+            quantity = request.form['quantity']
+            quality = request.form['quality']
+            pincode = request.form['pincode']
+            details = request.form['details']
+            query1 = {
+                "doctype":"item",
+                "category":category,
+                "subcategory":subcategory,
+                "itemname":itemname,
+                "quality":quality,
+                "quantity":quantity,
+                "donorID":donorID,
+                "pincode":pincode,
+                "details":details
+            }
+            result = es.index(index="donations", body=(query1))
+            ID = result["_id"]
+            try:
+                f = request.files['file']
+                filename = ID + '.' + f.filename.split('.')[1]
+                f.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
+            except:
+                print("error in image upload in respond to requirement")
+                return jsonpickle.encode(responsePackage("Failure","Error in image upload"),unpicklable=False)
+            query2 = {
+                "doctype":"update",
+                "updateType":"donate",
+                "NGOID":NGOID,
+                "requirementID":requirementID,
+                "DonorID":donorID,
+                "quantity":quantity
+            }
+            res = es.index(index="donations", body=(query2))
         except Exception as e:
             print(e)
-            return "Error in file upload"
+            return jsonpickle.encode(responsePackage("Failure","Error in respond to requirement"),unpicklable=False)
+        return jsonpickle.encode(responsePackage("success","Responded to requirement successfully"),unpicklable=False)
+        
+#function to upload a file
+# @app.route("/uploadFile",methods=['POST'])
+# def uploadFile():
+#     if request.method == "POST":
+#         try:
+#             f = request.files['file']
+#             filename = secure_filename(f.filename)
+#             f.save(os.path.join(app.config['UPLOAD_FOLDER'],secure_filename(f.filename)))
+#             print('file uploaded successfully')
+#             print(url_for('uploaded_file',filename=filename))
+#             return redirect(url_for('uploaded_file',filename=filename))
+#         except Exception as e:
+#             print(e)
+#             return "Error in file upload"
 
 #endpoint that returns the image once hit with the url and filename
 @app.route('/uploads/<filename>')
@@ -395,12 +462,6 @@ def uploaded_file(filename):
     url = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
     return send_from_directory(url,
                                filename)
-
-
-
-=======
-
-   
 
 @app.route("/deleteItem",methods=['POST','GET'])    
 def deleteItem():
@@ -416,7 +477,6 @@ def deleteItem():
         return jsonpickle.encode(responsePackage("Success","Deleted Item Successfully"),unpicklable=False)         
         
         
->>>>>>> 6e80fb62d3c688298d554c10b8d125c0305520db
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080, debug=True)
     
