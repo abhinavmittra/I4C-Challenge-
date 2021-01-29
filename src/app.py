@@ -1,10 +1,22 @@
-from flask import Flask, request, url_for
+from flask import Flask, request, url_for , redirect , send_from_directory
 from flask_cors import CORS
 from ssl import create_default_context
 from elasticsearch import Elasticsearch
 import json
 import jsonpickle
+import datetime
+from werkzeug.utils import secure_filename
+import os
 app = Flask(__name__)
+
+#defining the default temporary upload folder
+# UPLOAD_FOLDER = './Upload_folder'
+app.config['UPLOAD_FOLDER'] = './Upload_folder'
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
+app.add_url_rule('/uploads/<filename>', 'uploaded_file',
+                 build_only=True)
+# app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {
+#     '/uploadFile':  app.config['UPLOAD_FOLDER']
 
 CORS(app) #Used to disable cross origin policy to test app in local
 
@@ -280,6 +292,55 @@ def donateItem():
             print(e)
             return "Error in donate item function"
         return res
+
+#function to request an item
+@app.route("/requestItem",methods=['POST'])
+def requestItem():
+    if request.method == "POST":
+        try:
+            data = json.loads(request.data)
+            ngoId = data["NGOID"]
+            itemID = data["itemID"]
+            del data["itemID"]
+            print(itemID)
+            res = es.index(index="donations", body=(data))
+            requirementID = res["_id"]
+            date = datetime.datetime.now()
+            query = {"doctype":"update","updateType":"donaterequest","NGOID":ngoId,"itemID":itemID,"requirementID":requirementID,"date":date}
+            result = es.index(index="donations", body=query)
+            response = {"status":"success"}
+        except Exception as e: 
+            print(e)
+            print("Error in request item function")
+            response = {"status":"failure"}
+        response =json.dumps(response)
+        return response
+
+        
+#function to upload a file
+
+@app.route("/uploadFile",methods=['POST'])
+def uploadFile():
+    if request.method == "POST":
+        try:
+            f = request.files['file']
+            filename = secure_filename(f.filename)
+            f.save(os.path.join(app.config['UPLOAD_FOLDER'],secure_filename(f.filename)))
+            print('file uploaded successfully')
+            print(url_for('uploaded_file',filename=filename))
+            return redirect(url_for('uploaded_file',filename=filename))
+        except Exception as e:
+            print(e)
+            return "Error in file upload"
+
+#endpoint that returns the image once hit with the url and filename
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    url = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
+    return send_from_directory(url,
+                               filename)
+
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080, debug=True)
