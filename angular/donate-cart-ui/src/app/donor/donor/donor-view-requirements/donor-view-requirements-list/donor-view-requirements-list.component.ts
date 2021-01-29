@@ -17,14 +17,21 @@ export class DonorViewRequirementsListComponent implements OnInit {
   
   ngOnInit(): void {
   
+    this.getRequirements();
+  }
+
+  getRequirements(){
+
+    this.itemRequirementList = this.donorService.getItemRequirements();
     this.itemRequirementsChangedSubscription=this.donorService.publicItemRequirementsChanged.subscribe((data:ItemRequirement[])=>{
       this.itemRequirementList = data;
     });  
   
   }
+
   viewDetails(index:number){
     
-    this.router.navigate(['../details'],{relativeTo:this.route});
+    this.router.navigate(['../details',index+1],{relativeTo:this.route});
   }
   ngOnDestroy(){
     this.itemRequirementsChangedSubscription.unsubscribe();

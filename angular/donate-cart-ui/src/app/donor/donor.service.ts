@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { ItemRequirement } from '../model/item-requirement';
 import {tap} from 'rxjs/operators'
 import {Subject} from 'rxjs'
-
 @Injectable({
   providedIn: 'root'
 })
@@ -26,7 +25,10 @@ export class DonorService {
   
 
   publicItemRequirements:ItemRequirement[]=[];
-
+  publicItemRequirementsChanged = new Subject<ItemRequirement[]>();
+  
+  
+  
   constructor(private httpClient:HttpClient) { }
 
   getItemRequirements(){
@@ -35,9 +37,11 @@ export class DonorService {
   }
   setItemRequirements(data:any){
     this.publicItemRequirements = data["itemRequirements"]
-    console.log("hi from set req")
-    console.log(data["itemRequirements"])
-    console.log(this.publicItemRequirements);
+    this.publicItemRequirementsChanged.next(this.publicItemRequirements.slice())
+    
+  }
+  getItemRequirement(index:number){
+    return this.publicItemRequirements[index];
   }
   
   

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { DonorService } from 'src/app/donor/donor.service';
 import { ItemRequirement } from 'src/app/model/item-requirement';
 
 @Component({
@@ -10,13 +11,14 @@ import { ItemRequirement } from 'src/app/model/item-requirement';
 })
 export class DonorViewRequirementDetailsComponent implements OnInit {
 
-  constructor(private router:Router,private route:ActivatedRoute) { }
+  constructor(private router:Router,private route:ActivatedRoute,private donorService:DonorService) { }
   item:ItemRequirement=null;
   donateMode:boolean = null;
   selectedImage:File = null;
   ngOnInit(): void {
     this.donateMode = false;
-    this.item= new ItemRequirement("1","science class 10 ncert","Education","books","Need 5 text books for children","50","U&I","some ngo id");
+    const itemIdx = +this.route.snapshot.paramMap.get('id')-1
+    this.item= this.donorService.getItemRequirement(itemIdx);
   }
 
   onSubmit(form:NgForm){
