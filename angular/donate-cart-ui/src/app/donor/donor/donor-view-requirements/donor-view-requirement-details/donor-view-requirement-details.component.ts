@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { DonorService } from 'src/app/donor/donor.service';
 import { ItemRequirement } from 'src/app/model/item-requirement';
 
 @Component({
@@ -10,13 +11,14 @@ import { ItemRequirement } from 'src/app/model/item-requirement';
 })
 export class DonorViewRequirementDetailsComponent implements OnInit {
 
-  constructor(private router:Router,private route:ActivatedRoute) { }
+  constructor(private router:Router,private route:ActivatedRoute,private donorService:DonorService) { }
   item:ItemRequirement=null;
   donateMode:boolean = null;
   selectedImage:File = null;
   ngOnInit(): void {
     this.donateMode = false;
-    this.item= new ItemRequirement("science class 10 ncert","Education","books","Need 5 text books for children",50,"class 10 unprivileged children","U&I","some ngo id");
+    const itemIdx = +this.route.snapshot.paramMap.get('id')-1
+    this.item= this.donorService.getItemRequirement(itemIdx);
   }
 
   onSubmit(form:NgForm){
@@ -25,7 +27,11 @@ export class DonorViewRequirementDetailsComponent implements OnInit {
     submitForm.append('quantity',form.value.quantity);
     submitForm.append('quality',form.value.quality);
     submitForm.append('details',form.value.details);
+    submitForm.append('public',form.value.publicFlag);
+    submitForm.append('name',this.item.name);
+    submitForm.append('requirementId',this.item.subcategory)
     console.log(submitForm.get('image'));
+    console.log(submitForm.get('public'));
     //send post req with submitForm attached to server to create new item in db
   }
 

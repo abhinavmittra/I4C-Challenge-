@@ -23,7 +23,7 @@ const routes: Routes = [
 [
   {path:'updates',component:DonorViewUpdatesComponent},
   {path:'requirements',component:DonorViewRequirementsComponent,children:[
-    {path:'details',component:DonorViewRequirementDetailsComponent},
+    {path:'details/:id',component:DonorViewRequirementDetailsComponent},
     {path:'list',component:DonorViewRequirementsListComponent}
   ]},
   {path:'donate',component:DonorCreateItemComponent}
@@ -36,7 +36,7 @@ const routes: Routes = [
     {path:'list',component:DoneeViewDonationListComponent}
   ]
 },
-  {path:'allrequirements',component:DoneeViewUpdatesComponent}
+  {path:'updates',component:DoneeViewUpdatesComponent}
 ]},
 {path:'',redirectTo:'login',pathMatch:'full'}];
 

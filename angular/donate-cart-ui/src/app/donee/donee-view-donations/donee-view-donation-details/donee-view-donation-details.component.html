@@ -20,8 +20,17 @@
             required
             >
     </div>
+    <div class="form-group">
+        <input class="form-check-input" type="checkbox" value="" aria-label="Checkbox for making item public"
+        ngModel 
+        name="publicFlag"
+        
+        >
+       <label> Check this box to make this donation <b>public</b></label>
+        
+    </div>
     <div>
-        <button class="btn btn-secondary" type="submit" [disabled]="!donateReqForm.valid">Donate</button> 
+        <button class="btn btn-secondary" type="submit" [disabled]="!donateReqForm.valid">Request</button> 
         
     </div>
 </form>

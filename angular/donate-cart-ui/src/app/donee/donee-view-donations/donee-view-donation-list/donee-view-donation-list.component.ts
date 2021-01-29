@@ -14,7 +14,7 @@ export class DoneeViewDonationListComponent implements OnInit {
   
   itemDonationsList:DonationItem[]=[];
   ngOnInit(): void {
-    this.itemDonationsList.push(new DonationItem("Canvas Shoes","Clothing","Shoes","I have 2 pairs of shoes which i dont need",2,7,"some id"))
+    this.itemDonationsList.push(new DonationItem("1","Canvas Shoes","Clothing","Shoes","I have 2 pairs of shoes which i dont need",2,7,"some id"))
 
   }
   viewItem(index:number){

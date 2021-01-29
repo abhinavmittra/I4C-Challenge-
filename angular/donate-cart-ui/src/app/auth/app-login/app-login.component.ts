@@ -24,7 +24,7 @@ export class AppLoginComponent implements OnInit {
         }
 
       }
-      else if(data['role']=="ngo"){
+      else if(data['role']=="NGO"){
         if(data['pass']==true&&data['verified']==true){
           this.authService.setUserId(data['id']);
           this.router.navigate(['donee']);
