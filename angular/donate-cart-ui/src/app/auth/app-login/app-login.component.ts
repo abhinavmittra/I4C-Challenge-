@@ -20,6 +20,7 @@ export class AppLoginComponent implements OnInit {
       if(data['role']=="donor"){
         if(data['pass']=true){
           this.authService.setUserId(data['id']);
+          this.authService.setPincode(data['pincode']);
           this.router.navigate(['donor']);
         }
 
@@ -27,6 +28,7 @@ export class AppLoginComponent implements OnInit {
       else if(data['role']=="NGO"){
         if(data['pass']==true&&data['verified']==true){
           this.authService.setUserId(data['id']);
+          this.authService.setPincode(data['pincode']);
           this.router.navigate(['donee']);
         }
       }

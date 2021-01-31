@@ -8,6 +8,11 @@ import { Donor } from '../model/donor';
 export class AuthService {
 
   userId:string=null;
+  name:string = null;
+  email:string = null;
+  address:string = null;
+  pincode:string = null;
+  pan:string = null;
 
   constructor(private httpClient: HttpClient) { }
   public loginUrl = "http://127.0.0.1:5000/authenticate";
@@ -42,4 +47,24 @@ export class AuthService {
   getUserId(){
     return this.userId;
   }
+
+  getPincode(){
+    return this.pincode;
+  }
+  setPincode(pin:string){
+    this.pincode = pin;
+  }
+  getAddress(){
+    return this.getAddress;
+  }
+  setAddress(address:string){
+    this.address = address;
+  }
+  getPan(){
+    return this.pincode;
+  }
+  setPan(pan:string){
+    this.pan = pan;
+  }
+  
 }

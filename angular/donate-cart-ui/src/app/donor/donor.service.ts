@@ -19,8 +19,8 @@ export class DonorService {
 
   
   public getRequirementsUrl = "http://127.0.0.1:5000/getRequirements";
-  public donateItemUrl = "endpoint"
-  public createDonationItemUrl = "endpoint";
+  public donateItemUrl = "http://127.0.0.1:5000/respondToRequirement";
+  public createDonationItemUrl = "http://127.0.0.1:5000/donateItemPublic";
   public viewItemUpdatesUrl = "endpoint";
   
 
@@ -50,8 +50,8 @@ export class DonorService {
       this.setItemRequirements(data);
     }));;
   }
-  public donateItem(){
-    return this.httpClient.post<any>(this.donateItemUrl,{"type":"donate-requirement"});
+  public donateItem(item:FormData){
+    return this.httpClient.post<any>(this.donateItemUrl,item);
   }
   public createDonationItem(form:FormData){
     return this.httpClient.post<any>(this.createDonationItemUrl,form);

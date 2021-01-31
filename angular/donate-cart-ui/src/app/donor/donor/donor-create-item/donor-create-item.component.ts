@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import {DonationItem} from '../../../model/donation-item';
+import { AuthService } from 'src/app/auth/auth.service';
 import { DonorService } from '../../donor.service';
 @Component({
   selector: 'app-donor-create-item',
@@ -9,7 +9,7 @@ import { DonorService } from '../../donor.service';
 })
 export class DonorCreateItemComponent implements OnInit {
 
-  constructor(private donorService:DonorService) { }
+  constructor(private donorService:DonorService,private authService:AuthService) { }
   selectedImage:File = null;
   ngOnInit(): void {
     
@@ -26,10 +26,13 @@ export class DonorCreateItemComponent implements OnInit {
     submitForm.append('quantity',form.value.quantity);
     submitForm.append('quality',form.value.quality);
     submitForm.append('details',form.value.details);
+    submitForm.append('donorID',this.authService.getUserId());
+    submitForm.append('pincode',this.authService.getPincode());    
 
-    console.log(submitForm.get('image'));
     //send post req with submitForm attached to server to create new item in db
-    
+    this.donorService.createDonationItem(submitForm).subscribe((data)=>{
+    console.log(data)
+    });
   }
 
   onFileSelected(event){

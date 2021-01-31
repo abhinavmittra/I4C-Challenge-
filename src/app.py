@@ -36,15 +36,15 @@ except Exception as e:
 
 #class to define a donation Item object
 class donationItem:
-    def __init__(self,ID,name,category,subcategory,details,quantity,quality,imglink):
-        self.ID = ID
+    def __init__(self,itemId,name,category,subcategory,details,quantity,quality,imglink):
+        self.itemId = itemId
         self.name = name
         self.category = category
         self.subcategory = subcategory
         self.details = details
         self.quantity = quantity
         self.quality = quality
-        self.imglink = imglink
+        self.imgLink = imglink
 
 #class to define an item requirement object
 class itemRequirement:
@@ -75,8 +75,8 @@ class ngoPackage:
         self.message = message
 
 class donationItemPackage:
-    def __init__(self,donationItem,status,message):
-        self.donationItem = donationItem
+    def __init__(self,donationItems,status,message):
+        self.donationItems = donationItems
         self.status = status
         self.message = message
 
@@ -109,7 +109,6 @@ def createUserAccount():
                 result = json.dumps(result)
                 return result
             else: 
-                res = es.index(index = "accounts", body = data)
                 res = es.index(index = "accounts", body = data)
                 result = {"status" : "success"}
                 result = json.dumps(result)
@@ -188,8 +187,8 @@ def authentication():
                             "PAN":res["hits"]['hits'][0]['_source']['PAN'],
                             "address":res["hits"]['hits'][0]['_source']['Address'],
                             "website":res["hits"]['hits'][0]['_source']['Website'],
-                            "phone":res["hits"]['hits'][0]['_source']['Phone'],
-                            "Description":res["hits"]['hits'][0]['_source']['Description']
+                            "phone":res["hits"]['hits'][0]['_source']['Phone']
+                            
                         } 
                     result = json.dumps(result)
                 else:
@@ -255,68 +254,53 @@ def approveRejectNGO():
 
 
 ##NGO Utilities
-#function to create a requirement
-@app.route("/createPublicRequirement",methods=['POST','GET'])
-def createRequirements():
+#function to request an item
+@app.route("/requestItem",methods=['POST'])
+def requestItem():
     if request.method == "POST":
         try:
             data = json.loads(request.data)
-            data["public"] = "true"
-            data["doctype"] = "requirement"
-            res = es.search(index="accounts", body={"query":{"bool":{"must": [{"term" : {"_id" : data["ngoId"] }}]}}})
-            #Adding NGO Name field as well in Requirement since we can fetch it directly from requirement and show donor the ngo name also.
-            ngoName = ""
-            for item in res["hits"]['hits']:
-                ngoName = item['_source']["NGOName"]
-            data["ngo"]=ngoName            
-            res = es.index(index="donations", body=(data))
-            
+            #del data["itemId"]
+            category = data["category"]
+            subcategory = request.form["subcategory"]
+            name = data["name"]
+            details = data["details"]
+            quantity = data["quantity"]
+            pincode = data["pincode"]
+            ngoId = data["ngoId"]
+            itemId = data["itemId"]
+            public = data["public"]
+            print(itemId)
+            query = {
+                        "doctype":"requirement",
+                        "category":category,
+                        "subcategory":subcategory,
+                        "name":name,
+                        "details":details,
+                        "quantity":quantity,
+                        "ngoId":ngoId,
+                        "pincode":pincode,
+                        "public":public
+                    }
+                   
+            res = es.index(index="donations", body=(query))
+            requirementID = res["_id"]
+            date = datetime.datetime.now(datetime.timezone.utc) #changed to using utc format or else time and date will be different for users living in different areas
+            query = {"doctype":"update","updateType":"donaterequest","ngoId":ngoId,"itemId":itemId,"requirementId":requirementID,"date":date}
+            result = es.index(index="donations", body=query)
+            response = responsePackage("Success","Requested Item")
         except Exception as e: 
             print(e)
-            return jsonpickle.encode(responsePackage("Error","Couldn't create requirement"),unpicklable=False)
-        return jsonify({"status":"Success","requirementId":res["_id"]})
-
-#function to get all requirements
-@app.route("/getRequirements",methods=['POST','GET'])
-def getRequirements():
-    if request.method == "GET":
-        try:
-            res = es.search(index="donations", body={"query":{"bool":{"must": [{"term" : {"doctype" : "requirement" }},{"range" : {"quantity" : { "gte" : 0}}}]}}})
-            print(res["hits"]['hits'][0]['_source']['details'])
-            dataList = []
-            for item in res["hits"]['hits']:
-                dataList.append(itemRequirement(item['_id'],item['_source']['name'],item['_source']['category'],item['_source']['subcategory'],item['_source']['details'],item['_source']['quantity'],item['_source']['ngoId'],item['_source']['ngo']))
-            for obj in dataList:
-                print(obj.name)
-            result = itemRequirementPackage(dataList,"success","object contains list of requirements")
-        except Exception as e: 
-            print(e)
-            result = itemRequirementPackage("","failure","")
-        result = jsonpickle.encode(result,unpicklable=False)
-        return result
-
-
-#Need to think about handling side effects too i.e how to handle updates for the requests made to these delete items/requirements    
-@app.route("/deleteRequirement",methods=['POST','GET'])    
-def deleteRequirement():
-    if request.method=="POST":
-        try:
-            data = json.loads(request.data)
-            reqId = data["requirementId"]
-            res = es.delete(index = "donations", id = reqId)
-            print(res)
-        except Exception as e:
-            print(e)
-            return jsonpickle.encode(responsePackage("Error","Couldn't delete requirement"),unpicklable=False)
-        return jsonpickle.encode(responsePackage("Success","Deleted Requirement Successfully"),unpicklable=False)
-
-##DONOR Utilities
+            print("Error in request item function")
+            response = responsePackage("Failure","Something went wrong")
+        response =jsonpickle.encode(response,unpicklable=False)
+        return response
 #function to get all items (For NGO)
 @app.route("/getItems",methods=['POST','GET'])
 def getItems():
     if request.method == "GET":
         try:
-            res = es.search(index="donations", body={"query":{"bool":{"must": [{"term" : {"doctype" : "item" }}],"must_not": [{"term" : {"donatedFlag": "true" }}]}}})
+            res = es.search(index="donations", body={"query":{"bool":{"must": [{"term" : {"doctype" : "item" }},{"term":{"public":"true"}}],"must_not": [{"term" : {"donatedFlag": "true" }}]}}})
             print(res["hits"]['hits'])
             dataList = []
             for item in res["hits"]['hits']:
@@ -342,7 +326,43 @@ def getItems():
             result = donationItemPackage("","failure","")
         result = jsonpickle.encode(result,unpicklable=False)
         return result
+#function to create a requirement
+@app.route("/createPublicRequirement",methods=['POST','GET'])
+def createRequirements():
+    if request.method == "POST":
+        try:
+            data = json.loads(request.data)
+            data["public"] = "true"
+            data["doctype"] = "requirement"
+            res = es.search(index="accounts", body={"query":{"bool":{"must": [{"term" : {"_id" : data["ngoId"] }}]}}})
+            #Adding NGO Name field as well in Requirement since we can fetch it directly from requirement and show donor the ngo name also.
+            ngoName = ""
+            for item in res["hits"]['hits']:
+                ngoName = item['_source']["NGOName"]
+            data["ngo"]=ngoName            
+            res = es.index(index="donations", body=(data))
+            
+        except Exception as e: 
+            print(e)
+            return jsonpickle.encode(responsePackage("Error","Couldn't create requirement"),unpicklable=False)
+        return jsonify({"status":"Success","requirementId":res["_id"]})
 
+
+#Need to think about handling side effects too i.e how to handle updates for the requests made to these delete items/requirements    
+@app.route("/deleteRequirement",methods=['POST','GET'])    
+def deleteRequirement():
+    if request.method=="POST":
+        try:
+            data = json.loads(request.data)
+            reqId = data["requirementId"]
+            res = es.delete(index = "donations", id = reqId)
+            print(res)
+        except Exception as e:
+            print(e)
+            return jsonpickle.encode(responsePackage("Error","Couldn't delete requirement"),unpicklable=False)
+        return jsonpickle.encode(responsePackage("Success","Deleted Requirement Successfully"),unpicklable=False)
+
+##DONOR Utilities
 #function to donate an item 
 @app.route("/donateItemPublic",methods=['POST'])
 def donateItem():
@@ -350,7 +370,7 @@ def donateItem():
         try:
             category = request.form["category"]
             subcategory = request.form["subcategory"]
-            itemname = request.form["itemname"]
+            itemname = request.form["name"]
             details = request.form["details"]
             quantity = request.form["quantity"]
             quality = request.form["quality"]
@@ -366,14 +386,14 @@ def donateItem():
                         "quality":quality,
                         "donorID":donorID,
                         "pincode":pincode,
-                        "public":"true"
+                        "public":true
                     }
-            # data["public"] = "true"
             res = es.index(index="donations", body=(query))
             ID = res["_id"]
             try:
-                f = request.files['file']
+                f = request.files['image']
                 filename = ID + '.' + f.filename.split('.')[1]
+                print(filename)
                 f.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
             except:
                 print("error in image upload")
@@ -382,73 +402,75 @@ def donateItem():
             print(e)
             return jsonpickle.encode(responsePackage("Failure","Could not create an item"),unpicklable=False)
         return jsonpickle.encode(responsePackage("success","Item created"),unpicklable=False)
-        # return res
+        
 
-#function to request an item
-@app.route("/requestItem",methods=['POST'])
-def requestItem():
-    if request.method == "POST":
+
+#function to get all requirements
+@app.route("/getRequirements",methods=['POST','GET'])
+def getRequirements():
+    if request.method == "GET":
         try:
-            data = json.loads(request.data)
-            ngoId = data["NGOID"]
-            itemID = data["itemID"]
-            del data["itemID"]
-            print(itemID)
-            res = es.index(index="donations", body=(data))
-            requirementID = res["_id"]
-            date = datetime.datetime.now()
-            query = {"doctype":"update","updateType":"donaterequest","NGOID":ngoId,"itemID":itemID,"requirementID":requirementID,"date":date}
-            result = es.index(index="donations", body=query)
-            response = {"status":"success"}
+            res = es.search(index="donations", body={"query":{"bool":{"must": [{"term" : {"doctype" : "requirement" }},{"range" : {"quantity" : { "gte" : 0}}}]}}})
+            print(res["hits"]['hits'][0]['_source']['details'])
+            dataList = []
+            for item in res["hits"]['hits']:
+                dataList.append(itemRequirement(item['_id'],item['_source']['name'],item['_source']['category'],item['_source']['subcategory'],item['_source']['details'],item['_source']['quantity'],item['_source']['ngoId'],item['_source']['ngo']))
+            for obj in dataList:
+                print(obj.name)
+            result = itemRequirementPackage(dataList,"success","object contains list of requirements")
         except Exception as e: 
             print(e)
-            print("Error in request item function")
-            response = {"status":"failure"}
-        response =json.dumps(response)
-        return response
+            result = itemRequirementPackage("","failure","")
+        result = jsonpickle.encode(result,unpicklable=False)
+        return result
+
 
 #function to respond to a requirement
 @app.route("/respondToRequirement",methods=['POST'])
 def respondToRequirement():
     if request.method == "POST":
         try:
-            donorID = request.form['donorID']
+            donorID = request.form['donorId']
             category = request.form['category']
             subcategory = request.form['subcategory']
-            itemname = request.form['itemname']
-            requirementID = request.form['requirementID']
-            NGOID = request.form['NGOID']
+            itemname = request.form['name']
+            requirementID = request.form['requirementId']
+            NGOID = request.form['ngoId']
             quantity = request.form['quantity']
             quality = request.form['quality']
             pincode = request.form['pincode']
             details = request.form['details']
+            public = request.form['public']
             query1 = {
                 "doctype":"item",
                 "category":category,
                 "subcategory":subcategory,
-                "itemname":itemname,
+                "name":itemname,
                 "quality":quality,
                 "quantity":quantity,
-                "donorID":donorID,
+                "donorId":donorID,
                 "pincode":pincode,
-                "details":details
+                "details":details,
+                "public":public
             }
             result = es.index(index="donations", body=(query1))
             ID = result["_id"]
             try:
-                f = request.files['file']
+                f = request.files['image']
                 filename = ID + '.' + f.filename.split('.')[1]
                 f.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
             except:
                 print("error in image upload in respond to requirement")
                 return jsonpickle.encode(responsePackage("Failure","Error in image upload"),unpicklable=False)
+            date = datetime.datetime.now(datetime.timezone.utc)
             query2 = {
                 "doctype":"update",
                 "updateType":"donate",
-                "NGOID":NGOID,
+                "ngoId":NGOID,
                 "requirementID":requirementID,
-                "DonorID":donorID,
-                "quantity":quantity
+                "donorId":donorID,
+                "quantity":quantity,
+                "date":date
             }
             res = es.index(index="donations", body=(query2))
         except Exception as e:

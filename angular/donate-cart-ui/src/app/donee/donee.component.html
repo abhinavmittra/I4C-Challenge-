@@ -1,7 +1,15 @@
-<div class="container">
+
+<div class="d-flex justify-content-center" *ngIf="loadingFlag">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+
+<div class="container" *ngIf="!loadingFlag">
     <button class="btn btn-secondary" (click)="createItemRequirement()">Request an item</button>
     <button class="btn btn-secondary" (click)="viewDonations()">view Donations</button>
     <button class="btn btn-secondary" (click)="viewMyRequirements()">My Requirements</button>
 
     </div>
-<router-outlet></router-outlet>
+<router-outlet *ngIf="!loadingFlag"></router-outlet>

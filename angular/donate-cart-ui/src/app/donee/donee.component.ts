@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { DoneeService } from './donee.service';
 
 @Component({
   selector: 'app-donee',
@@ -8,14 +9,19 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class DoneeComponent implements OnInit {
 
-  constructor(private router:Router,private route: ActivatedRoute) { }
-
+  constructor(private router:Router,private route: ActivatedRoute,private doneeService:DoneeService) { }
+  loadingFlag:boolean = true;
   ngOnInit(): void {
   //make get request to server to fetch all item donations
   //make get request to server to fetch all requirements/donations this person has added or requested for.
   //use a service to store all this data
   //disable My Requirements button until data is fetched
-  }
+  this.loadingFlag = true;
+  this.doneeService.getAvailableDonationsFromServer().subscribe((data)=>{
+      this.loadingFlag=false
+    });
+
+}
   viewDonations(){
     this.router.navigate(['donations/list'],{relativeTo:this.route})
   }

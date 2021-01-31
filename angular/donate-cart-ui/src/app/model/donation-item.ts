@@ -6,9 +6,9 @@ export class DonationItem {
     details:string;
     quantity:number;
     quality:number;
-    donorId:string
+    imgLink:string;
 
-    constructor(itemId:string,name:string,category:string,subcat:string,details:string,quantity:number,quality:number,donorId:string){
+    constructor(itemId:string,name:string,category:string,subcat:string,details:string,quantity:number,quality:number,donorId:string,imgLink:string){
         this.itemId = itemId;
         this.name=name;
         this.category=category;
@@ -16,6 +16,6 @@ export class DonationItem {
         this.details=details;
         this.quantity=quantity;
         this.quality=quality;
-        this.donorId= donorId;
+        this.imgLink = imgLink;
     }
 }
