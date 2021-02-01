@@ -25,8 +25,8 @@ CORS(app) #Used to disable cross origin policy to test app in local
 #connecting to the elasticsearch cluster
 try: 
     es = Elasticsearch(
-                ['https://719f614d8e0d43d3b93ee3061d569f85.ap-south-1.aws.elastic-cloud.com:9243/'],
-                 http_auth=("elastic","aRmYqD3NViBVdO8FWAaz55Ok"),
+                ['https://90266fa352184992b46b503574f1132e.ap-south-1.aws.elastic-cloud.com:9243/'],
+                 http_auth=("elastic","HR9Cc5vxZXTwwU8auCrrBgJC"),
                  scheme = "https",
                 )
     print("Connected")
@@ -99,9 +99,9 @@ def createUserAccount():
         try:
             # print (request.data)
             data = json.loads(request.data)
-            email = data ["Email"]
+            email = data ["email"]
             # print (data)
-            query = '{"query":{"term":{"Email": "%s"}}}'%(email)
+            query = '{"query":{"term":{"email": "%s"}}}'%(email)
             emailExists = es.search(index="accounts", body=query)
             value = emailExists["hits"]["total"]["value"]
             if value >= 1:
@@ -109,6 +109,8 @@ def createUserAccount():
                 result = json.dumps(result)
                 return result
             else: 
+                data["numberOfRatings"] = "0"
+                data["averageRating"] = "0"
                 res = es.index(index = "accounts", body = data)
                 result = {"status" : "success"}
                 result = json.dumps(result)
@@ -118,15 +120,15 @@ def createUserAccount():
         return result
 
 #function to create an NGO account
-@app.route("/createNgoAccount",methods=['POST','GET'])
+@app.route("/createNgoAccount",methods=['POST'])
 def createNgoAccount():
     if request.method == "POST":
         try:
             # print (request.data)
             data = json.loads(request.data)
-            email = data ["Email"]
+            email = data ["email"]
             # print (data)
-            query = '{"query":{"term":{"Email": "%s"}}}'%(email)
+            query = '{"query":{"term":{"email": "%s"}}}'%(email)
             emailExists = es.search(index="accounts", body=query)
             value = emailExists["hits"]["total"]["value"]
             if value >= 1:
@@ -134,6 +136,7 @@ def createNgoAccount():
                 result = json.dumps(result)
                 return result
             else :
+                data["verifiedNgoFlag"] = "false"
                 res = es.index(index = "accounts", body = data)
                 result = {"status" : "success"}
                 result = json.dumps(result)
@@ -152,12 +155,12 @@ def authentication():
             data = json.loads(request.data)
             email = data['email']
             password = data['password']
-            query = '{"query":{"term":{"Email": "%s"}}}'%(email)
+            query = '{"query":{"term":{"email": "%s"}}}'%(email)
             res = es.search(index="accounts", body=query)
             if res["hits"]['total']['value'] > 0:
-                passwordActual = res["hits"]['hits'][0]['_source']['PasswordHash']
+                passwordActual = res["hits"]['hits'][0]['_source']['passwordHash']
                 if password == passwordActual:
-                    userType = res["hits"]['hits'][0]['_source']['UserType']
+                    userType = res["hits"]['hits'][0]['_source']['userType']
                     userId = res["hits"]['hits'][0]['_id']
                     if userType == 'donor':
                         verified = True
@@ -166,11 +169,11 @@ def authentication():
                         "id" : userId,
                         "verified" : verified,
                         "pass" : True,
-                        "name": res["hits"]['hits'][0]['_source']['Name'],
-                        "email":res["hits"]['hits'][0]['_source']['Email'],
-                        "address":res["hits"]['hits'][0]['_source']['Address'],
-                        "phone":res["hits"]['hits'][0]['_source']['Phone'],
-                        "pincode":res["hits"]['hits'][0]['_source']['Pincode']
+                        "name": res["hits"]['hits'][0]['_source']['name'],
+                        "email":res["hits"]['hits'][0]['_source']['email'],
+                        "address":res["hits"]['hits'][0]['_source']['address'],
+                        "phone":res["hits"]['hits'][0]['_source']['phone'],
+                        "pincode":res["hits"]['hits'][0]['_source']['pincode']
                         } 
                     else:
                         if 'VerifiedNGOFlag' in res["hits"]['hits'][0]['_source'] and res["hits"]['hits'][0]['_source']['VerifiedNGOFlag'] == "true":
@@ -182,12 +185,12 @@ def authentication():
                             "id" : userId,
                             "verified" : verified,
                             "pass" : True,
-                            "NGOName" : res["hits"]['hits'][0]['_source']['NGOName'],
-                            "email":res["hits"]['hits'][0]['_source']['Email'],
-                            "PAN":res["hits"]['hits'][0]['_source']['PAN'],
-                            "address":res["hits"]['hits'][0]['_source']['Address'],
-                            "website":res["hits"]['hits'][0]['_source']['Website'],
-                            "phone":res["hits"]['hits'][0]['_source']['Phone']
+                            "ngoName" : res["hits"]['hits'][0]['_source']['ngoName'],
+                            "email":res["hits"]['hits'][0]['_source']['email'],
+                            "pan":res["hits"]['hits'][0]['_source']['pan'],
+                            "address":res["hits"]['hits'][0]['_source']['address'],
+                            "website":res["hits"]['hits'][0]['_source']['website'],
+                            "phone":res["hits"]['hits'][0]['_source']['phone']
                             
                         } 
                     result = json.dumps(result)
@@ -221,11 +224,11 @@ def authentication():
 def getNgoList():
     if request.method == "GET":
         try:
-            res = es.search(index="accounts", body={"query":{"bool":{"must":{"term" : {"UserType" : "NGO"  }},"must_not":{"term" : { "VerifiedNGOFlag" : "true" }}}}})
+            res = es.search(index="accounts", body={"query":{"bool":{"must":{"term" : {"userType" : "NGO"  }},"must_not":{"term" : { "verifiedNgoFlag" : "true" }}}}})
             
             ngoList = []
             for item in res["hits"]['hits']:
-                ngoList.append(ngo(item['_id'],item['_source']['NGOName'],item['_source']['Email'],item['_source']['Phone'],item['_source']['PAN'],item['_source']['Address'],item['_source']['Pincode']))
+                ngoList.append(ngo(item['_id'],item['_source']['ngoName'],item['_source']['email'],item['_source']['phone'],item['_source']['pan'],item['_source']['address'],item['_source']['pincode']))
             
             
             res = ngoPackage(ngoList,"Success","Fetched all items")
@@ -240,11 +243,11 @@ def approveRejectNGO():
     if request.method == "POST":
         try:
             data = json.loads(request.data)
-            actionToken = data["actionTaken"]
+            actionToken = data["actionToken"]
             ngoId = data ["id"]
             print (actionToken)
             if actionToken == 'accept':
-                res = es.update(index = "accounts", id = ngoId, body = {"doc": {"VerifiedNGOFlag": "true"}})
+                res = es.update(index = "accounts", id = ngoId, body = {"doc": {"verifiedNgoFlag": "true"}})
             elif actionToken == 'reject':
                 res = es.delete(index = "accounts", id = ngoId)
         except Exception as e:
@@ -261,9 +264,10 @@ def requestItem():
         try:
             data = json.loads(request.data)
             #del data["itemId"]
+            print(data)
             category = data["category"]
-            subcategory = request.form["subcategory"]
-            name = data["name"]
+            subCategory = data["subCategory"]
+            name = data["itemName"]
             details = data["details"]
             quantity = data["quantity"]
             pincode = data["pincode"]
@@ -272,21 +276,21 @@ def requestItem():
             public = data["public"]
             print(itemId)
             query = {
-                        "doctype":"requirement",
+                        "docType":"requirement",
                         "category":category,
-                        "subcategory":subcategory,
-                        "name":name,
+                        "subCategory":subCategory,
+                        "itemName":name,
                         "details":details,
                         "quantity":quantity,
                         "ngoId":ngoId,
                         "pincode":pincode,
-                        "public":public
+                        "publicFlag":public
                     }
-                   
+            print("Query=",query)
             res = es.index(index="donations", body=(query))
             requirementID = res["_id"]
             date = datetime.datetime.now(datetime.timezone.utc) #changed to using utc format or else time and date will be different for users living in different areas
-            query = {"doctype":"update","updateType":"donaterequest","ngoId":ngoId,"itemId":itemId,"requirementId":requirementID,"date":date}
+            query = {"docType":"update","updateType":"donateRequest","ngoId":ngoId,"itemId":itemId,"requirementId":requirementID,"date":date}
             result = es.index(index="donations", body=query)
             response = responsePackage("Success","Requested Item")
         except Exception as e: 
@@ -300,7 +304,7 @@ def requestItem():
 def getItems():
     if request.method == "GET":
         try:
-            res = es.search(index="donations", body={"query":{"bool":{"must": [{"term" : {"doctype" : "item" }},{"term":{"public":"true"}}],"must_not": [{"term" : {"donatedFlag": "true" }}]}}})
+            res = es.search(index="donations", body={"query":{"bool":{"must": [{"term" : {"docType" : "item" }},{"term":{"publicFlag":"true"}}],"must_not": [{"term" : {"donatedFlag": "true" }}]}}})
             print(res["hits"]['hits'])
             dataList = []
             for item in res["hits"]['hits']:
@@ -317,7 +321,7 @@ def getItems():
                 except Exception as e:
                     print("error in finding file")
                     print(e)
-                dataList.append(donationItem(item['_id'],item['_source']['itemname'],item['_source']['category'],item['_source']['subcategory'],item['_source']['details'],item['_source']['quantity'],item['_source']['quality'],imglink))
+                dataList.append(donationItem(item['_id'],item['_source']['itemName'],item['_source']['category'],item['_source']['subCategory'],item['_source']['details'],item['_source']['quantity'],item['_source']['quality'],imglink))
             for obj in dataList:
                 print(obj.name)
             result = donationItemPackage(dataList,"success","object contains list of items up for donation")
@@ -332,20 +336,20 @@ def createRequirements():
     if request.method == "POST":
         try:
             data = json.loads(request.data)
-            data["public"] = "true"
-            data["doctype"] = "requirement"
+            data["publicFlag"] = "true"
+            data["docType"] = "requirement"
             res = es.search(index="accounts", body={"query":{"bool":{"must": [{"term" : {"_id" : data["ngoId"] }}]}}})
             #Adding NGO Name field as well in Requirement since we can fetch it directly from requirement and show donor the ngo name also.
             ngoName = ""
             for item in res["hits"]['hits']:
-                ngoName = item['_source']["NGOName"]
+                ngoName = item['_source']["ngoName"]
             data["ngo"]=ngoName            
             res = es.index(index="donations", body=(data))
             
         except Exception as e: 
             print(e)
             return jsonpickle.encode(responsePackage("Error","Couldn't create requirement"),unpicklable=False)
-        return jsonify({"status":"Success","requirementId":res["_id"]})
+        return json.dumps({"status":"Success","requirementId":res["_id"]})
 
 
 #Need to think about handling side effects too i.e how to handle updates for the requests made to these delete items/requirements    
@@ -369,24 +373,24 @@ def donateItem():
     if request.method == "POST":
         try:
             category = request.form["category"]
-            subcategory = request.form["subcategory"]
+            subcategory = request.form["subCategory"]
             itemname = request.form["name"]
             details = request.form["details"]
             quantity = request.form["quantity"]
             quality = request.form["quality"]
-            donorID = request.form["donorID"]
+            donorID = request.form["donorId"]
             pincode = request.form["pincode"]
             query = {
-                        "doctype":"item",
+                        "docType":"item",
                         "category":category,
-                        "subcategory":subcategory,
-                        "itemname":itemname,
+                        "subCategory":subcategory,
+                        "itemName":itemname,
                         "details":details,
                         "quantity":quantity,
                         "quality":quality,
-                        "donorID":donorID,
+                        "donorId":donorID,
                         "pincode":pincode,
-                        "public":true
+                        "publicFlag": "true"
                     }
             res = es.index(index="donations", body=(query))
             ID = res["_id"]
@@ -410,13 +414,21 @@ def donateItem():
 def getRequirements():
     if request.method == "GET":
         try:
-            res = es.search(index="donations", body={"query":{"bool":{"must": [{"term" : {"doctype" : "requirement" }},{"range" : {"quantity" : { "gte" : 0}}}]}}})
+            res = es.search(index="donations", body={"query":{"bool":{"must": [{"term" : {"docType" : "requirement" }},{"range" : {"quantity" : { "gte" : 0}}}]}}})
             print(res["hits"]['hits'][0]['_source']['details'])
             dataList = []
             for item in res["hits"]['hits']:
-                dataList.append(itemRequirement(item['_id'],item['_source']['name'],item['_source']['category'],item['_source']['subcategory'],item['_source']['details'],item['_source']['quantity'],item['_source']['ngoId'],item['_source']['ngo']))
-            for obj in dataList:
-                print(obj.name)
+                if 'ngo' in item['_source']:
+                    ngo = item['_source']['ngo']
+                else:
+                    ngo = ""
+                if 'details' in item['_source']:
+                    details = item['_source']['details']
+                else:
+                    details = ""
+                dataList.append(itemRequirement(item['_id'],item['_source']['itemName'],item['_source']['category'],item['_source']['subCategory'],details,item['_source']['quantity'],item['_source']['ngoId'],ngo))
+            # for obj in dataList:
+                # print(obj.name)
             result = itemRequirementPackage(dataList,"success","object contains list of requirements")
         except Exception as e: 
             print(e)
@@ -432,7 +444,7 @@ def respondToRequirement():
         try:
             donorID = request.form['donorId']
             category = request.form['category']
-            subcategory = request.form['subcategory']
+            subcategory = request.form['subCategory']
             itemname = request.form['name']
             requirementID = request.form['requirementId']
             NGOID = request.form['ngoId']
@@ -444,7 +456,7 @@ def respondToRequirement():
             query1 = {
                 "doctype":"item",
                 "category":category,
-                "subcategory":subcategory,
+                "subCategory":subcategory,
                 "name":itemname,
                 "quality":quality,
                 "quantity":quantity,
@@ -464,10 +476,10 @@ def respondToRequirement():
                 return jsonpickle.encode(responsePackage("Failure","Error in image upload"),unpicklable=False)
             date = datetime.datetime.now(datetime.timezone.utc)
             query2 = {
-                "doctype":"update",
+                "docType":"update",
                 "updateType":"donate",
                 "ngoId":NGOID,
-                "requirementID":requirementID,
+                "requirementId":requirementID,
                 "donorId":donorID,
                 "quantity":quantity,
                 "date":date
@@ -511,7 +523,102 @@ def deleteItem():
         except Exception as e:
             print(e)
             return jsonpickle.encode(responsePackage("Error","Couldn't delete item"),unpicklable=False)
-        return jsonpickle.encode(responsePackage("Success","Deleted Item Successfully"),unpicklable=False)         
+        return jsonpickle.encode(responsePackage("Success","Deleted Item Successfully"),unpicklable=False)      
+
+
+@app.route("/getUpdatesForDonor",methods=['POST'])    
+def getUpdatesForDonor():
+    if request.method=="POST":
+        try:
+            data = json.loads(request.data)
+            donorID = data["donorID"]
+            res = es.search(index = "donations", body={"sort":{"date" : "asc"},"query":{"bool": {"must": [{ "term": { "donorId" : donorID}}],"should": [{ "term" : { "docType": "item" } },{ "term" : { "docType": "update" } }],"minimum_should_match": 1}}})
+            # print(res["hits"]['hits'])
+            result = []
+            for obj in res["hits"]['hits']:
+                # print(obj["_source"]["docType"])
+                if obj["_source"]["docType"] == "item":
+                    item = {
+                        obj["_id"] : {
+                            "itemName" : obj["_source"]["itemName"],
+                            "category" : obj["_source"]["category"],
+                            "subcategory" : obj["_source"]["subCategory"],
+                            "quantity" : obj["_source"]["quantity"],
+                            "quality" :obj["_source"]["quality"],
+                            "details" : obj["_source"]["details"],
+                            "status":"",
+                            "updates" : []
+                        }
+                    }
+                    result.append(item)
+                if obj["_source"]["docType"] == "update":
+                #     if obj["_source"]["updateType"] == 'itemDeleted':
+                #         update = "Deleted"
+                #     elif obj["_source"]['updateType'] == 'received':
+                #         update = "Donation Received"
+                #     elif obj["_source"]['updateType'] == 'declineDonation':
+                #         update = "Donation Rejected"
+                #     elif obj["_source"]['updateType'] == 'acceptDonation':
+                #         update = "Donation Accepted"
+                #     elif obj["_source"]['updateType'] == 'NOTA':
+                #         update = "available"
+                #     else:
+                #         update = obj["_source"]["updateType"]
+                #     print(update)
+                    update = {
+                        "updateType" : obj["_source"]["updateType"],
+                        "ngoId" : obj["_source"]["ngoId"],
+                        "itemId" : obj["_source"]["itemId"],
+                        "requirementId" : obj["_source"]["requirementId"],
+                    }
+                    itemID = obj["_source"]["itemId"]
+                    for item in result:
+                        if itemID in item:
+                            item[itemID]["updates"].append(update)
+        except Exception as e:
+            print(e)
+            return jsonpickle.encode(responsePackage("Error","Couldn't fetch updates for donor"),unpicklable=False)
+        # return jsonpickle.encode(responsePackage("Success","Deleted Requirement Successfully"),unpicklable=False)   
+        return json.dumps(result)
+
+
+@app.route("/getUpdatesForNGO",methods=['POST'])    
+def getUpdatesForNGO():
+    if request.method=="POST":
+        try:
+            data = json.loads(request.data)
+            ngoId = data["ngoId"]
+            res = es.search(index = "donations", body={"sort":{"date" : "asc"},"query":{"bool": {"must": [{ "term" : { "ngoId": ngoId } }],"should": [{ "term" : { "docType": "requirement" } },{ "term" : { "docType": "update" } }],"minimum_should_match": 1}}})
+            print(res["hits"]['hits'])
+            result = []
+            for obj in res["hits"]["hits"]:
+                if obj["_source"]["docType"] == "requirement":
+                    item = {
+                        obj["_id"] : {
+                            "itemName" : obj["_source"]["itemName"],
+                            "category" : obj["_source"]["category"],
+                            "subcategory" : obj["_source"]["subCategory"],
+                            "quantity" : obj["_source"]["quantity"],
+                            "updates" : []
+                        }
+                    }
+                    result.append(item)
+                if obj["_source"]["docType"] == "update":
+                    update = {
+                        "updateType" : obj["_source"]["updateType"],
+                        "ngoId" : obj["_source"]["ngoId"],
+                        "itemId" : obj["_source"]["itemId"],
+                        "requirementId" : obj["_source"]["requirementId"],
+                    }
+                    requirementID = obj["_source"]["requirementId"]
+                    for item in result:
+                        if requirementID in item:
+                            item[requirementID]["updates"].append(update)
+        except Exception as e:
+            print(e)
+            return jsonpickle.encode(responsePackage("Error","Couldn't fetch updates for NGO"),unpicklable=False)
+        # return jsonpickle.encode(responsePackage("Success","Deleted Requirement Successfully"),unpicklable=False)   
+    return json.dumps(result)
         
         
 if __name__ == "__main__":
