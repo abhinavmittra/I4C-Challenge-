@@ -33,13 +33,13 @@ export class DoneeViewDonationDetailsComponent implements OnInit {
     submitForm.append('public',"false");
     else
     submitForm.append('public',form.value.publicFlag)
-
     submitForm.append('name',this.item.name);
     submitForm.append('itemId',this.item.itemId)
     submitForm.append('subcategory',this.item.subcategory)
     submitForm.append('category',this.item.category)
     submitForm.append('ngoId',this.authService.getUserId())
     submitForm.append('pincode',this.authService.getPincode())
+    submitForm.append('ngoName',this.authService.getName())
 
     this.doneeService.requestItem(submitForm).subscribe((data)=>{
       form.reset();

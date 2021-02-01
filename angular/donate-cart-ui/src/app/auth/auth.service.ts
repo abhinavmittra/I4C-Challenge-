@@ -47,6 +47,12 @@ export class AuthService {
   getUserId(){
     return this.userId;
   }
+  getName(){
+    return this.name;
+  }
+  setName(name:string){
+    this.name = name;
+  }
 
   getPincode(){
     return this.pincode;

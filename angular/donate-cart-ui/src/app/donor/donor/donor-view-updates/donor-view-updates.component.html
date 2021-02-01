@@ -1,14 +1,153 @@
-<div class="d-flex justify-content-center" *ngIf="loadingFlag">
-    <div class="spinner-border" role="status">
-      <span class="visually-hidden">Loading...</span>
-    </div>
-  </div>
-<div class="container" *ngIf="!loadingFlag">
-
-<div id = "updateList" *ngIf="itemListMode">
+<div class="container">
     <h3>Donations offered by you</h3>
-    
-    <table class="table">
+    <!--<ng-container *ngFor="let item of filteredJobs;index as i">
+        <tr (click)="viewJobHistory(i,job.jobname,job.jobParent)">                            
+        
+      <td> <div class="form-group">
+        <div class="form-group__text">
+            <span>{{job.jobname}}</span>
+                              
+        </div>
+    </div>
+  </td>
+  <td> <div class="form-group">
+    <div class="form-group__text">
+        <span>{{job.description}}</span>                                          
+    </div>
+</div>
+</td>
+<td> <div class="form-group">
+<div class="form-group__text">
+    <span>{{job.priority}}</span>
+                      
+</div>
+</div>
+</td>    
+<td> <div class="form-group">
+<div class="form-group__text">
+<span>{{job.jobFrequency}}</span>
+                  
+</div>
+</div>
+</td>    
+<td> <div class="form-group">
+<div class="form-group__text">
+    <span>{{job.jobPrevDate}}</span>
+                      
+</div>
+</div>
+</td>
+<td> <div class="form-group">
+<div class="form-group__text">
+<span>{{job.jobNextDate}}</span>                                  
+</div>
+</div>
+</td>
+<td> 
+<div class="form-group">
+<div class="form-group__text">
+<span>{{job.jobParent}}</span>
+              
+</div>
+</div>
+</td>
+<td>
+<span class="icon-chevron-down"></span>
+
+</td>
+</tr>
+<ng-container *ngIf="jobItems[i]">
+<tr>            
+<td colspan="8">
+<p *ngIf="!historyExist&&hasJobHistoryLoaded" id="zeroResults">No Search Results Found</p>
+<div class="loader loader--small" aria-label="Loading, please wait..." *ngIf="!hasJobHistoryLoaded">
+    <div class="wrapper">
+        <div class="wheel"></div>
+    </div>
+</div>
+<div class="responsive-table jobHistoryView" *ngIf="hasJobHistoryLoaded&&historyExist">
+<table class="table table--lined table--fixed table--bordered table--striped">
+    <thead>
+        <tr>                            
+            <th>Time of Occurence</th>                            
+            <th>Status</th>                             
+            <th>Duration (in seconds)</th>  
+            <th>SLA</th>  
+            
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let alert of filteredJobHistory">                 
+            <td> <div class="form-group">
+                <div class="form-group__text">
+                    <span>{{alert.jobRunTime}}</span>                                             
+                </div>
+            </div>
+            </td>  
+               
+      <td> <div class="form-group">
+        <div class="form-group__text">
+            <span>{{alert.jobRunStatus}}</span>                                             
+        </div>
+    </div>
+  </td>   
+    <td> <div class="form-group">
+        <div class="form-group__text">
+            <span>{{alert.jobDuration}}</span>                                               
+        </div>
+    </div>
+  </td>     
+  <td class="slaStatus"> <div class="form-group">
+    <div class="form-group__text">
+        <div data-balloon="SLA Met" data-balloon-pos="left"> <span class="text-success icon-check-outline icon-size-20" *ngIf="alert.metSla==1"></span></div>
+       <div data-balloon="Failed" data-balloon-pos="left"> <span class="text-danger icon-error-outline icon-size-20" *ngIf="alert.metSla==0"></span></div>
+       <div data-balloon="SLA not Met" data-balloon-pos="left"><span class="text-warning icon-warning-outline icon-size-20" *ngIf="alert.metSla==-1"></span></div>
+       <div data-balloon="SLA Pending" data-balloon-pos="left"> <span class=" text-info icon-info-outline icon-size-20" *ngIf="alert.metSla==-2"></span></div>                                             
+    </div>
+</div>
+</td>         
+        </tr>
+    </tbody>
+</table>
+</div>
+<div class="jobHistoryPagination" *ngIf="hasJobHistoryLoaded&&historyExist">
+<ul class="pagination">
+<li [class.disabled]="!isJobHistoryPrevActive"><a (click)="goToFirstPage('history')"><span class="icon-chevron-left-double"></span></a></li>
+<li [class.disabled]="!isJobHistoryPrevActive" (click)="goToPrev('history')"><a><span class="icon-chevron-left"></span></a></li>
+<li *ngFor="let page of pageCountJobHistory" [class.active]="pageJobHistorySelected[page-1]"><a (click)="changeJobHistoryPage(page-1)">{{page}}</a></li>
+<li *ngIf="showHistoryDots"><span class="icon-more"></span></li>
+<li [class.disabled]="!isJobHistoryNextActive" (click)="goToNext('history')"><a><span class="icon-chevron-right"></span></a></li>
+<li [class.disabled]="!isJobHistoryNextActive" ><a (click)="goToLastPage('history')"><span class="icon-chevron-right-double"></span></a></li>
+</ul>
+</div>
+</td>
+</tr>
+</ng-container>
+</ng-container>-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- <table class="table">
         <thead>
             <tr>  
                 <th>Item Name</th> 
@@ -46,16 +185,16 @@
     </td>   
 </tr>
     </tbody>
-    </table>
+    </table> -->
 </div>
-<div id = "viewItemDetail" *ngIf="!itemListMode">
+<!-- <div id = "viewItemDetail" *ngIf="!itemListMode">
     <div id="donationDetails">
         <h4>Donation Details</h4>
         <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal">
             Delete
           </button>
           
-          <!-- Modal -->
+           
           <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
               <div class="modal-content">
@@ -169,5 +308,5 @@
 
     
 
-</div>
+</div> -->
 </div>

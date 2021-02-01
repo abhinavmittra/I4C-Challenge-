@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AuthService } from 'src/app/auth/auth.service';
 import {DonorService} from '../donor.service';
 
 @Component({
@@ -9,8 +10,9 @@ import {DonorService} from '../donor.service';
 })
 export class DonorComponent implements OnInit {
 
-  constructor(private donorService:DonorService,private router:Router,private route:ActivatedRoute) { }
-  loadingFlag:boolean = true;
+  constructor(private donorService:DonorService,private router:Router,private route:ActivatedRoute,private authService:AuthService) { }
+  loadingReqFlag:boolean = true;
+  loadingUpdatesFlag:boolean = true;
   
   
   ngOnInit(): void {
@@ -18,9 +20,13 @@ export class DonorComponent implements OnInit {
   //make get request to server to fetch all item updates for this donor
   //use a service to store all this data
   //disable requirements button until data is fetched
-  this.loadingFlag = true;
+  this.loadingReqFlag = true;
+  this.loadingUpdatesFlag=true;
   this.donorService.getRequirementsFromServer().subscribe((data)=>{
-      this.loadingFlag=false
+      this.loadingReqFlag=false
+    });
+    this.donorService.getDonorUpdatesFromServer(this.authService.getUserId()).subscribe((data)=>{
+      this.loadingUpdatesFlag=false;
     });
   }
 

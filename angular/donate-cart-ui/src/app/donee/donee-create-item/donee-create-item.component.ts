@@ -19,7 +19,7 @@ export class DoneeCreateItemComponent implements OnInit {
     console.log(form);
     this.doneeService.createItemRequirement(new SubmitRequirement(form.value.name,
       form.value.category,form.value.subcategory,form.value.details,form.value.quantity,
-      this.authService.getUserId())).subscribe((data)=>{
+      this.authService.getUserId(),this.authService.getPincode(),this.authService.getName())).subscribe((data)=>{
         console.log(data);
         form.reset();
       });

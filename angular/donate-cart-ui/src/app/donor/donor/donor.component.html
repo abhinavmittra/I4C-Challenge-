@@ -1,14 +1,14 @@
 
-<div class="d-flex justify-content-center" *ngIf="loadingFlag">
+<div class="d-flex justify-content-center" *ngIf="loadingReqFlag||loadingUpdatesFlag">
     <div class="spinner-border" role="status">
       <span class="visually-hidden">Loading...</span>
     </div>
   </div>
 
-<div class="container" *ngIf="!loadingFlag">
+<div class="container" *ngIf="(!loadingUpdatesFlag)&&(!loadingReqFlag)">
 <button class="btn btn-secondary" (click)="donateItem()">Donate Item</button>
 <button class="btn btn-secondary" (click)="viewRequirements()">Requirements</button>
 <button class="btn btn-secondary" (click)="viewUpdates()">Updates</button>
 </div>
 
-<router-outlet *ngIf="!loadingFlag"></router-outlet>
+<router-outlet *ngIf="(!loadingUpdatesFlag)&&(!loadingReqFlag)"></router-outlet>

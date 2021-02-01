@@ -26,7 +26,7 @@ export class DonorCreateItemComponent implements OnInit {
     submitForm.append('quantity',form.value.quantity);
     submitForm.append('quality',form.value.quality);
     submitForm.append('details',form.value.details);
-    submitForm.append('donorID',this.authService.getUserId());
+    submitForm.append('donorId',this.authService.getUserId());
     submitForm.append('pincode',this.authService.getPincode());    
 
     //send post req with submitForm attached to server to create new item in db

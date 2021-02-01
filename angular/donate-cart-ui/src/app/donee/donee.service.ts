@@ -4,7 +4,7 @@ import {SubmitRequirement} from '../model/submit-requirement';
 import { DonationItem } from '../model/donation-item';
 import { Subject } from 'rxjs';
 import {tap} from 'rxjs/operators';
-import { AuthService } from '../auth/auth.service';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -28,7 +28,7 @@ public options = {
   public viewItemDonationsUrl = "http://127.0.0.1:5000/getItems";
   public requestItemUrl = "http://127.0.0.1:5000/requestItem";
   public createItemRequirementItemUrl = "http://127.0.0.1:5000/createPublicRequirement";
-  public viewItemUpdatesUrl = "endpoint";
+  public viewItemUpdatesUrl = "http://127.0.0.1:5000/getUpdatesForNGO";
 
 
   publicItemsList:DonationItem[]=[];
@@ -46,7 +46,7 @@ public options = {
     return this.publicItemsList[index];
   }
 
-  constructor(private httpClient:HttpClient,private authService:AuthService) { }
+  constructor(private httpClient:HttpClient) { }
 
   requestItem(form:FormData){
    
@@ -60,7 +60,7 @@ public options = {
     }));
   }
   getUpdates(ngoId:string){
-    return this.httpClient.post(this.viewItemUpdatesUrl,{ngoId});
+    return this.httpClient.post<any>(this.viewItemUpdatesUrl,{"ngoId":ngoId},this.headerOptions);
   }
   createItemRequirement(item:SubmitRequirement){
     return this.httpClient.post<any>(this.createItemRequirementItemUrl,JSON.stringify(item),this.headerOptions);
