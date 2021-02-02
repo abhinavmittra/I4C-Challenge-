@@ -7,9 +7,14 @@
 
 
 <div class="container" *ngIf="!loadingFlag">
-    <button class="btn btn-secondary" (click)="createItemRequirement()">Request an item</button>
-    <button class="btn btn-secondary" (click)="viewDonations()">view Donations</button>
-    <button class="btn btn-secondary" (click)="viewMyRequirements()">My Requirements</button>
+  <div class="btn-group" id="navigationBtns">
+    <button class="btn btn-outline-dark" (click)="createItemRequirement()">Request an item</button>
+    <button class="btn btn-outline-dark" (click)="viewDonations()">view Donations</button>
+    <button class="btn btn-outline-dark" (click)="viewMyRequirements()">My Requirements</button>
 
     </div>
+  </div>
+  <div id="seperator" style="height:30px">
+
+  </div>
 <router-outlet *ngIf="!loadingFlag"></router-outlet>

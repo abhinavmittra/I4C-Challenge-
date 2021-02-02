@@ -18,7 +18,7 @@
     <div class="col-lg-6">
         <div *ngIf="registerType=='donor'">
 <form #donorRegForm="ngForm" (ngSubmit)="onSubmit(donorRegForm)">
-    <div class="form-group">
+    <div class="mb-3">
         <label for="donorName">Name</label>
         <input type="text" id="donorName" class="form-control" 
         ngModel
@@ -26,7 +26,7 @@
         required
         >
     </div>
-    <div class="form-group">
+    <div class="mb-3">
         <label for="donorAddress">Address</label>
         <input type="text" id="donorAddress" class="form-control" 
         ngModel
@@ -34,7 +34,7 @@
         required
         >
     </div>
-    <div class="form-group">
+    <div class="mb-3">
         <label for="donorPincode">Pincode</label>
         <input type="number" id="donorPincode" class="form-control" 
         ngModel
@@ -42,7 +42,7 @@
         required
         >
     </div>
-    <div class="form-group">
+    <div class="mb-3">
         <label for="donorPhone">Contact No.</label>
         <input type="number" id="donorPhone" class="form-control" 
         ngModel
@@ -51,7 +51,7 @@
         pattern=".{10,}"
         >
     </div>
-    <div class="form-group">
+    <div class="mb-3">
     <label for="donorEmail">E-mail</label>
             <input type="email" id="donorEmail" class="form-control" 
             ngModel
@@ -59,7 +59,7 @@
             required
             email>
     </div>
-    <div class="form-group">
+    <div class="mb-3">
         <label for="donorPassword">Password</label>
         <input type="password" id="donorPassword" class="form-control"
         ngModel
@@ -75,7 +75,7 @@
 </div>
     <div *ngIf="registerType=='donee'">
     <form #doneeRegForm="ngForm" (ngSubmit)="onSubmit(doneeRegForm)" >
-        <div class="form-group">
+        <div class="mb-3">
             <label for="doneeName">NGO Name</label>
             <input type="text" id="doneeName" class="form-control" 
             ngModel
@@ -83,14 +83,21 @@
             required
             >
         </div>
-        <div class="form-group">
+        <div class="mb-3">
             <label for="doneeWebsite">Website Link</label>
             <input type="text" id="doneeWebsite" class="form-control" 
             ngModel
             name="website"            
             >
         </div>
-        <div class="form-group">
+        <div class="mb-3">
+            <label for="doneeDescription">Description</label>
+            <input type="text" id="doneeDescription" class="form-control" 
+            ngModel
+            name="description"            
+            >
+        </div>
+        <div class="mb-3">
             <label for="doneeAddress">Address</label>
             <input type="text" id="doneeAddress" class="form-control" 
             ngModel
@@ -98,7 +105,7 @@
             required
             >
         </div>
-        <div class="form-group">
+        <div class="mb-3">
             <label for="doneePincode">Pincode</label>
             <input type="number" id="doneePincode" class="form-control" 
             ngModel
@@ -106,7 +113,7 @@
             required
             >
         </div>
-        <div class="form-group">
+        <div class="mb-3">
             <label for="doneePhone">Contact No.</label>
             <input type="number" id="doneePhone" class="form-control" 
             ngModel
@@ -115,7 +122,7 @@
             pattern=".{10,}"
             >
         </div>
-        <div class="form-group">
+        <div class="mb-3">
             <label for="doneePan">Pan No.</label>
             <input type="text" id="doneePan" class="form-control" 
             ngModel
@@ -124,7 +131,7 @@
             
             >
         </div>
-        <div class="form-group">
+        <div class="mb-3">
             <label for="doneeEmail">E-mail</label>
             <input type="email" id="doneeEmail" class="form-control" 
             ngModel
@@ -132,7 +139,7 @@
             required
             email>
         </div>
-        <div class="form-group">
+        <div class="mb-3">
             <label for="doneePassword">Password</label>
             <input type="password" id="doneePassword" class="form-control"
             ngModel

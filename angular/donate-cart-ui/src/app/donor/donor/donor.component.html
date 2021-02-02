@@ -6,9 +6,14 @@
   </div>
 
 <div class="container" *ngIf="(!loadingUpdatesFlag)&&(!loadingReqFlag)">
-<button class="btn btn-secondary" (click)="donateItem()">Donate Item</button>
-<button class="btn btn-secondary" (click)="viewRequirements()">Requirements</button>
-<button class="btn btn-secondary" (click)="viewUpdates()">Updates</button>
+  <div class="btn-group" id="navigationBtns">
+<button class="btn btn-outline-dark" (click)="donateItem()">Donate Item</button>
+<button class="btn btn-outline-dark" (click)="viewRequirements()">Requirements</button>
+<button class="btn btn-outline-dark" (click)="viewUpdates()">Updates</button>
+</div>
+</div>
+<div id="seperator" style="height:30px">
+
 </div>
 
 <router-outlet *ngIf="(!loadingUpdatesFlag)&&(!loadingReqFlag)"></router-outlet>

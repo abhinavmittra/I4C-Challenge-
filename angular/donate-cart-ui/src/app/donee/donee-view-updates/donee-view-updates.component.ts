@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import {DoneeViewUpdateItem} from '../../model/donee-view-update-item';
 import {DonateRequirement} from '../../model/donate-requirement';
 @Component({
   selector: 'app-donee-view-updates',

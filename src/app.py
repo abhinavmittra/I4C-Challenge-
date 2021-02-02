@@ -160,7 +160,8 @@ def createNgoAccount():
                     "pincode":data["pincode"],
                     "passwordHash":data["password"],
                     "userType":"NGO",
-                    "pan":data["panno"]                    
+                    "pan":data["panno"],
+                    "description":data["description"]
                     
                 }
                 
@@ -202,8 +203,8 @@ def authentication():
                         "phone":res["hits"]['hits'][0]['_source']['phone'],
                         "pincode":res["hits"]['hits'][0]['_source']['pincode']
                         } 
-                    else:
-                        if 'VerifiedNGOFlag' in res["hits"]['hits'][0]['_source'] and res["hits"]['hits'][0]['_source']['VerifiedNGOFlag'] == "true":
+                    elif userType=='NGO':
+                        if 'verifiedNgoFlag' in res["hits"]['hits'][0]['_source'] and res["hits"]['hits'][0]['_source']['verifiedNgoFlag'] == "true":
                             verified = True
                         else:
                             verified = False
@@ -220,7 +221,15 @@ def authentication():
                             "phone":res["hits"]['hits'][0]['_source']['phone']
                             
                         } 
+                    elif userType=='admin':
+                        result ={
+                            "role":userType,
+                            "id":userId,
+                            "pass":True
+                        }
                     result = json.dumps(result)
+                    
+                   
                 else:
                     result = {
                         "role" : None,

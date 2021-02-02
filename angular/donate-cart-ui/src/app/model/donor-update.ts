@@ -9,10 +9,10 @@ export class DonorUpdate {
     itemDetails:string;
     itemImageLink:string;
     itemDate:string;
-    itemUpdates:ItemUpdate[];
+    itemUpdates:any;
 
     constructor(itemId:string,name:string,cat:string,subcat:string,quant:string,quality:string,
-        details:string,imgLink:string,date:string,itemUpdates:ItemUpdate[]){
+        details:string,imgLink:string,date:string,itemUpdates:any){
             this.itemName = name;
             this.itemCategory = cat;
             this.itemSubCategory = subcat;
