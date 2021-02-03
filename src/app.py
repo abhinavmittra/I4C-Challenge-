@@ -695,15 +695,18 @@ def getUpdatesForNGO():
             res = es.search(index = "donations", body={"sort":{"date" : "asc"},"query":{"bool": {"must": [{ "term" : { "ngoId": ngoId } }],"should": [{ "term" : { "docType": "requirement" } },{ "term" : { "docType": "update" } }],"minimum_should_match": 1}}})
             print(res["hits"]['hits'])
             result = []
+            count = 0
             for obj in res["hits"]["hits"]:
                 if obj["_source"]["docType"] == "requirement":
+                    count = count + 1
                     item = {
-                        obj["_id"] : {
+                        "Requirement"+str(count) : {
+                            "requirementId" : obj["_id"],
                             "itemName" : obj["_source"]["itemName"],
                             "category" : obj["_source"]["category"],
                             "subcategory" : obj["_source"]["subCategory"],
                             "quantity" : obj["_source"]["quantity"],
-                            "updates" : []
+                            "requirementUpdates" : []
                         }
                     }
                     result.append(item)
@@ -715,15 +718,28 @@ def getUpdatesForNGO():
                         "requirementId" : obj["_source"]["requirementId"],
                     }
                     requirementID = obj["_source"]["requirementId"]
+                    count = 0
                     for item in result:
-                        if requirementID in item:
-                            item[requirementID]["updates"].append(update)
+                        count = count + 1
+                        if item["Requirement"+str(count)]["requirementId"] == requirementID:
+                            item["Requirement"+str(count)]["requirementUpdates"].append(update)
+            #adding noUpdate string for which no updates are present
+            count=0
+            for item in result:
+                count=count+1
+                if len(item["Requirement"+str(count)]["requirementUpdates"])==0:
+                    update = {
+                        "updateType" : "noupdate",
+                        "ngoId" : "noupdate",
+                        "itemId" : "noupdate",
+                        "requirementId" : "noupdate"
+                    }
+                    item["Requirement"+str(count)]["requirementUpdates"].append(update)
         except Exception as e:
             print(e)
             return jsonpickle.encode(responsePackage("Error","Couldn't fetch updates for NGO"),unpicklable=False)
           
     return json.dumps({"updatesForNGO":result})
-        
         
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080, debug=True)
