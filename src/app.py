@@ -5,7 +5,6 @@ from elasticsearch import Elasticsearch
 import json
 import jsonpickle
 import datetime
-import time
 from werkzeug.utils import secure_filename
 import os
 from os import listdir
@@ -22,7 +21,6 @@ app.add_url_rule('/uploads/<filename>', 'uploaded_file',
 #     '/uploadFile':  app.config['UPLOAD_FOLDER']
 
 CORS(app) #Used to disable cross origin policy to test app in local
-ts= time.time()
 #connecting to the elasticsearch cluster
 try: 
     es = Elasticsearch(
@@ -366,7 +364,7 @@ def requestItem():
             res = es.get(index="donations", id=itemId)
             donorId = res["_source"]["donorId"]
             
-            query = {"docType":"update","updateType":"donateRequest","ngoId":ngoId,"itemId":itemId,"donorId":donorId,"requirementId":requirementID,"date":date}
+            query = {"docType":"update","updateType":"donateRequest","ngoId":ngoId,"itemId":itemId,"donorId":donorId,"requirementId":requirementID,"date":date,"quantity":quantity,"details":details,"ngoName":ngoName,"itemName":name}
             result = es.index(index="donations", body=query)
             response = responsePackage("Success","Requested Item")
         except Exception as e: 
@@ -559,7 +557,7 @@ def respondToRequirement():
             pincode = request.form['pincode']
             details = request.form['details']
             public = request.form['public']
-            date = datetime.datetime.now()
+            date = datetime.datetime.now(datetime.timezone.utc)
             query1 = {
                 "doctype":"item",
                 "category":category,
@@ -585,7 +583,9 @@ def respondToRequirement():
             except:
                 print("error in image upload in respond to requirement")
                 return jsonpickle.encode(responsePackage("Failure","Error in image upload"),unpicklable=False)
-            
+            res = es.search(index="accounts",body={"query":{"term":{"_id":NGOID}}})
+            ngoName = res["hits"]["hits"][0]["_source"]["ngoName"]
+            imageLink = "/uploads/"+ID
             query2 = {
                 "docType":"update",
                 "updateType":"donate",
@@ -593,13 +593,12 @@ def respondToRequirement():
                 "requirementId":requirementID,
                 "donorId":donorID,
                 "itemId":ID,
-                "quantity":quantity,
-                "quality":quality,
                 "date":date,
-                "ngoName":"",
+                "ngoName":ngoName,
                 "quantity":quantity,
                 "quality":quality,
-                "pincode":pincode
+                "pincode":pincode,
+                "imageLink": imageLink
             }
             res = es.index(index="donations", body=(query2))
         except Exception as e:
@@ -617,7 +616,7 @@ def respondToDonationRequest():
             itemId = data["itemId"]
             donorId = data["donorId"]
             reqId = data["requirementId"]
-            date = datetime.datetime.now()
+            date = datetime.datetime.now(datetime.timezone.utc)
             query1 = {
                 "docType":"update",
                 "updateType":"accept",
@@ -915,19 +914,63 @@ def getUpdatesForNGO():
     return json.dumps({"updatesForNGO":result})
 
 
-#function to send a message (Not yet completed)
-# @app.route("/sendMessage",methods=['POST'])    
-# def sendMessage():
-#     if request.method=="POST":
-#         try:
-#             data = json.loads(request.data)
-#             itemId = data["itemId"]
-#             res = es.delete(index = "donations", id = itemId)
-#             print(res)
-#         except Exception as e:
-#             print(e)
-#             return jsonpickle.encode(responsePackage("Error","Couldn't send message"),unpicklable=False)
-#         return jsonpickle.encode(responsePackage("Success","Message sent"),unpicklable=False)  
+#function to send a message TO-ngo FROM-Donor
+@app.route("/sendMessageToNgo",methods=['POST'])    
+def sendMessageToNgo():
+    if request.method=="POST":
+        try:
+            data = json.loads(request.data)
+            message = data["message"]
+            reqId = data["requirementId"]
+            ngoId = data ["ngoId"]
+            itemId = data["itemId"]
+            donorId  = data["donorId"]
+            query = {
+                "docType" : "update",
+                "updateType" : "message",
+                "message": message,
+                "requirementId": reqId,
+                "donorId": donorId,
+                "ngoId" : ngoId,
+                "itemId" : itemId,
+                "messageFrom": "donor",
+                "date": datetime.datetime.now(datetime.timezone.utc)
+            }
+            res = es.index(index = "donations", body =(query))
+            print(res)
+        except Exception as e:
+            print(e)
+            return jsonpickle.encode(responsePackage("Error","Couldn't send message to NGO"),unpicklable=False)
+        return jsonpickle.encode(responsePackage("Success","Message sent to NGO"),unpicklable=False)
+
+#function to send message TO-Donor from NGO
+@app.route("/sendMessageToDonor",methods=['POST'])    
+def sendMessageToDonor():
+    if request.method=="POST":
+        try:
+            data = json.loads(request.data)
+            message = data["message"]
+            reqId = data["requirementId"]
+            ngoId = data ["ngoId"]
+            itemId = data["itemId"]
+            donorId  = data["donorId"]
+            query = {
+                "docType" : "update",
+                "updateType" : "message",
+                "message": message,
+                "requirementId": reqId,
+                "donorId": donorId,
+                "ngoId" : ngoId,
+                "itemId" : itemId,
+                "messageFrom": "ngo",
+                "date": datetime.datetime.now(datetime.timezone.utc)
+            }
+            res = es.index(index = "donations", body =(query))
+            print(res)
+        except Exception as e:
+            print(e)
+            return jsonpickle.encode(responsePackage("Error","Couldn't send message to donor"),unpicklable=False)
+        return jsonpickle.encode(responsePackage("Success","Message sent to donor"),unpicklable=False)  
         
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080, debug=True)
