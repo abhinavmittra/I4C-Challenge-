@@ -1,0 +1,615 @@
+Credentials
+
+Username: elastic
+Password : aRmYqD3NViBVdO8FWAaz55Ok
+
+API (For backend to connect) :  https://719f614d8e0d43d3b93ee3061d569f85.ap-south-1.aws.elastic-cloud.com:9243
+
+GUI : https://ba8a16debdf642679567b89f3c40e591.ap-south-1.aws.elastic-cloud.com:9243/app/home
+
+
+NOTE: DO NOT USE EMAIL ID as DONORID AND NGOID
+ALL UPDATES SHOULD HAVE NGOID, DONORID, REQUIREMENTID, ITEMID, NGONAME ( NO NGOID, NGONAME, AND REQUIREMENT ID IN DELETES), DATE
+ALL REQUIREMENTS SHOULD HAVE NGONAME
+
+DATA STRUCTURES
+
+NGO 
+  
+  ngoName
+  pan
+  address
+  website
+  phone
+  email
+  description
+  passwordHash
+  userType: NGO
+  pincode
+  verifiedNGOFlag ( Do not set on account creation)
+
+
+User
+
+  name
+  address
+  phone
+  email
+  passwordHash
+  userType: donor
+  pincode
+  numberOfRatings: 0 
+  averageRating: 0
+
+Admin
+
+  name
+  email
+  passwordHash
+  userType: admin
+
+
+Requirement
+
+  docType: requirement
+  ngoId
+  category
+  subCategory
+  itemName
+  details
+  quantity
+  pincode
+  date
+  publicFlag
+  ngoName
+
+Item
+
+  docType: item
+  category
+  subCategory
+  itemName
+  details
+  quantity
+  quality
+  imageLink [ ]
+  donorId
+  pincode
+  date
+  publicFlag
+  donatedFlag ( do not set on creation )
+
+Updates
+
+  docType: update
+  updateType: ( donate / acceptDonation / declineDonation // donateRequest / accept / decline // received / message)
+  ngoId
+  itemId
+  requirementId
+  date
+  details
+  imageLink [ ]
+  messageFrom (if updateType message) ( NGO/ donor )
+  ngoName
+  quantity
+  quality
+
+
+INDEX
+
+PUT /accounts
+{
+  "mappings": {
+    "properties": {
+      "ngoName": { "type": "text" },
+      "pan": { "type": "keyword" },
+      "address": { "type": "text" },
+      "website": { "type": "keyword" },
+      "phone": { "type": "keyword" },
+      "email": { "type": "keyword" },
+      "descritpion": { "type": "text" },
+      "passwordHash": { "type": "keyword" },
+      "userType": { "type": "keyword" },
+      "name": { "type": "keyword" },
+      "pincode": { "type": "keyword" },
+      "verifiedNgoFlag": { "type": "boolean" },
+      "numberOfRatings" : { "type" : "integer"},
+      "averageRating" : { "type" : "keyword"}	
+    }
+  }
+}
+
+PUT /donations
+{
+  "mappings":{
+    "properties": {
+      "docType":{ "type" : "keyword"},
+      "category": {
+        "type": "text",
+        "fields": { "keyword": { "type":  "keyword" } }
+        },
+       "subCategory": {
+        "type": "text",
+        "fields": { "keyword": { "type":  "keyword" } }
+        },
+       "itemName": {
+        "type": "text",
+        "fields": { "keyword": { "type":  "keyword" } }
+        },  
+      "details":{ "type" : "text"},
+      "quantity":{ "type" : "integer"},
+      "quality":{ "type" : "keyword"},
+      "imageLink":{ "type" : "keyword"},
+      "donorId":{ "type" : "keyword"},
+      "pincode":{ "type" : "keyword"},
+      "donatedFlag":{ "type" : "keyword"},
+      "updateType":{"type" : "keyword"},
+      "itemId":{"type" : "keyword"},
+      "ngoId":{"type" : "keyword"},
+      "date":{"type" : "date"},
+      "requirementId" : { "type" : "keyword"},
+      "publicFlag" : { "type" : "keyword"},
+      "ngoName" : { "type" : "keyword"},
+      "messageFrom" : { "type" : "keyword"}
+    }
+  }
+}
+
+
+
+ACCOUNT QUERIES
+
+NGO Account Creation:
+  POST accounts/_doc/
+  {
+    "ngoName": "Giving2",
+    "pan": "XYZ1235",
+    "address": "Mangalore Road,1st Cross",
+    "website": "www.google2.com",
+    "phone": "1232123455",
+    "email": "ceo2@ngo.com",
+    "description": "You can give stuff for poorest people",
+    "passwordHash": "password123",
+    "userType": "NGO",
+    "pincode": "576103"
+  }
+
+
+User Account Creation:
+  POST accounts/_doc/
+  {
+    "address": "Bangalore Road,2nd Cross",
+    "phone": "1232123445",
+    "email": "person@gmail.com",
+    "passwordHash": "password123",
+    "userType": "donor",
+    "pincode": "576123",
+    "name": "John Doe",
+    "numberOfRatings": 0,
+    "averageRating" : "0"
+  }
+
+Return password (for login):
+  GET accounts/_search
+  {
+    "query":{
+      "term" : {"email" : "person@gmail.com" }
+    }
+  }
+
+Return all unverified NGOs (For admin to verify):
+  GET accounts/_search
+  {
+   "query":{
+      "bool":{
+        "must":{
+          "term" : {"userType" : "NGO"  }
+        },
+        "must_not":{
+          "term" : { "verifiedNgoFlag" : "true" }
+        }
+      }
+    }
+  }
+
+Mark NGO as Verified:
+  POST accounts/_update/sXj_HncBr-j5I2jvc9nI
+  {
+    "doc": {
+      "verifiedNgoFlag": "true"
+    }
+  }
+
+Reject NGO
+  DELETE /accounts/_doc/yngHH3cBr-j5I2jvnNnR
+
+
+
+
+
+NGO QUERIES
+
+View Available Items:
+  
+  Fetch all requirements of that ngo. From this, make a list of category, subcategory. Extract pincode
+
+  GET /donations/_search
+  {
+    "query": {
+      "bool":{
+        "must": [
+          { "term" : { "docType" : "requirement" } },
+          { "term" : { "ngoId" : "" } }
+        ]
+      }
+    }
+  }
+  
+  Add category, subcategory, pincode while fetching available items
+
+  GET /donations/_search
+  {
+    "query":{
+      "bool":{
+        "must": [
+          { "term" : { "docType" : "item" } },
+          { "term" : { "publicFlag" : "true" } }
+        ],
+        "must_not": [
+          { "term" : { "donatedFlag": "true" } }
+        ], 
+        "should": [
+          { "term" : { "pincode" : "123410"} },
+          { "terms" : {"category": ["clothing", "xyz"] } },
+          { "terms" : {"subCategory": ["laptops","xyz"] } }
+        ]
+      }
+    }
+  }
+
+  GET /donations/_search
+  {
+    "query":{
+      "bool":{
+       "must": [
+          {"term" : {"docType" : "item" }},
+	        {"term" : {"publicFlag" : "true" }}
+        ],
+        "must_not": [
+          {"term" : {"donatedFlag": "true" }}
+        ]
+      }
+    }
+  }
+
+Request an item (Use itemID) :
+  Create corresponding requirement, insert into donations with docType update and updateType as donateRequest
+
+  POST /donations/_doc
+  {
+	   "docType": "requirement",
+     "ngoId" : "ceo@ngo.com",
+     "ngoName" : "",
+     "date" : ""
+	   category, subCategory, itemName, quantity from the item; pincode from NGO account;
+	   publicFlag, details from frontend
+  }
+
+  POST /donations/_doc
+  {
+    "docType": "update",
+    "updateType": "donateRequest",
+    "ngoId" : "ceo@ngo.com",
+    "ngoName" : "",
+    "donorId" : "",
+    "itemId": "5zDLKHcBAiLz3dKLgBiN",
+    "requirementId": frompreviousquery
+    "date":"",
+    details from requirement
+  }
+
+Post a requirement (Creates requirementID) :
+  Insert into donations with docType requirement
+
+  POST /donations/_doc
+  {
+    "docType": "requirement",
+    "category" : "Books",
+    "subCategory" : "Textbooks",
+    "itemName" : "Grade 7 books",
+    "details" : "Need some textbooks for grade 7 students",
+    "quantity": 10,
+    "ngoId" : "ceo@ngo.com",
+    "pincode": "576123",
+    "publicFlag": "true",
+    "ngoName": ""
+  }
+
+Updates feed:
+  List all requirements, and all updates under that requirment
+
+  GET /donations/_search
+  {
+    "sort":{
+      "date" : "asc"
+    },
+    "query":{
+      "bool": {
+        "must": [
+          { "term" : { "ngoId": "ceo@ngo.com" } }
+        ],
+        "should": [
+          { "term" : { "docType": "requirement" } },
+          { "term" : { "docType": "update" } }
+        ],
+        "minimum_should_match": 1
+      }
+    }
+  }
+
+Accept and decline a donation (Use requirementID) :
+  Insert into donations with docType update and updatetType acceptDonation/declineDonation. Change item’s donatedFlag. Then change quantity.
+
+  POST /donations/_doc
+  {
+    "docType": "update",
+    "updateType": "acceptDonation",
+    "ngoId" : "ceo@ngo.com",
+    "ngoName" : ""
+    "donorId" : "",
+    "itemId": "5zDLKHcBAiLz3dKLgBiN",
+    "requirementId": 
+    "date":""
+  }
+
+  POST donations/_update/<itemId> {
+    "doc": {
+      "donatedFlag": "true"
+    }
+  }
+
+  POST donations/_update/requirementId
+  {
+    "script" : {
+      "source": "ctx._source.quantity = 9"
+    }
+  }
+  
+  POST /donations/_doc
+  {
+    "docType": "update",
+    "updateType": "declineDonation",
+    "ngoId" : "ceo@ngo.com",
+    "ngoName" : "",
+    "donorId": "",
+    "itemId": "5zDLKHcBAiLz3dKLgBiN",
+    "requirementId": 
+    "date":""
+  }
+
+Mark as received (requirementID or itemID):
+  Insert into donations with docType update and updateType received
+
+  POST /donations/_doc
+  {
+    "docType": "update",
+    "updateType": "received",
+    "ngoId" : "ceo@ngo.com",
+    "ngoName" : "".
+    "donorId" :"",
+    "itemId": "5zDLKHcBAiLz3dKLgBiN",
+    "requirementId": 
+    "date":""
+  }
+
+
+DONOR QUERIES
+
+View requirements:
+  Fetch all items of that donor. From this, make a list of category, subcategory. Extract pincode
+
+  GET /donations/_search
+  {
+    "query": {
+      "bool":{
+        "must": [
+          { "term" : { "docType" : "item" } },
+          { "term" : { "donorId" : "" } }
+        ]
+      }
+    }
+  }
+  
+  Add category, subcategory, pincode while fetching requirements
+
+  GET /donations/_search
+  {
+    "query":{
+      "bool":{
+        "must": [
+          { "term" : { "docType" : "requirement" } },
+          { "term" : { "publicFlag" : "true" } },
+          {"range" : {"quantity" : { "gte" : 0}}}
+        ],
+        "should": [
+          { "term" : { "pincode" : "123410"} },
+          { "terms" : {"category": ["clothing"] } },
+          { "terms" : {"subCategory": ["laptops"] } }
+        ]
+      }
+    }
+  }
+
+Put an item up for donation (Creates itemID(:
+  Insert into donations with docType item
+
+  POST /donations/_doc
+  {
+    "docType": "item",
+    "category" : "Electronics",
+    "subCategory" : "Phones",
+    "itemName" : "Samsung M11 two years old",
+    "details" : "No defects, old Android phone",
+    "quantity":"1",
+    "quality": "Good",
+    "imageLink" : "https://www.incimages.com/uploaded_files/image/1920x1080/getty_883231284_200013331818843182490_335833.jpg",
+    "donorId" : "lXMDXHcBd3Y4wJFJIB4P",
+    "pincode": "576123",
+    "publicFlag": "true",
+    "date": "2020-12-21T11:10:30Z"
+  }
+
+Respond to requirement (Use requirementID) :
+  Insert into donations with doctype update and updatetype donate
+
+  POST /donations/_doc
+  {
+    "doctype": "item",
+    "donorId" : "person@gmail.com",
+    date: ""
+	 category, subCategory, itemName from requirement; 
+	 pincode from the account;
+	 publicFlag, imageLink, quality, quantity, details from frontend
+  }
+
+  POST /donations/_doc
+  {
+    "docType": "update",
+    "updateType" : "donate",
+    "ngoId" : "ceo@ngo.com",
+    "donorId" : "person@gmail.com",
+    "ngoName": ""
+    "requirementId" : "5jDBKHcBAiLz3dKLexiF",
+    "itemId":""
+    imageLink, quality, quantity, pincode, details from the Item
+    "date": ""
+  }
+
+
+Updates feed:
+  List all items, for each item list all updates
+
+  GET /donations/_search
+  {
+    
+    "sort":{
+      "date" : "asc"
+    },
+    "query":{
+      "bool": {
+        "must": [
+          { "term" : { "donorId": "person@gmail.com" } }
+        ],
+        "should": [
+          { "term" : { "docType": "item" } },
+          { "term" : { "docType": "update" } }
+        ],
+        "minimum_should_match": 1
+      }
+    }
+  }
+
+Respond to donation request (Use itemID):
+  Insert into donations with docType update and updateType accept. For all other NGOs who requested that item, insert updateType decline. Then change the donatedflag to true. For the NGO's request donor accepts, quantity
+
+  POST /donations/_doc
+  {
+    "docType" : "update",
+    "updateType" : "accept"/"decline", 
+    "ngoId" : "ceo@ngo.com",
+    "ngoName": "",
+    "itemId" : "5DB6JXcBAiLz3dKL6Biw",
+    "donorId" : ""
+    "requirementId" : ""
+    "date" : "2020-01-01T14:10:30Z"
+  }
+
+  POST donations/_update/itemId
+  {
+    "doc": {
+      "donatedFlag": "true"
+    }
+  }
+
+  POST donations/_update/requirementId
+  {
+    "script" : {
+      "source": "ctx._source.quantity -= 1"
+    }
+  }
+
+  GET /donations/_search
+  {
+  	"query":{
+  		"bool":{
+  			"must": [
+  				{ "term" : { "updateType": "donateRequest" } },
+  				{ "term" : { "itemId": "" } }
+  			]
+  		}
+  	}
+  }
+
+Delete an item:
+  Change publicFlag to false. 
+
+  POST donations/_update/requirementId
+  {
+    "script" : {
+      "source": "ctx._source.publicFlag = false"
+    }
+  }
+
+  Get all updates for that itemId. From this, make a list of all requirementIds
+  GET /donations/_search
+  {
+    "query": {
+      "bool":{
+        "must": [
+          { "term" : { "docType" : "update" } },
+          { "term" : {"itemId" : "OHjWKHcBr-j5I2jvm9qL"} }
+        ]
+      }
+    }
+  }
+
+  For each requirementId from previous step
+  POST /donations/_search
+  {
+    "docType": "update",
+    "updateType" : "itemDeleted",
+    "ngoId" : "ceo@ngo.com",
+    "ngoName": "",
+    "itemId" : "5DB6JXcBAiLz3dKL6Biw",
+    "donorId" : ""
+    "requirementId" : ""
+    "date" : "2020-01-01T14:10:30Z"
+  }
+
+  If there are no requirementIds associated, then just post above query with blank ngoId and requirementId
+
+
+
+COMMON QUERIES
+
+Send a message:
+  POST donations/_doc
+  {
+    "docType" : "update",
+    "updateType" : "message",
+    "details": "",
+    "requirementId": "",
+    "donorId":"",
+    "ngoId" :"",
+    "itemId" : ""
+    "messageFrom": "donor"/"NGO",
+    "date": "",
+    "ngoName"
+  }
+		
+		
+
+
+
+
+
