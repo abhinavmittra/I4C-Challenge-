@@ -305,7 +305,7 @@ Request an item (Use itemID) :
     "itemId": "5zDLKHcBAiLz3dKLgBiN",
     "requirementId": frompreviousquery
     "date":"",
-    details from requirement
+    details, pincode from requirement
   }
 
 Post a requirement (Creates requirementID) :
