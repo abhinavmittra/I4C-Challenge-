@@ -27,7 +27,7 @@ export class DoneeViewDonationDetailsComponent implements OnInit {
   }
   onSubmit(form:NgForm){
     const submitForm = new FormData();
-    submitForm.append('quantity',form.value.quantity);
+    submitForm.append('quantity',this.item.quantity.toString());
     submitForm.append('details',form.value.details);
     if(!form.value.publicFlag)
     submitForm.append('public',"false");

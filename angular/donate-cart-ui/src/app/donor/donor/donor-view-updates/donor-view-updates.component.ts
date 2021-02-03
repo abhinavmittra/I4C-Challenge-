@@ -59,6 +59,7 @@ export class DonorViewUpdatesComponent implements OnInit {
       const reqId = this.donorUpdates[index].itemUpdates[i]["reqId"]
       const ngoId = this.donorUpdates[index].itemUpdates[i]["ngoId"]
       const donorId = this.donorUpdates[index].itemUpdates[i]["donorId"]
+      
 
       //perform checks for optional fields
       var msg = "";
@@ -66,7 +67,7 @@ export class DonorViewUpdatesComponent implements OnInit {
       var ngoName = "";
       var reqQuantity = "";
       var reqDetails = ""
-
+      var updateDate=""
       if(this.donorUpdates[index].itemUpdates[i]["message"])
         msg = this.donorUpdates[index].itemUpdates[i]["message"];
       if(this.donorUpdates[index].itemUpdates[i]["messageFrom"])
@@ -77,8 +78,10 @@ export class DonorViewUpdatesComponent implements OnInit {
         reqQuantity = this.donorUpdates[index].itemUpdates[i]["reqQuantity"];
       if(this.donorUpdates[index].itemUpdates[i]["reqDetails"])
         reqDetails = this.donorUpdates[index].itemUpdates[i]["reqDetails"];
-        
-      this.selectedItemUpdates.push(new ItemUpdate(updateType,itemId,reqId,ngoId,donorId,ngoName,reqQuantity,reqDetails,msgFrom,msg));
+      if( this.donorUpdates[index].itemUpdates[i]["date"]) 
+        updateDate = this.donorUpdates[index].itemUpdates[i]["date"]
+      console.log(this.donorUpdates[index].itemUpdates[i]["date"])
+      this.selectedItemUpdates.push(new ItemUpdate(updateType,itemId,reqId,ngoId,donorId,ngoName,reqQuantity,reqDetails,msgFrom,msg,updateDate));
     
     }
     //set visible flag for this itemUpdates to true and all others to false
@@ -91,22 +94,26 @@ export class DonorViewUpdatesComponent implements OnInit {
   viewItemImage(index:number){
     window.open(this.baseUrlForImage+this.donorUpdates[index].itemImageLink)
   }
-  approveRequest(index:number){
-
+  respondToDonateReq(itemIndex:number,updateIndex:number,actionTaken:string){
+    //send reqId,itemId,ngoId,donorId, actionTaken to backend
+    console.log(actionTaken)
   }
-  rejectRequest(index:number){
+
+  sendMessage(itemIndex:number,updateIndex:number){
+    console.log("Item idx"+itemIndex);
+    console.log("update Idx"+updateIndex);
+    //get text from input field for message and send post req to server with reqId,donorId,itemId,ngoId
+  }
+  deleteItem(itemIndex:number){
     
-  }
 
- /* deleteItem(){
-    const id = this.selectedItem.itemId;
-
-    console.log("deleted id"+id);
+    console.log("Item idx"+itemIndex);
+    
     //call service to delete item and return a new copy.
-    this.itemListMode = true;
+    
 
     //send post req with id to delete
-  }*/
+  }
 
   ngOnDestroy(){
     this.donorUpdatesChanged.unsubscribe();

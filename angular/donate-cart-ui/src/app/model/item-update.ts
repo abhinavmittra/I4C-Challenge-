@@ -9,11 +9,11 @@ export class ItemUpdate {
     reqDetails:string;
     messageFrom:string;
     message:string;
-
+    updateDate:string;
         
     constructor(type:string,itemId:string,requirementId:string,ngoId:string,
         donorId:string,ngoName:string,reqQuantity:string,reqDetails:string,
-        messageFrom:string,message:string
+        messageFrom:string,message:string,updateDate:string
         ){
         this.updateType=type;        
         this.itemId=itemId;
@@ -25,5 +25,6 @@ export class ItemUpdate {
         this.reqDetails = reqDetails;
         this.messageFrom = messageFrom;
         this.message = message;
+        this.updateDate = updateDate;
     }
 }

@@ -23,11 +23,16 @@ app.add_url_rule('/uploads/<filename>', 'uploaded_file',
 CORS(app) #Used to disable cross origin policy to test app in local
 #connecting to the elasticsearch cluster
 try: 
+    #es = Elasticsearch(
+                #['https://90266fa352184992b46b503574f1132e.ap-south-1.aws.elastic-cloud.com:9243/'],
+                 #http_auth=("elastic","HR9Cc5vxZXTwwU8auCrrBgJC"),
+                 #scheme = "https",
+                #)
     es = Elasticsearch(
-                ['https://90266fa352184992b46b503574f1132e.ap-south-1.aws.elastic-cloud.com:9243/'],
-                 http_auth=("elastic","HR9Cc5vxZXTwwU8auCrrBgJC"),
+                ['https://5ea0807d2db24793b2ae5f6ee4f413bd.ap-south-1.aws.elastic-cloud.com:9243'],
+                 http_auth=("elastic","JEjJFXwITPboNUxEIcnxwsYs"),
                  scheme = "https",
-                )
+                )         
     print("Connected")
 except Exception as e: 
     print(e) 
@@ -328,6 +333,7 @@ def requestItem():
             data = json.loads(request.data)
             #del data["itemId"]
             print(data)
+           
             category = data["category"]
             subCategory = data["subcategory"]
             name = data["name"]
@@ -364,7 +370,7 @@ def requestItem():
             res = es.get(index="donations", id=itemId)
             donorId = res["_source"]["donorId"]
             
-            query = {"docType":"update","updateType":"donateRequest","ngoId":ngoId,"itemId":itemId,"donorId":donorId,"requirementId":requirementID,"date":date,"quantity":quantity,"details":details,"ngoName":ngoName,"itemName":name}
+            query = {"docType":"update","updateType":"donateRequest","ngoId":ngoId,"itemId":itemId,"donorId":donorId,"requirementId":requirementID,"date":date,"details":details,"ngoName":ngoName,"pincode":pincode}
             result = es.index(index="donations", body=query)
             response = responsePackage("Success","Requested Item")
         except Exception as e: 
@@ -583,6 +589,7 @@ def respondToRequirement():
             except:
                 print("error in image upload in respond to requirement")
                 return jsonpickle.encode(responsePackage("Failure","Error in image upload"),unpicklable=False)
+            #get ngoName via ngoId
             res = es.search(index="accounts",body={"query":{"term":{"_id":NGOID}}})
             ngoName = res["hits"]["hits"][0]["_source"]["ngoName"]
             imageLink = "/uploads/"+ID
@@ -615,28 +622,33 @@ def respondToDonationRequest():
             ngoName = data["ngoName"]
             itemId = data["itemId"]
             donorId = data["donorId"]
-            reqId = data["requirementId"]
+            reqId = data["requirementId"],
+            actionTaken = data["actionTaken"] #Added actionTaken by Donor (accept/decline)
             date = datetime.datetime.now(datetime.timezone.utc)
-            query1 = {
-                "docType":"update",
-                "updateType":"accept",
-                "ngoId":ngoId,
-                "ngoName" : ngoName,
-                "itemId" : itemId,
-                "donorId" : donorId,
-                "requirementId" : reqId,
-                "date": date
-            }
-            # #adding document with updateType "accept"
-            result1 = es.index(index = "donations", body = (query1))
-            # #setting donatedFlag to true
-            result2 = es.update(index = "donations", id = reqId, body = {"doc": {"donatedFlag": "true"}})
-            #getting remaining NGOs and setting updateType "decline"
-            ngoList = es.search(index="donations" , body = {"query":{"bool":{"must": [{ "term" : { "updateType": "donateRequest" } },{ "term" : { "itemId": itemId }}]}}})
-            # print(ngoList)
-            for ngo in ngoList["hits"]["hits"]:
-                if ngo["_source"]["ngoId"] != ngoId:
-                    query = {
+            
+            if actionTaken == "accept":
+                query1 = {
+                    "docType":"update",
+                    "updateType":"accept",
+                    "ngoId":ngoId,
+                    "ngoName" : ngoName,
+                    "itemId" : itemId,
+                    "donorId" : donorId,
+                    "requirementId" : reqId,
+                    "date": date
+                }
+            
+                
+                #adding document with updateType "accept"
+                result1 = es.index(index = "donations", body = (query1))
+                #setting donatedFlag to true
+                result2 = es.update(index = "donations", id = reqId, body = {"doc": {"donatedFlag": "true"}})
+                #getting remaining NGOs and setting updateType "decline"
+                ngoList = es.search(index="donations" , body = {"query":{"bool":{"must": [{ "term" : { "updateType": "donateRequest" } },{ "term" : { "itemId": itemId }}]}}})
+                # print(ngoList)
+                for ngo in ngoList["hits"]["hits"]:
+                    if ngo["_source"]["ngoId"] != ngoId:
+                        query = {
                         "docType":"update",
                         "updateType":"decline",
                         "ngoId":ngo["_source"]["ngoId"],
@@ -644,25 +656,41 @@ def respondToDonationRequest():
                         "donorId" : donorId,
                         "requirementId" : reqId,
                         "date": date
-                    }
-                    if "ngoName" in ngo["_source"]:
-                        query["ngoName"] = ngo["_source"]["ngoName"]
-                    res = es.index(index = "donations", body = (query1))
-            #updating the quantites
-            requirement = es.search(index = "donations", body = {"query": {"term": {"_id": reqId}}})
-            reqQuantity = requirement["hits"]["hits"][0]["_source"]["quantity"]
-            # print(reqQuantity)
-            item = es.search(index = "donations", body = {"query": {"term": {"_id": itemId}}})
-            itemQuantity = item["hits"]["hits"][0]["_source"]["quantity"]
-            # print(itemQuantity)
-            finalQuantity = reqQuantity - itemQuantity
-            source = "ctx._source.quantity = %s"%(str(finalQuantity))
-            result3 = es.update(index="donations" , id = reqId , body = {"script" : {"source": source}})
+                        }
+                        if "ngoName" in ngo["_source"]:
+                            query["ngoName"] = ngo["_source"]["ngoName"]
+                        res = es.index(index = "donations", body = (query1))
+                #updating the quantites
+                requirement = es.search(index = "donations", body = {"query": {"term": {"_id": reqId}}})
+                reqQuantity = requirement["hits"]["hits"][0]["_source"]["quantity"]
+                # print(reqQuantity)
+                item = es.search(index = "donations", body = {"query": {"term": {"_id": itemId}}})
+                itemQuantity = item["hits"]["hits"][0]["_source"]["quantity"]
+                # print(itemQuantity)
+                finalQuantity = reqQuantity - itemQuantity
+                source = "ctx._source.quantity = %s"%(str(finalQuantity))
+                result3 = es.update(index="donations" , id = reqId , body = {"script" : {"source": source}})
+                return result3
+            elif actionTaken == "decline":
+                query1 = {
+                    "docType":"update",
+                    "updateType":"decline",
+                    "ngoId":ngoId,
+                    "ngoName" : ngoName,
+                    "itemId" : itemId,
+                    "donorId" : donorId,
+                    "requirementId" : reqId,
+                    "date": date
+                }           
+                
+                #adding document with updateType "decline"
+                result1 = es.index(index = "donations", body = (query1))
+                return result1
         except Exception as e:
             print(e)
             return jsonpickle.encode(responsePackage("Error","Couldn't respond to donation request"),unpicklable=False)
         # return jsonpickle.encode(responsePackage("Success","Responded to donation request"),unpicklable=False)   
-        return result3
+        #return result3
         
 #function to upload a file
 # @app.route("/uploadFile",methods=['POST'])
@@ -728,25 +756,7 @@ def getUpdatesForDonor():
                     }
                     result.append(item)
                 if obj["_source"]["docType"] == "update":
-                #     if obj["_source"]["updateType"] == 'itemDeleted':
-                #         update = "Deleted"
-                #     elif obj["_source"]['updateType'] == 'received':
-                #         update = "Donation Received"
-                #     elif obj["_source"]['updateType'] == 'declineDonation':
-                #         update = "Donation Rejected"
-                #     elif obj["_source"]['updateType'] == 'acceptDonation':
-                #         update = "Donation Accepted"
-                #     elif obj["_source"]['updateType'] == 'NOTA':
-                #         update = "available"
-                #     else:
-                #         update = obj["_source"]["updateType"]
-                #     print(update)
-                    # update = {
-                    #     "updateType" : obj["_source"]["updateType"],
-                    #     "ngoName" : obj["_source"]["ngoName"],
-                    #     "itemId" : obj["_source"]["itemId"],
-                    #     "requirementId" : obj["_source"]["requirementId"]
-                    # }
+               
                     updateType = obj["_source"]["updateType"]
                     if "itemId" in obj["_source"]:
                         itemId = obj["_source"]["itemId"]
@@ -766,56 +776,76 @@ def getUpdatesForDonor():
                         donorId = ""
                     if "ngoName" in obj["_source"]:
                         ngoName = obj["_source"]["ngoName"]
-                    else: 
-                        donorId = ""
+                    else:
+                        ngoName = ""
+                    
                     if "quantity" in obj["_source"]:
                         reqQuantity = obj["_source"]["quantity"]
                     else:
-                        reqQuantity = ""
-                    if "details" in obj["_source"]:
-                        reqDetails = obj["_source"]["details"]
-                    else:
-                        reqDetails = ""
+                        reqQuantity = ""                    
                     if "messageFrom" in obj["_source"]:
                         messageFrom = obj["_source"]["messageFrom"]
                     else:
                         messageFrom = ""
-                    if "message" in obj["_source"]:
-                        message = obj["_source"]["message"]
+                    
+                    date = ""
+                    if "date" in obj["_source"]:
+                        date=obj["_source"]["date"]
+                    
+                    #because message field is details in backend so check if type message then set message otherwise assign details to details var
+                    message = ""
+                    details = ""
+                    if updateType=="message":
+                        if "details" in obj["_source"]:
+                            message = obj["_source"]["details"]
+                        else:
+                            message = ""
                     else:
-                        message = ""
-                    update = donorUpdate(updateType,itemId,reqId,ngoId,donorId,ngoName,reqQuantity,reqDetails,messageFrom,message)
+                        if "details" in obj["_source"]:
+                            reqDetails = obj["_source"]["details"]
+                        else:
+                            reqDetails = ""
+                    
+                    
+                    #update = donorUpdate(updateType,itemId,reqId,ngoId,donorId,ngoName,reqQuantity,reqDetails,messageFrom,message)
+                    update = {
+                        "updateType":updateType,
+                        "itemId":itemId,
+                        "reqId":reqId,
+                        "ngoId":ngoId,
+                        "donorId":donorId,
+                        "ngoName":ngoName,
+                        "reqQuantity":reqQuantity,
+                        "reqDetails":reqDetails,
+                        "messageFrom":messageFrom,
+                        "message":message,
+                        "date":date
+                    }
                     # update = donorUpdatePackage(updateDetails,"success")
-                    itemID = obj["_source"]["itemId"]
-                    count  = 0
-                    print(result)
+                    
+                    count=0
                     for item in result:
                         count=count+1
-                        print(item)
-                        print("count:"+str(count))
-                        if item["Item"+str(count)]["itemId"] == itemID:
-                            print("TEST")
+                        if item["Item"+str(count)]["itemId"] == itemId:
                             
-                            print(item["Item"+str(count)]["itemUpdates"])
-                            item["Item"+str(count)]["itemUpdates"].append(jsonpickle.encode(update,unpicklable=False))
+                            item["Item"+str(count)]["itemUpdates"].append(update)
+                    
                 
             #Add empty strings for items with no updates
-            # count=0
-            # for item in result:
-            #     count=count+1
-            #     if len(item["Item"+str(count)]["itemUpdates"])==0:
-            #         update = {
-            #             "updateType" : "noupdate",
-            #             "ngoName" : "noupdate",
-            #             "itemId" : "noupdate",
-            #             "requirementId" : "noupdate"
-            #         }
-            #         item["Item"+str(count)]["itemUpdates"].append(update)
+            count=0
+            for item in result:
+                count=count+1
+                if len(item["Item"+str(count)]["itemUpdates"])==0:
+                    update = {
+                         "updateType" : "noupdate"
+                         
+                     }
+                    item["Item"+str(count)]["itemUpdates"].append(update)
                     
         except Exception as e:
             print(e)
             return jsonpickle.encode(responsePackage("Error","Couldn't fetch updates for donor"),unpicklable=False)
-        # return jsonpickle.encode(responsePackage("Success","Deleted Requirement Successfully"),unpicklable=False)   
+         
         return json.dumps({"updatesForDonor":result})
 
 #TODO Refer to my getUpdatesForDonor and send me back the response in a similar manner.
@@ -826,7 +856,7 @@ def getUpdatesForNGO():
             data = json.loads(request.data)
             ngoId = data["ngoId"]
             res = es.search(index = "donations", body={"sort":{"date" : "asc"},"query":{"bool": {"must": [{ "term" : { "ngoId": ngoId } }],"should": [{ "term" : { "docType": "requirement" } },{ "term" : { "docType": "update" } }],"minimum_should_match": 1}}})
-            print(res["hits"]['hits'])
+            #print(res["hits"]['hits'])
             result = []
             count = 0
             for obj in res["hits"]["hits"]:
@@ -844,12 +874,7 @@ def getUpdatesForNGO():
                     }
                     result.append(item)
                 if obj["_source"]["docType"] == "update":
-                    # update = {
-                    #     "updateType" : obj["_source"]["updateType"],
-                    #     "ngoId" : obj["_source"]["ngoId"],
-                    #     "itemId" : obj["_source"]["itemId"],
-                    #     "requirementId" : obj["_source"]["requirementId"],
-                    # }
+                    
                     requirementID = obj["_source"]["requirementId"]
                     # updateType,itemId,reqId,ngoId,donorId,itemQuantity,itemQuality,itemDetails,messageFrom,message
                     updateType = obj["_source"]["updateType"]
@@ -874,39 +899,72 @@ def getUpdatesForNGO():
                     else: 
                         donorId = ""
                     if "quantity" in obj["_source"]:
-                        reqQuantity = obj["_source"]["quantity"]
+                        itemQuantity = obj["_source"]["quantity"]
                     else:
-                        reqQuantity = ""
-                    if "details" in obj["_source"]:
-                        reqDetails = obj["_source"]["details"]
+                        itemQuantity = ""
+                    if "quality" in obj["_source"]:
+                        itemQuality = obj["_source"]["quality"]
                     else:
-                        reqDetails = ""
+                        itemQuality = ""
+                    itemImgLink = ""
+                    if "itemImageLink" in obj["_source"]:
+                        itmImgLink = obj["_source"]["itemImageLink"]
+                    
                     if "messageFrom" in obj["_source"]:
                         messageFrom = obj["_source"]["messageFrom"]
                     else:
                         messageFrom = ""
-                    if "message" in obj["_source"]:
-                        message = obj["_source"]["message"]
+                    
+                    date = ""
+                    if "date" in obj["_source"]:
+                        date = obj["_source"]["date"]
+                    #because message field is details in backend so check if type message then set message otherwise assign details to details var
+                    message = ""
+                    details = ""
+                    if updateType=="message":
+                        if "details" in obj["_source"]:
+                            message = obj["_source"]["details"]
+                        else:
+                            message = ""
                     else:
-                        message = ""
-                    update = ngoUpdate(updateType,itemId,reqId,ngoId,donorId,ngoName,reqQuantity,reqDetails,messageFrom,message)
+                        if "details" in obj["_source"]:
+                            itemDetails = obj["_source"]["details"]
+                        else:
+                            itemDetails = ""
+                    
+                    
+                    #update = ngoUpdate(updateType,itemId,reqId,ngoId,donorId,ngoName,reqQuantity,reqDetails,messageFrom,message)
+                    update = {
+                        "updateType":updateType,
+                        "itemId":itemId,
+                        "reqId":reqId,
+                        "donorId":donorId,
+                        "ngoId":ngoId,
+                        "itemQuantity":itemQuantity,
+                        "itemImageLink":itemImgLink,
+                        "itemQuality":itemQuality,
+                        "itemDetails":itemDetails,                        
+                        "messageFrom":messageFrom,
+                        "message":message,
+                        "date":date
+                    }
+                    
+                    
                     count = 0
                     for item in result:
                         count = count + 1
                         if item["Requirement"+str(count)]["requirementId"] == requirementID:
-                            item["Requirement"+str(count)]["requirementUpdates"].append(jsonpickle.encode(update,unpicklable=False))
+                            item["Requirement"+str(count)]["requirementUpdates"].append(update)
             #adding noUpdate string for which no updates are present
-            # count=0
-            # for item in result:
-            #     count=count+1
-            #     if len(item["Requirement"+str(count)]["requirementUpdates"])==0:
-            #         update = {
-            #             "updateType" : "noupdate",
-            #             "ngoId" : "noupdate",
-            #             "itemId" : "noupdate",
-            #             "requirementId" : "noupdate"
-            #         }
-            #         item["Requirement"+str(count)]["requirementUpdates"].append(update)
+            count=0
+            for item in result:
+                count=count+1
+                if len(item["Requirement"+str(count)]["requirementUpdates"])==0:
+                    update = {
+                        "updateType" :"noupdate"
+                         
+                    }
+                    item["Requirement"+str(count)]["requirementUpdates"].append(update)
         except Exception as e:
             print(e)
             return jsonpickle.encode(responsePackage("Error","Couldn't fetch updates for NGO"),unpicklable=False)
@@ -928,7 +986,7 @@ def sendMessageToNgo():
             query = {
                 "docType" : "update",
                 "updateType" : "message",
-                "message": message,
+                "details": message,
                 "requirementId": reqId,
                 "donorId": donorId,
                 "ngoId" : ngoId,
@@ -957,12 +1015,12 @@ def sendMessageToDonor():
             query = {
                 "docType" : "update",
                 "updateType" : "message",
-                "message": message,
+                "details": message,
                 "requirementId": reqId,
                 "donorId": donorId,
                 "ngoId" : ngoId,
                 "itemId" : itemId,
-                "messageFrom": "ngo",
+                "messageFrom": "NGO",
                 "date": datetime.datetime.now(datetime.timezone.utc)
             }
             res = es.index(index = "donations", body =(query))
