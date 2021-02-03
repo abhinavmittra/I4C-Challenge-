@@ -37,7 +37,29 @@ export class DonorService {
     return this.donorUpdates.slice()
   }
   setDonorUpdates(data:any){
-    this.donorUpdates = data['updatesForDonor'];
+    var refList = []
+   for(var itemIndex in data['updatesForDonor']){
+      var idx = +itemIndex + 1
+      var key = "Item"+idx
+
+      var id = data['updatesForDonor'][itemIndex][key]['itemId']
+      var name = data['updatesForDonor'][itemIndex][key]['itemName']
+      var cat = data['updatesForDonor'][itemIndex][key]['itemCategory']
+      var subcat = data['updatesForDonor'][itemIndex][key]['itemSubcategory']
+      var quantity = data['updatesForDonor'][itemIndex][key]['itemQuantity']
+      var quality = data['updatesForDonor'][itemIndex][key]['itemQuality']
+      var details = data['updatesForDonor'][itemIndex][key]['itemDetails']
+      var itemUpdates = data['updatesForDonor'][itemIndex][key]['itemUpdates']
+      //var date = data['updatesForDonor'][itemIndex][key]['itemDate']
+      //var imgLink = data['updatesForDonor'][itemIndex][key]['itemImageLink']
+      var imgLink=''
+      var date = new Date()
+      refList.push(new DonorUpdate(id,name,cat,subcat,quantity,quality,details,imgLink,date.toDateString(),itemUpdates))
+    
+
+   }
+    this.donorUpdates = refList
+    
     this.donorUpdatesChanged.next(this.donorUpdates.slice());
   }
 

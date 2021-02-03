@@ -51,7 +51,8 @@ export class AppRegisterComponent implements OnInit {
       const pincode = form.value.pincode;
       const website = form.value.website;
       const panno = form.value.panno;
-      var donee:Donee = new Donee(name,address,pincode,phone,panno,website,email,pass);
+      const desc = form.value.description;
+      var donee:Donee = new Donee(name,address,pincode,phone,panno,website,desc,email,pass);
       this.authService.registerDonee(donee).subscribe((data)=>{
         console.log(data)
       });

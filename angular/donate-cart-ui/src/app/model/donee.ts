@@ -5,11 +5,13 @@ export class Donee {
     public phone:string;
     public website:string;
     public panno:string;
+    public description:string;
     public email:string;
     public password:string;
     
+    
 
-    constructor(name:string,address:string,pincode:string,phone:string,panno:string,website:string,email:string,password:string){
+    constructor(name:string,address:string,pincode:string,phone:string,panno:string,website:string,description:string,email:string,password:string){
         this.name=name;
         this.address=address;
         this.pincode=pincode;
@@ -18,5 +20,6 @@ export class Donee {
         this.panno=panno;
         this.email=email;
         this.password=password;
+        this.description=description;
     }
 }
