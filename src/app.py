@@ -23,16 +23,12 @@ app.add_url_rule('/uploads/<filename>', 'uploaded_file',
 CORS(app) #Used to disable cross origin policy to test app in local
 #connecting to the elasticsearch cluster
 try: 
-    #es = Elasticsearch(
-                #['https://90266fa352184992b46b503574f1132e.ap-south-1.aws.elastic-cloud.com:9243/'],
-                 #http_auth=("elastic","HR9Cc5vxZXTwwU8auCrrBgJC"),
-                 #scheme = "https",
-                #)
     es = Elasticsearch(
-                ['https://5ea0807d2db24793b2ae5f6ee4f413bd.ap-south-1.aws.elastic-cloud.com:9243'],
-                 http_auth=("elastic","JEjJFXwITPboNUxEIcnxwsYs"),
-                 scheme = "https",
-                )         
+               ['https://90266fa352184992b46b503574f1132e.ap-south-1.aws.elastic-cloud.com:9243/'],
+               http_auth=("elastic","HR9Cc5vxZXTwwU8auCrrBgJC"),
+                scheme = "https",
+                )
+
     print("Connected")
 except Exception as e: 
     print(e) 
