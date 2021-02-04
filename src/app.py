@@ -728,9 +728,14 @@ def deleteItem():
 def getUpdatesForDonor():
     if request.method=="POST":
         try:
+            es_updated = Elasticsearch(
+               ['https://5ea0807d2db24793b2ae5f6ee4f413bd.ap-south-1.aws.elastic-cloud.com:9243'],
+               http_auth=("elastic","JEjJFXwITPboNUxEIcnxwsYs"),
+                scheme = "https",
+                )
             data = json.loads(request.data)
             donorID = data["donorId"]
-            res = es.search(index = "donations", body={"sort":{"date" : "asc"},"query":{"bool": {"must": [{ "term": { "donorId" : donorID}}],"should": [{ "term" : { "docType": "item" } },{ "term" : { "docType": "update" } }],"minimum_should_match": 1}}})
+            res = es_updated.search(index = "donations", body={"size": 10000,"sort":{"date" : "asc"},"query":{"bool": {"must": [{ "term": { "donorId" : donorID}}],"should": [{ "term" : { "docType": "item" } },{ "term" : { "docType": "update" } }],"minimum_should_match": 1}}})
             # print(res["hits"]['hits'])
             result = []
             count = 0
