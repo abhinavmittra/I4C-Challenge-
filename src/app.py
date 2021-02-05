@@ -199,6 +199,30 @@ def createNgoAccount():
             return jsonpickle.encode(responsePackage("Failure","Couldn't create ngo account"),unpicklable=False)
         return result
 
+#function to get Ngo Details 
+@app.route("/getNgoInfo",methods=['GET']) 
+def getNgoInfo():
+    if request.method=="GET":
+        try:
+            data = json.loads(request.data)
+            ngoId = data["ngoId"]
+            res = es.search(index = "accounts", body={"query":{"term":{"_id":ngoId}}})
+            ngo = res["hits"]["hits"][0]["_source"]
+            ngoInfo = {
+                    "address": ngo["address"],
+                    "description": ngo["description"],
+                    "email": ngo["email"],
+                    "ngoName": ngo["ngoName"],
+                    "pan": ngo["pan"],
+                    "phone": ngo["phone"],
+                    "pincode": ngo["pincode"],
+                    "verifiedNgoFlag": ngo["verifiedNgoFlag"],
+                    "website": ngo["website"],
+            }
+        except Exception as e:
+            print(e)
+            return jsonpickle.encode(responsePackage("Error","Couldn't get NGO Information"),unpicklable=False)
+        return ngoInfo
 
 #function for user/ngo authentication
 @app.route("/authenticate",methods=['POST'])
