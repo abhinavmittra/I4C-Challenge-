@@ -1,4 +1,4 @@
-import {ItemUpdate}  from './item-update'
+
 export class DonorUpdate {
     itemId:string;
     itemName:string;
