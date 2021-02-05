@@ -203,6 +203,11 @@ def createNgoAccount():
 #function for user/ngo authentication
 @app.route("/authenticate",methods=['POST'])
 def authentication():
+    es_updated = Elasticsearch(
+               ['https://5ea0807d2db24793b2ae5f6ee4f413bd.ap-south-1.aws.elastic-cloud.com:9243'],
+               http_auth=("elastic","JEjJFXwITPboNUxEIcnxwsYs"),
+                scheme = "https",
+                )
     if request.method == "POST": 
     #Changed to only allow post reqs by Abhinav -> passwords to be sent inside body of post req's since that is better than sending it in the URI itself.
         try:
@@ -210,7 +215,7 @@ def authentication():
             email = data['email']
             password = data['password']
             query = '{"query":{"term":{"email": "%s"}}}'%(email)
-            res = es.search(index="accounts", body=query)
+            res = es_updated.search(index="accounts", body=query)
             if res["hits"]['total']['value'] > 0:
                 passwordActual = res["hits"]['hits'][0]['_source']['passwordHash']
                 if password == passwordActual:
@@ -852,11 +857,16 @@ def getUpdatesForDonor():
 #TODO Refer to my getUpdatesForDonor and send me back the response in a similar manner.
 @app.route("/getUpdatesForNGO",methods=['POST'])    
 def getUpdatesForNGO():
+    es_updated = Elasticsearch(
+               ['https://5ea0807d2db24793b2ae5f6ee4f413bd.ap-south-1.aws.elastic-cloud.com:9243'],
+               http_auth=("elastic","JEjJFXwITPboNUxEIcnxwsYs"),
+                scheme = "https",
+                )
     if request.method=="POST":
         try:
             data = json.loads(request.data)
             ngoId = data["ngoId"]
-            res = es.search(index = "donations", body={"sort":{"date" : "asc"},"query":{"bool": {"must": [{ "term" : { "ngoId": ngoId } }],"should": [{ "term" : { "docType": "requirement" } },{ "term" : { "docType": "update" } }],"minimum_should_match": 1}}})
+            res = es_updated.search(index = "donations", body={"size": 10000,"sort":{"date" : "asc"},"query":{"bool": {"must": [{ "term" : { "ngoId": ngoId } }],"should": [{ "term" : { "docType": "requirement" } },{ "term" : { "docType": "update" } }],"minimum_should_match": 1}}})
             #print(res["hits"]['hits'])
             result = []
             count = 0
@@ -866,10 +876,10 @@ def getUpdatesForNGO():
                     item = {
                         "Requirement"+str(count) : {
                             "requirementId" : obj["_id"],
-                            "itemName" : obj["_source"]["itemName"],
-                            "category" : obj["_source"]["category"],
-                            "subcategory" : obj["_source"]["subCategory"],
-                            "quantity" : obj["_source"]["quantity"],
+                            "requirementName" : obj["_source"]["itemName"],
+                            "requirementCategory" : obj["_source"]["category"],
+                            "requirementSubcategory" : obj["_source"]["subCategory"],
+                            "requirementQuantity" : obj["_source"]["quantity"],
                             "requirementUpdates" : []
                         }
                     }
@@ -934,7 +944,7 @@ def getUpdatesForNGO():
                             itemDetails = ""
                     
                     
-                    #update = ngoUpdate(updateType,itemId,reqId,ngoId,donorId,ngoName,reqQuantity,reqDetails,messageFrom,message)
+                    
                     update = {
                         "updateType":updateType,
                         "itemId":itemId,
@@ -956,7 +966,7 @@ def getUpdatesForNGO():
                         count = count + 1
                         if item["Requirement"+str(count)]["requirementId"] == requirementID:
                             item["Requirement"+str(count)]["requirementUpdates"].append(update)
-            #adding noUpdate string for which no updates are present
+            #adding noupdate string for which no updates are present
             count=0
             for item in result:
                 count=count+1
