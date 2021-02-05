@@ -1060,12 +1060,12 @@ def getUpdatesForNGO():
                         "Requirement"+str(count) : {
                             "requirementId" : obj["_id"],
 
-                            "itemName" : obj["_source"]["itemName"],
-                            "category" : obj["_source"]["category"],
-                            "subcategory" : obj["_source"]["subCategory"],
-                            "quantity" : obj["_source"]["quantity"],
-                            "requirementDate" : obj["_source"]["date"],
-                            "requirementUpdates" : []
+                            "reqName" : obj["_source"]["itemName"],
+                            "reqCategory" : obj["_source"]["category"],
+                            "reqSubcategory" : obj["_source"]["subCategory"],
+                            "reqQuantity" : obj["_source"]["quantity"],
+                            "reqDate" : obj["_source"]["date"],
+                            "reqUpdates" : []
                         }
                     }
                     result.append(item)
@@ -1136,10 +1136,10 @@ def getUpdatesForNGO():
                         "reqId":reqId,
                         "donorId":donorId,
                         "ngoId":ngoId,
-                        "reqQuantity":itemQuantity,
-                        "reqImageLink":itemImgLink,
-                        "reqQuality":itemQuality,
-                        "reqDetails":itemDetails,                        
+                        "itemQuantity":itemQuantity,
+                        "itemImageLink":itemImgLink,
+                        "itemQuality":itemQuality,
+                        "itemDetails":itemDetails,                        
                         "messageFrom":messageFrom,
                         "message":message,
                         "date":date
