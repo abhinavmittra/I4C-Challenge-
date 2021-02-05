@@ -200,7 +200,8 @@ Return password (for login):
 Return all unverified NGOs (For admin to verify):
   GET accounts/_search
   {
-   "query":{
+  	"size": 10000,
+  	"query":{
       "bool":{
         "must":{
           "term" : {"userType" : "NGO"  }
@@ -235,6 +236,7 @@ View Available Items:
 
   GET /donations/_search
   {
+    "size": 100,
     "query": {
       "bool":{
         "must": [
@@ -249,6 +251,7 @@ View Available Items:
 
   GET /donations/_search
   {
+    "size": 10000,
     "query":{
       "bool":{
         "must": [
@@ -262,21 +265,6 @@ View Available Items:
           { "term" : { "pincode" : "123410"} },
           { "terms" : {"category": ["clothing", "xyz"] } },
           { "terms" : {"subCategory": ["laptops","xyz"] } }
-        ]
-      }
-    }
-  }
-
-  GET /donations/_search
-  {
-    "query":{
-      "bool":{
-       "must": [
-          {"term" : {"docType" : "item" }},
-	        {"term" : {"publicFlag" : "true" }}
-        ],
-        "must_not": [
-          {"term" : {"donatedFlag": "true" }}
         ]
       }
     }
@@ -330,6 +318,7 @@ Updates feed:
 
   GET /donations/_search
   {
+    "size": 10000,
     "sort":{
       "date" : "asc"
     },
@@ -368,10 +357,10 @@ Accept and decline a donation (Use requirementID) :
     }
   }
 
-  POST donations/_update/requirementId
+ POST donations/_update/requirementId
   {
     "script" : {
-      "source": "ctx._source.quantity = 9"
+      "source": "ctx._source.quantity -= 1"
     }
   }
   
@@ -410,6 +399,7 @@ View requirements:
 
   GET /donations/_search
   {
+    "size": 10,
     "query": {
       "bool":{
         "must": [
@@ -424,6 +414,7 @@ View requirements:
 
   GET /donations/_search
   {
+    "size": 10000,
     "query":{
       "bool":{
         "must": [
@@ -460,11 +451,11 @@ Put an item up for donation (Creates itemID(:
   }
 
 Respond to requirement (Use requirementID) :
-  Insert into donations with doctype update and updatetype donate
+  Insert into donations with docType update and updatetype donate
 
   POST /donations/_doc
   {
-    "doctype": "item",
+    "docType": "item",
     "donorId" : "person@gmail.com",
     date: ""
 	 category, subCategory, itemName from requirement; 
@@ -491,7 +482,7 @@ Updates feed:
 
   GET /donations/_search
   {
-    
+    "size": 10000,
     "sort":{
       "date" : "asc"
     },
@@ -540,6 +531,7 @@ Respond to donation request (Use itemID):
 
   GET /donations/_search
   {
+  	"size": 10000,
   	"query":{
   		"bool":{
   			"must": [
@@ -553,7 +545,7 @@ Respond to donation request (Use itemID):
 Delete an item:
   Change publicFlag to false. 
 
-  POST donations/_update/requirementId
+  POST donations/_update/itemId
   {
     "script" : {
       "source": "ctx._source.publicFlag = false"
