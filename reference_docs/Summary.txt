@@ -200,7 +200,8 @@ Return password (for login):
 Return all unverified NGOs (For admin to verify):
   GET accounts/_search
   {
-   "query":{
+  	"size": 10000,
+  	"query":{
       "bool":{
         "must":{
           "term" : {"userType" : "NGO"  }
@@ -235,6 +236,7 @@ View Available Items:
 
   GET /donations/_search
   {
+    "size": 100,
     "query": {
       "bool":{
         "must": [
@@ -249,6 +251,7 @@ View Available Items:
 
   GET /donations/_search
   {
+    "size": 10000,
     "query":{
       "bool":{
         "must": [
@@ -262,21 +265,6 @@ View Available Items:
           { "term" : { "pincode" : "123410"} },
           { "terms" : {"category": ["clothing", "xyz"] } },
           { "terms" : {"subCategory": ["laptops","xyz"] } }
-        ]
-      }
-    }
-  }
-
-  GET /donations/_search
-  {
-    "query":{
-      "bool":{
-       "must": [
-          {"term" : {"docType" : "item" }},
-	        {"term" : {"publicFlag" : "true" }}
-        ],
-        "must_not": [
-          {"term" : {"donatedFlag": "true" }}
         ]
       }
     }
@@ -330,6 +318,7 @@ Updates feed:
 
   GET /donations/_search
   {
+    "size": 10000,
     "sort":{
       "date" : "asc"
     },
@@ -368,10 +357,10 @@ Accept and decline a donation (Use requirementID) :
     }
   }
 
-  POST donations/_update/requirementId
+ POST donations/_update/requirementId
   {
     "script" : {
-      "source": "ctx._source.quantity = 9"
+      "source": "ctx._source.quantity -= 1"
     }
   }
   
@@ -402,6 +391,44 @@ Mark as received (requirementID or itemID):
     "date":""
   }
 
+Delete a requirement :
+  Change quantity to 0
+
+  POST donations/_update/requirementId
+  {
+    "script" : {
+      "source": "ctx._source.quantity = 0"
+    }
+  }
+
+  Get all updates for that itemId. From this, make a list of all requirementIds
+  
+  
+  GET /donations/_search
+  {
+    "query": {
+      "bool":{
+        "must": [
+          { "terms" : { "updateType" : [ "donate", "donateRequest" ] } },
+          { "term" : {"requirementId" : ""} }
+        ]
+      }
+    }
+  }
+  For each requirementId from previous step
+  POST /donations/_search
+  {
+    "docType": "update",
+    "updateType" : "requirementDeleted",
+    "ngoId" : "",
+    "ngoName": "",
+    "itemId" : "",
+    "donorId" : ""
+    "requirementId" : ""
+    "date" : "2020-01-01T14:10:30Z"
+  }
+
+  If there are no itemIds associated, then just post above query with blank donorId and itemId
 
 DONOR QUERIES
 
@@ -410,6 +437,7 @@ View requirements:
 
   GET /donations/_search
   {
+    "size": 10,
     "query": {
       "bool":{
         "must": [
@@ -424,6 +452,7 @@ View requirements:
 
   GET /donations/_search
   {
+    "size": 10000,
     "query":{
       "bool":{
         "must": [
@@ -460,11 +489,11 @@ Put an item up for donation (Creates itemID(:
   }
 
 Respond to requirement (Use requirementID) :
-  Insert into donations with doctype update and updatetype donate
+  Insert into donations with docType update and updatetype donate
 
   POST /donations/_doc
   {
-    "doctype": "item",
+    "docType": "item",
     "donorId" : "person@gmail.com",
     date: ""
 	 category, subCategory, itemName from requirement; 
@@ -491,7 +520,7 @@ Updates feed:
 
   GET /donations/_search
   {
-    
+    "size": 10000,
     "sort":{
       "date" : "asc"
     },
@@ -540,6 +569,7 @@ Respond to donation request (Use itemID):
 
   GET /donations/_search
   {
+  	"size": 10000,
   	"query":{
   		"bool":{
   			"must": [
@@ -553,7 +583,7 @@ Respond to donation request (Use itemID):
 Delete an item:
   Change publicFlag to false. 
 
-  POST donations/_update/requirementId
+  POST donations/_update/itemId
   {
     "script" : {
       "source": "ctx._source.publicFlag = false"
@@ -561,18 +591,19 @@ Delete an item:
   }
 
   Get all updates for that itemId. From this, make a list of all requirementIds
+  
+  
   GET /donations/_search
   {
     "query": {
       "bool":{
         "must": [
-          { "term" : { "docType" : "update" } },
-          { "term" : {"itemId" : "OHjWKHcBr-j5I2jvm9qL"} }
+          { "terms" : { "updateType" : [ "donate", "donateRequest" ] } },
+          { "term" : {"itemId" : "BebMZ3cBZKhmmo7bRevw"} }
         ]
       }
     }
   }
-
   For each requirementId from previous step
   POST /donations/_search
   {
