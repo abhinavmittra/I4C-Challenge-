@@ -1,12 +1,12 @@
 
-<div class="d-flex justify-content-center" *ngIf="loadingFlag">
+<div class="d-flex justify-content-center" *ngIf="loadingItemsFlag||loadingUpdatesFlag">
     <div class="spinner-border" role="status">
       <span class="visually-hidden">Loading...</span>
     </div>
   </div>
 
 
-<div class="container" *ngIf="!loadingFlag">
+<div class="container" *ngIf="(!loadingUpdatesFlag)&&(!loadingItemsFlag)">
   <div class="btn-group" id="navigationBtns">
     <button class="btn btn-outline-dark" (click)="createItemRequirement()">Request an item</button>
     <button class="btn btn-outline-dark" (click)="viewDonations()">view Donations</button>
@@ -17,4 +17,4 @@
   <div id="seperator" style="height:30px">
 
   </div>
-<router-outlet *ngIf="!loadingFlag"></router-outlet>
+<router-outlet *ngIf="(!loadingUpdatesFlag)&&(!loadingItemsFlag)"></router-outlet>

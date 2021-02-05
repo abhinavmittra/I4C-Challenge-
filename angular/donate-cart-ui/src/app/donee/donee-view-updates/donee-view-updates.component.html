@@ -1,5 +1,196 @@
-<div class="d-flex justify-content-center" *ngIf="loadingFlag">
-    <div class="spinner-border" role="status">
-      <span class="visually-hidden">Loading...</span>
+<div class="modal" id="exampleModal"  aria-labelledby="exampleModalLabel" aria-hidden="true" [class.hide]="!showModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Send Message</h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-floating">
+          <textarea class="form-control" [(ngModel)]="messageBody" placeholder="Type your Message here" id="floatingTextarea2" style="height: 100px"></textarea>
+          <label for="floatingTextarea2">Your Message</label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" (click)="closeModal()">Close</button>
+        <button type="button" class="btn btn-primary" (click)="sendMessage()">Send</button>
+      </div>
     </div>
   </div>
+</div>
+
+
+<div class="container">
+  <h3>Requirements posted by you</h3>
+  <ng-container *ngFor="let item of doneeUpdates;index as i">  
+          <div class="card mt-3">
+              <div class="card-body">
+                <h5 class="card-title">{{item.reqName}}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">{{item.reqDate | date:'medium'}}</h6>
+                <div class="row">
+                    <div class="col">
+                        Category : {{item.reqCategory}}
+                    </div>
+                    <div class="col">
+                      SubCategory : {{item.reqSubCategory}}
+                  </div>
+                  <div class="col">
+                      Quantity : {{item.reqQuantity}}
+                  </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                     Details: {{item.reqDetails}}
+                  </div>
+                </div>
+                <div class="btn-group"  role="group" aria-label="Basic outlined example">
+                <button class="btn btn-outline-secondary" (click)="viewReqUpdates(i)">View Updates</button>
+                <button class="btn btn-outline-secondary" (click)="deleteReq(i)">Delete</button>
+                </div>
+              </div>
+            </div>
+      
+<ng-container *ngIf="visibleReqUpdate[i]">
+  <h5>Updates for selected Item </h5>
+<div id="itemUpdates" *ngFor ="let update of selectedReqUpdates;index as j;">
+  
+  <div [ngSwitch]="update.updateType">
+      <div *ngSwitchCase = "'donate'" id="donateUpdate">
+          <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">{{update.updateDate | date:'medium'}}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">{{update.updateType}}</h6>
+                <div class="row">
+                    <div class="col">
+                    DonorId: {{update.donorId}} 
+                   </div>
+                  <div class="col">
+                      Quantity: {{update.itemQuantity}}
+                  </div>
+                  <div class="col">
+                    Quality: {{update.itemQuality}}
+                </div>
+                  </div>
+                  <div class="row">
+                      <div class="col">
+                          Details: {{update.itemDetails}}
+                      </div>
+                  </div>
+                  <div class="btn-group"  role="group" aria-label="Basic outlined example">
+                    <button class="btn btn-outline-secondary" (click)="viewItemImage(i,j)">View Image</button>
+                      <button class="btn btn-outline-secondary" (click)="acceptOrReject(i,j,'accept')">Accept</button>
+                      <button class="btn btn-outline-secondary" (click)="acceptOrReject(i,j,'decline')">Decline</button>
+                      
+                  </div>
+              </div>
+            </div>
+      </div>
+      <div *ngSwitchCase = "'donateRequest'" id="donateReqUpdate">
+          <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">{{update.updateDate | date:'medium'}}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">{{update.updateType}}</h6>
+                <p class="card-text">Waiting for {{update.donorId}} Approval</p>
+              </div>
+            </div>
+      </div>
+      <div *ngSwitchCase = "'received'" id="receivedUpdate">
+          <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">{{update.updateDate | date:'medium'}}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">{{update.updateType}}</h6>
+                <p class="card-text">You have received this item</p>
+              </div>
+            </div>
+      </div>
+      <div *ngSwitchCase = "'message'" id="messageUpdate">
+          <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">{{update.updateDate | date:'medium'}}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">{{update.updateType}}</h6>
+                <p class="card-text">From: {{update.donorId}}</p>
+                <p>{{update.message}}</p>
+              </div>
+            </div>
+       </div>
+      <div *ngSwitchCase = "'accept'" id="acceptUpdate">
+          <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">{{update.updateDate | date:'medium'}}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">{{update.updateType}}</h6>
+                <p class="card-text">{{update.donorId}} accepted your request for donation</p>
+                <button type="button" class="btn btn-outline-secondary" (click)="setMsgIndex(i,j)">
+                  Send Message
+                </button>
+                <button type="button" class="btn btn-outline-secondary" (click)="markReceived(i,j)">
+                  Mark Received
+                </button>
+                
+              </div>
+            </div>
+      </div>
+      <div *ngSwitchCase = "'decline'" id="declineUpdate">
+          <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">{{update.updateDate | date:'medium'}}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">{{update.updateType}}</h6>
+                <p class="card-text">{{update.donorId}} declined your request for donation</p>
+                 
+              </div>
+            </div>
+      </div>
+      <div *ngSwitchCase = "'acceptDonation'" id="acceptDonationUpdate">
+          <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">{{update.updateDate | date:'medium'}}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">{{update.updateType}}</h6>
+                <p class="card-text">You have accepted {{update.donorId}}'s offer</p>
+                <button class="btn btn-outline-secondary" (click)="sendMessage(i,j)">Send Message</button>  
+                <button type="button" class="btn btn-outline-secondary" (click)="markReceived(i,j)">
+                  Mark Received
+                </button>
+              </div>
+            </div>
+      </div>
+      <div *ngSwitchCase = "'declineDonation'" id="rejectDonationUpdate">
+          <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">{{update.updateDate | date:'medium'}}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">{{update.updateType}}</h6>
+                <p class="card-text">You have declined {{update.donorId}}'s  offer</p>
+              </div>
+            </div>
+      </div>
+      <div *ngSwitchCase = "'noupdate'" id="noupdateUpdate">
+          <h5> No Updates for this Item</h5>
+       </div>
+      <div *ngSwitchDefault>
+          New updateType not handled: {{update.updateType}}
+      </div>
+  </div>
+</div>
+</ng-container>
+</ng-container>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

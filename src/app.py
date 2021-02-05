@@ -925,9 +925,11 @@ def getUpdatesForDonor():
             result = []
             count = 0
             for obj in res["hits"]['hits']:
-                count=count+1
+                
+             
                 # print(obj["_source"]["docType"])
                 if obj["_source"]["docType"] == "item":
+                    count=count+1
                     item = {
                             "Item"+str(count): {
                             "itemId":    obj["_id"],
@@ -974,7 +976,9 @@ def getUpdatesForDonor():
                         messageFrom = obj["_source"]["messageFrom"]
                     else:
                         messageFrom = ""
-                    
+                    pincode = ""
+                    if "pincode" in obj["_source"]:
+                        pincode = obj["_source"]["pincode"]
                     date = ""
                     if "date" in obj["_source"]:
                         date=obj["_source"]["date"]
@@ -1006,6 +1010,7 @@ def getUpdatesForDonor():
                         "reqDetails":reqDetails,
                         "messageFrom":messageFrom,
                         "message":message,
+                        "pincode":pincode,
                         "date":date
                     }
                     # update = donorUpdatePackage(updateDetails,"success")
@@ -1049,20 +1054,23 @@ def getUpdatesForNGO():
             ngoId = data["ngoId"]
 
             res = es_updated.search(index = "donations", body={"size": 10000,"sort":{"date" : "asc"},"query":{"bool": {"must": [{ "term" : { "ngoId": ngoId } }],"should": [{ "term" : { "docType": "requirement" } },{ "term" : { "docType": "update" } }],"minimum_should_match": 1}}})
-
+            
             #print(res["hits"]['hits'])
             result = []
             count = 0
-            for obj in res["hits"]["hits"]:
+            
+            print(res)
+            for obj in res["hits"]['hits']: 
+                
                 if obj["_source"]["docType"] == "requirement":
                     count = count + 1
                     item = {
                         "Requirement"+str(count) : {
-                            "requirementId" : obj["_id"],
-
+                            "reqId" : obj["_id"],
                             "reqName" : obj["_source"]["itemName"],
                             "reqCategory" : obj["_source"]["category"],
                             "reqSubcategory" : obj["_source"]["subCategory"],
+                            "reqDetails":obj["_source"]["details"],
                             "reqQuantity" : obj["_source"]["quantity"],
                             "reqDate" : obj["_source"]["date"],
                             "reqUpdates" : []
@@ -1071,7 +1079,7 @@ def getUpdatesForNGO():
                     result.append(item)
                 if obj["_source"]["docType"] == "update":
                     
-                    requirementID = obj["_source"]["requirementId"]
+                    #requirementID = obj["_source"]["_id"]
                     # updateType,itemId,reqId,ngoId,donorId,itemQuantity,itemQuality,itemDetails,messageFrom,message
                     updateType = obj["_source"]["updateType"]
                     if "itemId" in obj["_source"]:
@@ -1105,6 +1113,10 @@ def getUpdatesForNGO():
                     itemImgLink = ""
                     if "itemImageLink" in obj["_source"]:
                         itmImgLink = obj["_source"]["itemImageLink"]
+                        
+                    pincode = ""
+                    if "pincode" in obj["_source"]:
+                        pincode = obj["_source"]["pincode"]
                     
                     if "messageFrom" in obj["_source"]:
                         messageFrom = obj["_source"]["messageFrom"]
@@ -1142,6 +1154,7 @@ def getUpdatesForNGO():
                         "itemDetails":itemDetails,                        
                         "messageFrom":messageFrom,
                         "message":message,
+                        "pincode":pincode,
                         "date":date
                     }
                     
@@ -1149,18 +1162,18 @@ def getUpdatesForNGO():
                     count = 0
                     for item in result:
                         count = count + 1
-                        if item["Requirement"+str(count)]["requirementId"] == requirementID:
-                            item["Requirement"+str(count)]["requirementUpdates"].append(update)
+                        if item["Requirement"+str(count)]["reqId"] == reqId:
+                            item["Requirement"+str(count)]["reqUpdates"].append(update)
             #adding noupdate string for which no updates are present
             count=0
             for item in result:
                 count=count+1
-                if len(item["Requirement"+str(count)]["requirementUpdates"])==0:
+                if len(item["Requirement"+str(count)]["reqUpdates"])==0:
                     update = {
                         "updateType" :"noupdate"
                          
                     }
-                    item["Requirement"+str(count)]["requirementUpdates"].append(update)
+                    item["Requirement"+str(count)]["reqUpdates"].append(update)
         except Exception as e:
             print(e)
             return jsonpickle.encode(responsePackage("Error","Couldn't fetch updates for NGO"),unpicklable=False)

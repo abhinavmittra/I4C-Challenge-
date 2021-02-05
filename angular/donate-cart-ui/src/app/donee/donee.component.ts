@@ -11,19 +11,19 @@ import { DoneeService } from './donee.service';
 export class DoneeComponent implements OnInit {
 
   constructor(private router:Router,private route: ActivatedRoute,private doneeService:DoneeService,private authService:AuthService) { }
-  loadingFlag:boolean = true;
+  loadingItemsFlag:boolean = true;
+  loadingUpdatesFlag = true;
   ngOnInit(): void {
-  //make get request to server to fetch all item donations
-  //make get request to server to fetch all requirements/donations this person has added or requested for.
-  //use a service to store all this data
-  //disable My Requirements button until data is fetched
-  this.loadingFlag = true;
+  
+  this.loadingItemsFlag = true;
+  this.loadingUpdatesFlag = true;
   this.doneeService.getAvailableDonationsFromServer().subscribe((data)=>{
-      this.loadingFlag=false
+      this.loadingItemsFlag=false
+      
     });
-    this.doneeService.getUpdates(this.authService.getUserId()).subscribe((data)=>{
-    
-    })
+    this.doneeService.getDoneeUpdatesFromServer(this.authService.getUserId()).subscribe((data)=>{
+      this.loadingUpdatesFlag=false;
+    });
 
 }
   viewDonations(){

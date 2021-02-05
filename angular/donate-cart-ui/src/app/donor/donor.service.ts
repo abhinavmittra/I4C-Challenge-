@@ -23,7 +23,9 @@ export class DonorService {
   public donateItemUrl = "http://127.0.0.1:5000/respondToRequirement";
   public createDonationItemUrl = "http://127.0.0.1:5000/donateItemPublic";
   public viewItemUpdatesUrl = "http://127.0.0.1:5000/getUpdatesForDonor";
-  
+  public sendMessageUrl = "http://127.0.0.1:5000/sendMessageToNGO"
+  public acceptOrRejectUrl = "http://127.0.0.1:5000/respondToDonationRequest"
+  public deleteItemUrl = "http://127.0.0.1:5000/deleteItem"
 
   publicItemRequirements:ItemRequirement[]=[];
   publicItemRequirementsChanged = new Subject<ItemRequirement[]>();
@@ -36,31 +38,9 @@ export class DonorService {
   getDonorUpdates(){
     return this.donorUpdates.slice()
   }
-  setDonorUpdates(data:any){
-    var refList = []
-   for(var itemIndex in data['updatesForDonor']){
-      var idx = +itemIndex + 1
-      var key = "Item"+idx
-
-      var id = data['updatesForDonor'][itemIndex][key]['itemId']
-      var name = data['updatesForDonor'][itemIndex][key]['itemName']
-      var cat = data['updatesForDonor'][itemIndex][key]['itemCategory']
-      var subcat = data['updatesForDonor'][itemIndex][key]['itemSubcategory']
-      var quantity = data['updatesForDonor'][itemIndex][key]['itemQuantity']
-      var quality = data['updatesForDonor'][itemIndex][key]['itemQuality']
-      var details = data['updatesForDonor'][itemIndex][key]['itemDetails']
-      var itemUpdates = data['updatesForDonor'][itemIndex][key]['itemUpdates']
-      //var date = data['updatesForDonor'][itemIndex][key]['itemDate']
-      //var imgLink = data['updatesForDonor'][itemIndex][key]['itemImageLink']
-      var imgLink=''
-      var date = new Date()
-      refList.push(new DonorUpdate(id,name,cat,subcat,quantity,quality,details,imgLink,date.toDateString(),itemUpdates))
-    
-
-   }
-    this.donorUpdates = refList
-    
-    this.donorUpdatesChanged.next(this.donorUpdates.slice());
+  setDonorUpdates(data:DonorUpdate[]){
+    this.donorUpdates = data;
+    this.donorUpdatesChanged.next(this.donorUpdates.slice())
   }
 
 
@@ -91,7 +71,64 @@ export class DonorService {
   }
   public getDonorUpdatesFromServer(donorId:string){
     return this.httpClient.post<any>(this.viewItemUpdatesUrl,{"donorId":donorId},this.headerOptions).pipe(tap((data)=>{
-      this.setDonorUpdates(data);
+      var refList = []
+   for(var itemIndex in data['updatesForDonor']){
+      var idx = +itemIndex + 1
+      var key = "Item"+idx
+
+      var id = data['updatesForDonor'][itemIndex][key]['itemId']
+      var name = data['updatesForDonor'][itemIndex][key]['itemName']
+      var cat = data['updatesForDonor'][itemIndex][key]['itemCategory']
+      var subcat = data['updatesForDonor'][itemIndex][key]['itemSubcategory']
+      var quantity = data['updatesForDonor'][itemIndex][key]['itemQuantity']
+      var quality = data['updatesForDonor'][itemIndex][key]['itemQuality']
+      var details = data['updatesForDonor'][itemIndex][key]['itemDetails']
+      var itemUpdates = data['updatesForDonor'][itemIndex][key]['itemUpdates']
+      var date = data['updatesForDonor'][itemIndex][key]['itemDate']
+      var imgLink = data['updatesForDonor'][itemIndex][key]['itemImageLink']
+      
+     
+      refList.push(new DonorUpdate(id,name,cat,subcat,quantity,quality,details,imgLink,date,itemUpdates))
+    
+
+   }
+    this.donorUpdates = refList
+    
+    this.donorUpdatesChanged.next(this.donorUpdates.slice());
     }));
+  }
+
+
+  deleteItem(itemId:string,donorId:string){
+    return this.httpClient.post<any>(this.deleteItemUrl,JSON.stringify({
+      
+      'itemId':itemId,
+      
+      'donorId':donorId
+    
+    }),this.headerOptions);
+  }
+
+
+  acceptOrReject(reqId:string,itemId:string,donorId:string,ngoId:string,ngoName:string,actionTaken:string){
+    return this.httpClient.post<any>(this.acceptOrRejectUrl,JSON.stringify({
+      'requirementId':reqId,
+      'itemId':itemId,
+      'ngoId':ngoId,
+      'donorId':donorId,
+      'actionTaken':actionTaken,
+      'ngoName':ngoName
+    
+    }),this.headerOptions);
+  }
+  sendMessageToNgo(reqId:string,itemId:string,donorId:string,ngoId:string,message:string){
+    return this.httpClient.post<any>(this.sendMessageUrl,JSON.stringify({
+      'requirementId':reqId,
+    'itemId':itemId,
+    'ngoId':ngoId,
+    'donorId':donorId,
+    'message':message
+  
+  }),this.headerOptions);
   }
 }

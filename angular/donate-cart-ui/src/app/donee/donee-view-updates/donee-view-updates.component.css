@@ -1,0 +1,5 @@
+#donateReqUpdate, #donateUpdate, #receivedUpdate, #messageUpdate,#acceptUpdate,#declineUpdate,
+#acceptDonationUpdate,#rejectDonationUpdate,#noupdateUpdate{
+    width:75%;
+    margin:auto;
+}

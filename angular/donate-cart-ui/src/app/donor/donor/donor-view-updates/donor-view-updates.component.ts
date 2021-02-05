@@ -47,10 +47,12 @@ export class DonorViewUpdatesComponent implements OnInit {
    
   }
   viewItemUpdates(index:number){
-    //clear the updates array first
-    this.selectedItemUpdates.length = 0;
+  
 
     //set updates array to updates of item selected
+    if(this.visibleItemUpdate[index]!=true){
+        //clear the updates array first
+    this.selectedItemUpdates.length = 0;
 
     for(var i  = 0;i<this.donorUpdates[index].itemUpdates.length;i++){
       //console.log(this.donorUpdates[index].itemUpdates[i]["updateType"])
@@ -79,8 +81,10 @@ export class DonorViewUpdatesComponent implements OnInit {
       if(this.donorUpdates[index].itemUpdates[i]["reqDetails"])
         reqDetails = this.donorUpdates[index].itemUpdates[i]["reqDetails"];
       if( this.donorUpdates[index].itemUpdates[i]["date"]) 
-        updateDate = this.donorUpdates[index].itemUpdates[i]["date"]
-      console.log(this.donorUpdates[index].itemUpdates[i]["date"])
+        var tempDate = this.donorUpdates[index].itemUpdates[i]["date"]
+        var formattedDate = new Date(tempDate)
+        updateDate = formattedDate.toLocaleString()
+
       this.selectedItemUpdates.push(new ItemUpdate(updateType,itemId,reqId,ngoId,donorId,ngoName,reqQuantity,reqDetails,msgFrom,msg,updateDate));
     
     }
@@ -89,6 +93,11 @@ export class DonorViewUpdatesComponent implements OnInit {
       this.visibleItemUpdate[i]=false;
     }
     this.visibleItemUpdate[index]=true;
+
+  }
+  else{
+    this.visibleItemUpdate[index]=!this.visibleItemUpdate[index];
+  }
   }
 
   viewItemImage(index:number){
@@ -105,15 +114,27 @@ export class DonorViewUpdatesComponent implements OnInit {
     //get text from input field for message and send post req to server with reqId,donorId,itemId,ngoId
   }
   deleteItem(itemIndex:number){
-    
 
-    console.log("Item idx"+itemIndex);
-    
-    //call service to delete item and return a new copy.
-    
+    this.donorService.deleteItem(    
+    this.donorUpdates[itemIndex].itemId,
+    this.authService.getUserId()
+    ).subscribe((data)=>{
+     console.log(data)
+    });
 
-    //send post req with id to delete
-  }
+}
+
+acceptOrReject(itemIndex:number,updateIdx:number,actionTaken:string){
+  this.donorService.acceptOrReject(
+    this.donorUpdates[itemIndex].itemUpdates[updateIdx]["reqId"],
+  this.donorUpdates[itemIndex].itemUpdates[updateIdx]["itemId"],
+  this.donorUpdates[itemIndex].itemUpdates[updateIdx]["donorId"],
+  this.donorUpdates[itemIndex].itemUpdates[updateIdx]["ngoId"],
+  this.donorUpdates[itemIndex].itemUpdates[updateIdx]["ngoName"],
+  actionTaken).subscribe((data)=>{
+   console.log(data)
+  });
+}
 
   ngOnDestroy(){
     this.donorUpdatesChanged.unsubscribe();

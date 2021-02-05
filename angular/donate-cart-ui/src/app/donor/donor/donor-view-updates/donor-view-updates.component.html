@@ -4,7 +4,7 @@
             <div class="card mt-3">
                 <div class="card-body">
                   <h5 class="card-title">{{item.itemName}}</h5>
-                  <h6 class="card-subtitle mb-2 text-muted">{{item.itemDate}}</h6>
+                  <h6 class="card-subtitle mb-2 text-muted">{{item.itemDate | date:'medium'}}</h6>
                   <div class="row">
                       <div class="col">
                           Category : {{item.itemCategory}}
@@ -40,15 +40,12 @@
         <div *ngSwitchCase = "'donateRequest'" id="donateReqUpdate">
             <div class="card">
                 <div class="card-body">
-                  <h5 class="card-title">{{update.updateDate}}</h5>
+                  <h5 class="card-title">{{update.updateDate | date:'medium'}}</h5>
                   <h6 class="card-subtitle mb-2 text-muted">{{update.updateType}}</h6>
                   <div class="row">
                       <div class="col">
                       NGOName: {{update.ngoName}} 
                      </div>
-                    <div class="col">
-                        Quantity: {{update.reqQuantity}}
-                    </div>
                     </div>
                     <div class="row">
                         <div class="col">
@@ -56,9 +53,8 @@
                         </div>
                     </div>
                     <div class="btn-group"  role="group" aria-label="Basic outlined example">
-                        <button class="btn btn-outline-secondary" (click)="respondToDonateReq(i,j,'accept')">Accept</button>
-                        <button class="btn btn-outline-secondary" (click)="respondToDonateReq(i,j,'decline')">Decline</button>
-                        <button class="btn btn-outline-secondary" (click)="sendMessage(i,j)">Send Message</button>  
+                        <button class="btn btn-outline-secondary" (click)="acceptOrReject(i,j,'accept')">Accept</button>
+                        <button class="btn btn-outline-secondary" (click)="acceptOrReject(i,j,'decline')">Decline</button>
                     </div>
                 </div>
               </div>
@@ -66,7 +62,7 @@
         <div *ngSwitchCase = "'donate'" id="donateUpdate">
             <div class="card">
                 <div class="card-body">
-                  <h5 class="card-title">{{update.updateDate}}</h5>
+                  <h5 class="card-title">{{update.updateDate | date:'medium'}}</h5>
                   <h6 class="card-subtitle mb-2 text-muted">{{update.updateType}}</h6>
                   <p class="card-text">Waiting for NGO Approval</p>
                 </div>
@@ -75,7 +71,7 @@
         <div *ngSwitchCase = "'received'" id="receivedUpdate">
             <div class="card">
                 <div class="card-body">
-                  <h5 class="card-title">{{update.updateDate}}</h5>
+                  <h5 class="card-title">{{update.updateDate | date:'medium'}}</h5>
                   <h6 class="card-subtitle mb-2 text-muted">{{update.updateType}}</h6>
                   <p class="card-text">NGO has received your item</p>
                 </div>
@@ -84,7 +80,7 @@
         <div *ngSwitchCase = "'message'" id="messageUpdate">
             <div class="card">
                 <div class="card-body">
-                  <h5 class="card-title">{{update.updateDate}}</h5>
+                  <h5 class="card-title">{{update.updateDate | date:'medium'}}</h5>
                   <h6 class="card-subtitle mb-2 text-muted">{{update.updateType}}</h6>
                   <p class="card-text">From: {{update.ngoName}}</p>
                   <p>{{update.message}}</p>
@@ -94,16 +90,17 @@
         <div *ngSwitchCase = "'accept'" id="acceptUpdate">
             <div class="card">
                 <div class="card-body">
-                  <h5 class="card-title">{{update.updateDate}}</h5>
+                  <h5 class="card-title">{{update.updateDate | date:'medium'}}</h5>
                   <h6 class="card-subtitle mb-2 text-muted">{{update.updateType}}</h6>
                   <p class="card-text">You have accepted {{update.ngoName}}'s request</p>
+                  <button class="btn btn-outline-secondary" (click)="sendMessage(i,j)">Send Message</button>  
                 </div>
               </div>
         </div>
         <div *ngSwitchCase = "'decline'" id="declineUpdate">
             <div class="card">
                 <div class="card-body">
-                  <h5 class="card-title">{{update.updateDate}}</h5>
+                  <h5 class="card-title">{{update.updateDate | date:'medium'}}</h5>
                   <h6 class="card-subtitle mb-2 text-muted">{{update.updateType}}</h6>
                   <p class="card-text">You declined {{update.ngoName}}'s request</p>
                 </div>
@@ -112,16 +109,17 @@
         <div *ngSwitchCase = "'acceptDonation'" id="acceptDonationUpdate">
             <div class="card">
                 <div class="card-body">
-                  <h5 class="card-title">{{update.updateDate}}</h5>
+                  <h5 class="card-title">{{update.updateDate | date:'medium'}}</h5>
                   <h6 class="card-subtitle mb-2 text-muted">{{update.updateType}}</h6>
                   <p class="card-text">{{update.ngoName}} accepted your offer</p>
+                  <button class="btn btn-outline-secondary" (click)="sendMessage(i,j)">Send Message</button>  
                 </div>
               </div>
         </div>
-        <div *ngSwitchCase = "'rejectDonation'" id="rejectDonationUpdate">
+        <div *ngSwitchCase = "'declineDonation'" id="rejectDonationUpdate">
             <div class="card">
                 <div class="card-body">
-                  <h5 class="card-title">{{update.updateDate}}</h5>
+                  <h5 class="card-title">{{update.updateDate | date:'medium'}}</h5>
                   <h6 class="card-subtitle mb-2 text-muted">{{update.updateType}}</h6>
                   <p class="card-text">{{update.ngoName}} rejected your offer</p>
                 </div>
