@@ -301,7 +301,7 @@ def getNgoList():
             return jsonpickle.encode(ngoPackage([],"Failure","error occured"),unpicklable=False)
         return jsonpickle.encode(res,unpicklable=False)
 
-#function to approve or reject an NGO by admin
+#function to approve or reject an NGO by admin (to mark NGO as verified)
 @app.route("/approve_reject_NGO",methods=['POST'])
 def approveRejectNGO():
     if request.method == "POST":
@@ -450,10 +450,10 @@ def createRequirements():
             return jsonpickle.encode(responsePackage("Error","Couldn't create requirement"),unpicklable=False)
         return json.dumps({"status":"Success","requirementId":res["_id"]})
 
-
+#changing function name as this deletes the entire requirement document
 #Need to think about handling side effects too i.e how to handle updates for the requests made to these delete items/requirements    
-@app.route("/deleteRequirement",methods=['POST','GET'])    
-def deleteRequirement():
+@app.route("/deleteRequirementDocument",methods=['POST','GET'])    
+def deleteRequirementDocument():
     if request.method=="POST":
         try:
             data = json.loads(request.data)
@@ -666,7 +666,7 @@ def respondToDonationRequest():
                 finalQuantity = reqQuantity - itemQuantity
                 source = "ctx._source.quantity = %s"%(str(finalQuantity))
                 result3 = es.update(index="donations" , id = reqId , body = {"script" : {"source": source}})
-                return result3
+                # return result3
             elif actionTaken == "decline":
                 query1 = {
                     "docType":"update",
@@ -678,14 +678,13 @@ def respondToDonationRequest():
                     "requirementId" : reqId,
                     "date": date
                 }           
-                
                 #adding document with updateType "decline"
                 result1 = es.index(index = "donations", body = (query1))
-                return result1
+                # return result1
         except Exception as e:
             print(e)
             return jsonpickle.encode(responsePackage("Error","Couldn't respond to donation request"),unpicklable=False)
-        # return jsonpickle.encode(responsePackage("Success","Responded to donation request"),unpicklable=False)   
+        return jsonpickle.encode(responsePackage("Success","Responded to donation request"),unpicklable=False)   
         #return result3
         
 #function to upload a file
@@ -704,14 +703,68 @@ def respondToDonationRequest():
 #             return "Error in file upload"
 
 #endpoint that returns the image once hit with the url and filename
+
+#function for and NGO to accept or decline a donation request 
+@app.route('/accept_decline_donation',methods=['POST'])
+def acceptDeclineDonation():
+    if request.method == "POST":
+        try:
+            data = json.loads(request.data)
+            donorId = data["donorId"]
+            ngoId = data ["ngoId"]
+            requirementId = data["requirementId"]
+            itemId = data["itemId"]
+            actionToken = data["actionToken"]
+            res = es.search(index="accounts",body={"query":{"term":{"_id":ngoId}}})
+            ngoName = res["hits"]["hits"][0]["_source"]["ngoName"]
+            date = datetime.datetime.now(datetime.timezone.utc)
+            if actionToken == "accept":
+                query1 = {
+                             "docType": "update",
+                            "updateType": "acceptDonation",
+                            "ngoId" : ngoId,
+                            "ngoName" : ngoName,
+                            "donorId" : donorId,
+                            "itemId": itemId,
+                            "requirementId": requirementId,
+                            "date":date
+                        }
+                res1 = es.index(index="donations",body=(query1))
+                #updating donated flag
+                res2 = es.update(index = "donations", id = itemId, body = {"doc": {"donatedFlag": "true"}})
+                #updating the quantity
+                item = es.search(index = "donations", body = {"query": {"term": {"_id": itemId}}})
+                itemQuantity = item["hits"]["hits"][0]["_source"]["quantity"]
+                source = "ctx._source.quantity -= %s"%(str(itemQuantity))
+                res3 = es.update(index="donations" , id = requirementId , body = {"script" : {"source": source}})
+                return jsonpickle.encode(responsePackage("success","Accepted donation"),unpicklable=False)
+            elif actionToken == "decline":
+                query1 = {
+                            "docType": "update",
+                            "updateType": "declineDonation",
+                            "ngoId" : ngoId,
+                            "ngoName" : ngoName,
+                            "donorId" : donorId,
+                            "itemId": itemId,
+                            "requirementId": requirementId,
+                            "date":date
+                        }
+                result = es.index(index="donations",body=(query1))
+                return jsonpickle.encode(responsePackage("success","Declined donation"),unpicklable=False)
+        except Exception as e:
+            print(e)
+            return jsonpickle.encode(responsePackage("Error","Couldn't respond to donation"),unpicklable=False)
+
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
     url = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
     return send_from_directory(url,
                                filename)
 
-@app.route("/deleteItem",methods=['POST','GET'])    
-def deleteItem():
+
+#function to remove document (Changine name from deleteItem to deleteDocument)
+@app.route("/deleteDocument",methods=['POST','GET'])    
+def deleteDocument():
     if request.method=="POST":
         try:
             data = json.loads(request.data)
@@ -720,9 +773,112 @@ def deleteItem():
             print(res)
         except Exception as e:
             print(e)
-            return jsonpickle.encode(responsePackage("Error","Couldn't delete item"),unpicklable=False)
-        return jsonpickle.encode(responsePackage("Success","Deleted Item Successfully"),unpicklable=False)      
+            return jsonpickle.encode(responsePackage("Error","Couldn't delete document"),unpicklable=False)
+        return jsonpickle.encode(responsePackage("Success","Deleted document Successfully"),unpicklable=False)   
 
+#function to delete item
+@app.route("/deleteItem",methods=['POST'])    
+def deleteItem():
+    if request.method=="POST":
+        try:
+            data = json.loads(request.data)
+            itemId = data["itemId"]
+            donorId = data["donorId"]
+            #setting Public Flag to false for the item
+            res1 = es.update(index = "donations", id = itemId, body = {"script" : {"source": "ctx._source.publicFlag = false"}})
+            #get all requirements
+            res2 = es.search(index = "donations", body ={"query": {"bool":{"must": [{ "term" : { "updateType" : "donateRequest" } },{ "term" : {"itemId" : itemId} }]}}})
+            requirementList = []
+            for item in res2["hits"]["hits"]:
+                if "requirementId" in item["_source"]:
+                    requirementList.append(item["_source"])
+            print(requirementList)
+            #setting updateType as itemDeleted for each requirement Id
+            if len(requirementList) > 0:
+                for requirement in requirementList:
+                    res = es.search(index="accounts",body={"query":{"term":{"_id":requirement["ngoId"]}}})
+                    ngoName = res["hits"]["hits"][0]["_source"]["ngoName"]
+                    query = {
+                        "docType":"update",
+                        "updateType":"itemDeleted",
+                        "ngoId":requirement["ngoId"],
+                        "requirementId":requirement["requirementId"],
+                        "ngoName":ngoName,
+                        "itemId":itemId,
+                        "donorId": donorId,
+                        "date": datetime.datetime.now(datetime.timezone.utc)
+                    }
+                    res1 = es.index(index="donations",body=(query))
+            else:
+                #ngoId and requirement id will be blank
+                query = {
+                        "docType":"update",
+                        "updateType":"itemDeleted",
+                        "ngoId":"",
+                        "requirementId":"",
+                        "ngoName":"",
+                        "itemId":itemId,
+                        "donorId": donorId,
+                        "date": datetime.datetime.now(datetime.timezone.utc)
+                    }
+                res = es.index(index="donations",body=(query))
+        except Exception as e:
+            print(e)
+            return jsonpickle.encode(responsePackage("Error","Couldn't delete item"),unpicklable=False)
+        return jsonpickle.encode(responsePackage("Success","Deleted Item Successfully"),unpicklable=False)     
+
+
+#function to delete requirement
+@app.route("/deleteRequirement",methods=['POST'])    
+def deleteRequirement():
+    if request.method=="POST":
+        try:
+            data = json.loads(request.data)
+            reqId = data["requirementId"]
+            ngoId = data["ngoId"]
+            #chnging quantity to 0
+            res1 = es.update(index = "donations", id = reqId, body = {"script" : {"source": "ctx._source.quantity = 0"}})
+            #get all updates for that requirement Id
+            res2 = es.search(index = "donations", body ={"query": {"bool":{"must": [{ "term" : { "updateType" : "donateRequest" } },{ "term" : {"requirementId" : reqId} }]}}})
+            requirementList = []
+            for item in res2["hits"]["hits"]:
+                if "requirementId" in item["_source"]:
+                    requirementList.append(item["_source"])
+            print(requirementList)
+            #setting updateType as itemDeleted for each requirement Id
+            if len(requirementList) > 0:
+                for requirement in requirementList:
+                    #obtaining NGO Name
+                    res = es.search(index="accounts",body={"query":{"term":{"_id":requirement["ngoId"]}}})
+                    ngoName = res["hits"]["hits"][0]["_source"]["ngoName"]
+                    query = {
+                        "docType":"update",
+                        "updateType":"requirementDeleted",
+                        "ngoId":requirement["ngoId"],
+                        "requirementId":requirement["requirementId"],
+                        "ngoName":ngoName,
+                        "itemId":requirement["itemId"],
+                        "donorId": requirement["donorId"],
+                        "date": datetime.datetime.now(datetime.timezone.utc)
+                    }
+                    res1 = es.index(index="donations",body=(query))
+            else:
+                #donorId and requirement id will be blank
+                query = {
+                        "docType":"update",
+                        "updateType":"requirementDeleted",
+                        "ngoId":ngoId,
+                        "requirementId":reqId,
+                        "ngoName":"",
+                        "itemId":"",
+                        "donorId": "",
+                        "date": datetime.datetime.now(datetime.timezone.utc)
+                    }
+                res = es.index(index="donations",body=(query))
+        except Exception as e:
+            print(e)
+            return jsonpickle.encode(responsePackage("Error","Couldn't delete requirement"),unpicklable=False)
+        return jsonpickle.encode(responsePackage("Success","Deleted requirement Successfully"),unpicklable=False)  
 
 @app.route("/getUpdatesForDonor",methods=['POST'])    
 def getUpdatesForDonor():
@@ -752,6 +908,7 @@ def getUpdatesForDonor():
                             "itemQuantity" : obj["_source"]["quantity"],
                             "itemQuality" :obj["_source"]["quality"],
                             "itemDetails" : obj["_source"]["details"],
+                            "itemDate" : obj["_source"]["date"],
                             "itemUpdates" : []
                         }
                     }
@@ -856,7 +1013,7 @@ def getUpdatesForNGO():
         try:
             data = json.loads(request.data)
             ngoId = data["ngoId"]
-            res = es.search(index = "donations", body={"sort":{"date" : "asc"},"query":{"bool": {"must": [{ "term" : { "ngoId": ngoId } }],"should": [{ "term" : { "docType": "requirement" } },{ "term" : { "docType": "update" } }],"minimum_should_match": 1}}})
+            res = es.search(index = "donations", body={"size": 10000,"sort":{"date" : "asc"},"query":{"bool": {"must": [{ "term" : { "ngoId": ngoId } }],"should": [{ "term" : { "docType": "requirement" } },{ "term" : { "docType": "update" } }],"minimum_should_match": 1}}})
             #print(res["hits"]['hits'])
             result = []
             count = 0
@@ -870,6 +1027,7 @@ def getUpdatesForNGO():
                             "category" : obj["_source"]["category"],
                             "subcategory" : obj["_source"]["subCategory"],
                             "quantity" : obj["_source"]["quantity"],
+                            "requirementDate" : obj["_source"]["date"],
                             "requirementUpdates" : []
                         }
                     }
@@ -972,6 +1130,38 @@ def getUpdatesForNGO():
           
     return json.dumps({"updatesForNGO":result})
 
+
+#Function to mark an item as received
+@app.route("/markItem",methods=['POST'])
+def markItem():
+    if request.method == "POST":
+        try:
+            data = json.loads(request.data)
+            donorId = data["donorId"]
+            ngoId = data ["ngoId"]
+            requirementId = data["requirementId"]
+            itemId = data["itemId"]
+            #getting NgoName
+            res = es.search(index="accounts",body={"query":{"term":{"_id":ngoId}}})
+            ngoName = res["hits"]["hits"][0]["_source"]["ngoName"]
+            date = datetime.datetime.now(datetime.timezone.utc)
+            print (ngoName)
+            query = {
+                "docType": "update",
+                "updateType": "received",
+                "ngoId" : ngoId,
+                "ngoName" : ngoName,
+                "donorId" : donorId,
+                "itemId": itemId,
+                "requirementId": requirementId,
+                "date": date
+            }
+            res = es.index(index = "donations",body =(query))
+            print(query)
+        except Exception as e:
+            print (e)
+            return jsonpickle.encode(responsePackage("Error","Couldn't mark item as received"),unpicklable=False)
+        return jsonpickle.encode(responsePackage("success","Item marked as received"),unpicklable=False)
 
 #function to send a message TO-ngo FROM-Donor
 @app.route("/sendMessageToNgo",methods=['POST'])    
