@@ -391,6 +391,44 @@ Mark as received (requirementID or itemID):
     "date":""
   }
 
+Delete a requirement :
+  Change quantity to 0
+
+  POST donations/_update/requirementId
+  {
+    "script" : {
+      "source": "ctx._source.quantity = 0"
+    }
+  }
+
+  Get all updates for that itemId. From this, make a list of all requirementIds
+  
+  
+  GET /donations/_search
+  {
+    "query": {
+      "bool":{
+        "must": [
+          { "terms" : { "updateType" : [ "donate", "donateRequest" ] } },
+          { "term" : {"requirementId" : ""} }
+        ]
+      }
+    }
+  }
+  For each requirementId from previous step
+  POST /donations/_search
+  {
+    "docType": "update",
+    "updateType" : "requirementDeleted",
+    "ngoId" : "",
+    "ngoName": "",
+    "itemId" : "",
+    "donorId" : ""
+    "requirementId" : ""
+    "date" : "2020-01-01T14:10:30Z"
+  }
+
+  If there are no itemIds associated, then just post above query with blank donorId and itemId
 
 DONOR QUERIES
 
@@ -553,18 +591,19 @@ Delete an item:
   }
 
   Get all updates for that itemId. From this, make a list of all requirementIds
+  
+  
   GET /donations/_search
   {
     "query": {
       "bool":{
         "must": [
-          { "term" : { "docType" : "update" } },
-          { "term" : {"itemId" : "OHjWKHcBr-j5I2jvm9qL"} }
+          { "terms" : { "updateType" : [ "donate", "donateRequest" ] } },
+          { "term" : {"itemId" : "BebMZ3cBZKhmmo7bRevw"} }
         ]
       }
     }
   }
-
   For each requirementId from previous step
   POST /donations/_search
   {
