@@ -547,7 +547,7 @@ def donateItem():
         except Exception as e: 
             print(e)
             return jsonpickle.encode(responsePackage("Failure","Could not create an item"),unpicklable=False)
-        return jsonpickle.encode(responsePackage("success","Item created"),unpicklable=False)
+        return jsonpickle.encode(responsePackage({"status":"Success","itemId":ID}),unpicklable=False)
         
 
 
@@ -702,7 +702,7 @@ def respondToDonationRequest():
                 itemQuantity = item["hits"]["hits"][0]["_source"]["quantity"]
                 # print(itemQuantity)
                 finalQuantity = reqQuantity - itemQuantity
-                source = "ctx._source.quantity = %s"%(str(finalQuantity))
+                source = "ctx._source.quantity = %d"%(finalQuantity)
                 result3 = es.update(index="donations" , id = reqId , body = {"script" : {"source": source}})
                 # return result3
             elif actionTaken == "decline":
