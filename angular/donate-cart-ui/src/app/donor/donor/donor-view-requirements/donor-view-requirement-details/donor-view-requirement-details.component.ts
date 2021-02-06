@@ -54,7 +54,7 @@ export class DonorViewRequirementDetailsComponent implements OnInit {
       donorUpdates.push(new DonorUpdate(data["itemId"],this.item.name,this.item.category,
      this.item.subcategory,form.value.quantity,form.value.quality,form.value.details,this.baseUrl+"/uploads/"+data["itemId"]+".jpg",new Date().toISOString(),itemUpdates))
       this.donorService.setDonorUpdates(donorUpdates);
-
+      console.log(donorUpdates);
       form.reset();
 
       this.toggleDonateMode();

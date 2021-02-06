@@ -364,23 +364,23 @@ def approveRejectNGO():
 def requestItem():
     if request.method == "POST":
         try:
-            data = json.loads(request.data)
+            #data = json.loads(request.data)
             #del data["itemId"]
-            print(data)
+            #print(data)
            
-            category = data["category"]
-            subCategory = data["subcategory"]
-            name = data["name"]
-            details = data["details"]
-            quantity = data["quantity"]
-            pincode = data["pincode"]
-            ngoId = data["ngoId"]
-            itemId = data["itemId"]
-            public = data["public"]
-            ngoName = data["ngoName"]
+            category = request.form["category"]
+            subCategory = request.form["subcategory"]
+            name = request.form["name"]
+            details = request.form["details"]
+            quantity = request.form["quantity"]
+            pincode = request.form["pincode"]
+            ngoId = request.form["ngoId"]
+            itemId = request.form["itemId"]
+            public = request.form["public"]
+            ngoName = request.form["ngoName"]
             print(itemId)
             
-            print("Query=",query)
+            
             
             
             date = datetime.datetime.now(datetime.timezone.utc) #changed to using utc format or else time and date will be different for users living in different areas
@@ -410,8 +410,8 @@ def requestItem():
         except Exception as e: 
             print(e)
             print("Error in request item function")
-            response = responsePackage("Failure","Something went wrong")
-            return response
+            return jsonpickle.encode(responsePackage("Error","Couldn't perform action"),unpicklable=False)
+            
         response = json.dumps({"status":"Success","requirementId":requirementID})
         return response
 
@@ -1089,10 +1089,8 @@ def getUpdatesForNGO():
                         }
                     }
                     result.append(item)
-                if obj["_source"]["docType"] == "update":
+                if obj["_source"]["docType"] == "update":                    
                     
-                    #requirementID = obj["_source"]["_id"]
-                    # updateType,itemId,reqId,ngoId,donorId,itemQuantity,itemQuality,itemDetails,messageFrom,message
                     updateType = obj["_source"]["updateType"]
                     if "itemId" in obj["_source"]:
                         itemId = obj["_source"]["itemId"]
@@ -1122,9 +1120,10 @@ def getUpdatesForNGO():
                         itemQuality = obj["_source"]["quality"]
                     else:
                         itemQuality = ""
+                    
                     itemImgLink = ""
-                    if "itemImageLink" in obj["_source"]:
-                        itmImgLink = obj["_source"]["itemImageLink"]
+                    if "imageLink" in obj["_source"]:
+                        itemImgLink = obj["_source"]["imageLink"]
                         
                     pincode = ""
                     if "pincode" in obj["_source"]:
