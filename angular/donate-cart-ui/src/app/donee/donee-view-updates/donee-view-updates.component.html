@@ -151,6 +151,24 @@
               </div>
             </div>
       </div>
+      <div *ngSwitchCase = "'requirementDeleted'" id="requirementDeletedUpdate">
+        <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">{{update.updateDate | date:'medium'}}</h5>
+              <h6 class="card-subtitle mb-2 text-muted">{{update.updateType}}</h6>
+              <p class="card-text">You have deleted this requirement</p>
+            </div>
+          </div>
+    </div>
+    <div *ngSwitchCase = "'itemDeleted'" id="itemDeletedUpdate">
+      <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">{{update.updateDate | date:'medium'}}</h5>
+            <h6 class="card-subtitle mb-2 text-muted">{{update.updateType}}</h6>
+            <p class="card-text">Donor deleted this item</p>
+          </div>
+        </div>
+  </div>
       <div *ngSwitchCase = "'noupdate'" id="noupdateUpdate">
           <h5> No Updates for this Item</h5>
        </div>

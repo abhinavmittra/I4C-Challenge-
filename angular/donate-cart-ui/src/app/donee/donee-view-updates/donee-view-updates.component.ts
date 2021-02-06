@@ -14,7 +14,7 @@ export class DoneeViewUpdatesComponent implements OnInit {
 
   constructor(private authService:AuthService,private doneeService:DoneeService) { }
   
- baseUrlForImage = "http://127.0.0.1:5000/";
+ baseUrlForImage = "http://127.0.0.1:5000";
  doneeUpdates:DoneeUpdate[]=[];
  doneeUpdatesChanged:Subscription;
   

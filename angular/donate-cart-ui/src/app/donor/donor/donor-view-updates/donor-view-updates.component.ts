@@ -13,7 +13,7 @@ export class DonorViewUpdatesComponent implements OnInit {
 
   constructor(private donorService:DonorService,private authService:AuthService) { }
 
- baseUrlForImage = "http://127.0.0.1:5000/";
+ baseUrlForImage = "http://127.0.0.1:5000";
   donorUpdates:DonorUpdate[]=[];
   donorUpdatesChanged:Subscription;
 
@@ -140,7 +140,7 @@ export class DonorViewUpdatesComponent implements OnInit {
   }
 
   deleteItem(itemIndex:number){
-
+    console.log(this.donorUpdates[itemIndex].itemId)
     this.donorService.deleteItem(    
     this.donorUpdates[itemIndex].itemId,
     this.authService.getUserId()

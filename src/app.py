@@ -133,7 +133,7 @@ def createUserAccount():
         try:
             # print (request.data)
             data = json.loads(request.data)
-            email = data ["email"]
+            email = data ["Email"]
             # print (data)
             query = '{"query":{"term":{"email": "%s"}}}'%(email)
             emailExists = es.search(index="accounts", body=query)
@@ -147,12 +147,12 @@ def createUserAccount():
                 data["userType"] = "donor"
                 
                 query = {
-                        "name":data["name"],
-                        "passwordHash":data["password"],
-                        "address":data["address"],
-                        "phone":data["email"],
-                        "email":data["email"],
-                        "pincode":data["pincode"],
+                        "name":data["Name"],
+                        "passwordHash":data["PasswordHash"],
+                        "address":data["Address"],
+                        "phone":data["Phone"],
+                        "email":data["Email"],
+                        "pincode":data["Pincode"],
                         "userType":data["userType"],
                         "numberOfRatings":data["numberOfRatings"],
                         "averageRating":data["averageRating"]
@@ -160,7 +160,7 @@ def createUserAccount():
                 
                 res = es.index(index = "accounts", body = query)
                 result = responsePackage("Success","User created successfully")
-                result = jsonpickle.encode(responsePackage)
+                result = jsonpickle.encode(result,unpicklable=False)
         except Exception as e: 
             print(e)
             return jsonpickle.encode(responsePackage("Error","Couldn't create user"),unpicklable=False)
@@ -173,7 +173,7 @@ def createNgoAccount():
         try:
             # print (request.data)
             data = json.loads(request.data)
-            email = data ["email"]
+            email = data ["Email"]
             # print (data)
             query = '{"query":{"term":{"email": "%s"}}}'%(email)
             emailExists = es.search(index="accounts", body=query)
@@ -186,22 +186,22 @@ def createNgoAccount():
             #commenting it out because new architecture requires the field to be missing to check for unverified ngos
                 #data["verifiedNgoFlag"] = "false" 
                 query = {
-                    "ngoName":data["name"],
-                    "address":data["address"],
-                    "email":data["email"],
-                    "phone":data["phone"],
-                    "website":data["website"],
-                    "pincode":data["pincode"],
-                    "passwordHash":data["password"],
+                    "ngoName":data["NGOName"],
+                    "address":data["Address"],
+                    "email":data["Email"],
+                    "phone":data["Phone"],
+                    "website":data["Website"],
+                    "pincode":data["Pincode"],
+                    "passwordHash":data["PasswordHash"],
                     "userType":"NGO",
-                    "pan":data["panno"],
+                    "pan":data["PAN"],
                     "description":data["description"]
                     
                 }
                 
                 res = es.index(index = "accounts", body = query)
                 result = responsePackage("Success","Ngo Account created successfully")
-                result = jsonpickle.encode(result)
+                result = jsonpickle.encode(result,unpicklable=False)
         except Exception as e: 
             print(e)
             return jsonpickle.encode(responsePackage("Failure","Couldn't create ngo account"),unpicklable=False)
@@ -404,7 +404,19 @@ def requestItem():
             res = es.get(index="donations", id=itemId)
             donorId = res["_source"]["donorId"]
             
-            query = {"docType":"update","updateType":"donateRequest","ngoId":ngoId,"itemId":itemId,"donorId":donorId,"requirementId":requirementID,"date":date,"details":details,"ngoName":ngoName,"pincode":pincode}
+            query = {
+            "docType":"update",
+            "updateType":"donateRequest",
+            "ngoId":ngoId,
+            "itemId":itemId,
+            "donorId":donorId,
+            "requirementId":requirementID,
+            "quantity":quantity,
+            "date":date,
+            "details":details,
+            "ngoName":ngoName,
+            "pincode":pincode
+            }
             result = es.index(index="donations", body=query)
             response = responsePackage("Success","Requested Item")
         except Exception as e: 
@@ -703,8 +715,10 @@ def respondToDonationRequest():
                 item = es.search(index = "donations", body = {"query": {"term": {"_id": itemId}}})
                 itemQuantity = item["hits"]["hits"][0]["_source"]["quantity"]
                 # print(itemQuantity)
-                finalQuantity = reqQuantity - itemQuantity
-                source = "ctx._source.quantity = %d"%(int(finalQuantity))
+                #finalQuantity = reqQuantity - itemQuantity
+                #print(finalQuantity)
+                print(itemQuantity)
+                source = "ctx._source.quantity -= %d"%(int(itemQuantity))
                 result3 = es.update(index="donations" , id = reqId , body = {"script" : {"source": source}})
                 # return result3
             elif actionTaken == "decline":
@@ -744,7 +758,7 @@ def respondToDonationRequest():
 
 #endpoint that returns the image once hit with the url and filename
 
-#function for and NGO to accept or decline a donation request 
+#function for an NGO to accept or decline a donation request 
 @app.route('/accept_decline_donation',methods=['POST'])
 def acceptDeclineDonation():
     if request.method == "POST":
@@ -778,6 +792,7 @@ def acceptDeclineDonation():
                 source = "ctx._source.quantity -= %d"%(int(itemQuantity))
                 res3 = es.update(index="donations" , id = requirementId , body = {"script" : {"source": source}})
                 return jsonpickle.encode(responsePackage("success","Accepted donation"),unpicklable=False)
+               
             elif actionToken == "decline":
                 query1 = {
                             "docType": "update",
@@ -878,6 +893,8 @@ def deleteRequirement():
             ngoId = data["ngoId"]
             #chnging quantity to 0
             res1 = es.update(index = "donations", id = reqId, body = {"script" : {"source": "ctx._source.quantity = 0"}})
+            #setting publicFlag to false
+            res1 = es.update(index = "donations", id = reqId, body = {"script" : {"source": "ctx._source.publicFlag = false"}})
             #get all updates for that requirement Id
             res2 = es.search(index = "donations", body ={"query": {"bool":{"must": [{ "term" : { "updateType" : "donateRequest" } },{ "term" : {"requirementId" : reqId} }]}}})
             requirementList = []

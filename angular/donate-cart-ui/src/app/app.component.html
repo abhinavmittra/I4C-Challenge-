@@ -7,7 +7,7 @@
     </h1>
     
    
-   <div class="ms-1"> <a routerLink="/login">Log out</a></div>
+   <div class="ms-1"> <a routerLink="/login" *ngIf="showLogOut">Log out</a></div>
     
   </div>
 </header>
@@ -25,7 +25,7 @@
 <footer class="footer mt-auto py-3 bg-dark">
   <div class="container" style="text-align: center;">
     <span class="text-muted"><a href="https://www.uandifoundation.com/">Contact Us</a></span>
-    <span> </span>
-    <span class="text-muted"><a href="https://www.incometaxindia.gov.in/Pages/utilities/exempted-institutions.aspx">Income Tax Dept</a></span>
+    
+    
   </div>
 </footer>

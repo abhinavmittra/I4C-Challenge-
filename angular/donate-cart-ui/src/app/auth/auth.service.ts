@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient,HttpHeaders } from '@angular/common/http';
 import { Donee } from '../model/donee';
 import { Donor } from '../model/donor';
+import { BehaviorSubject} from 'rxjs'
 @Injectable({
   providedIn: 'root'
 })
@@ -13,7 +14,7 @@ export class AuthService {
   address:string = null;
   pincode:string = null;
   pan:string = null;
-
+  showLogout = new BehaviorSubject<boolean>(false);
   constructor(private httpClient: HttpClient) { }
   public loginUrl = "http://127.0.0.1:5000/authenticate";
   public registerDonorUrl = "http://127.0.0.1:5000/createUserAccount";
@@ -33,7 +34,7 @@ export class AuthService {
 
   }
   registerDonee(donee:Donee){
-    return this.httpClient.post<any>(this.registerDoneeUrl,{"NGOName":donee.name,"Website":donee.website,"PAN":donee.panno,"Address":donee.address,"website":donee.website,
+    return this.httpClient.post<any>(this.registerDoneeUrl,{"NGOName":donee.name,"Website":donee.website,"PAN":donee.panno,"Address":donee.address,"description":donee.description,
   "Phone":donee.phone,"Email":donee.email,"Pincode":donee.pincode,"PasswordHash":donee.password,"UserType":"NGO"},this.headerOptions);
   }
   loginUser(email:string,pass:string){

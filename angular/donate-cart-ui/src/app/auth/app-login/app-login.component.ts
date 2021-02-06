@@ -22,7 +22,9 @@ export class AppLoginComponent implements OnInit {
           this.authService.setUserId(data['id']);
           this.authService.setPincode(data['pincode']);
           this.authService.setName(data['name'])
+          this.authService.showLogout.next(true);
           this.router.navigate(['donor']);
+          
         }
 
       }
@@ -31,13 +33,14 @@ export class AppLoginComponent implements OnInit {
           this.authService.setUserId(data['id']);
           this.authService.setPincode(data['pincode']);
           this.authService.setName(data['ngoName']);
+          this.authService.showLogout.next(true);
           this.router.navigate(['donee']);
         }
       }
       else if(data['role']=="admin"){
         if(data['pass']==true){
           this.authService.setUserId(data['id']);
-          
+          this.authService.showLogout.next(true);
           this.router.navigate(['admin']);
         }
       }

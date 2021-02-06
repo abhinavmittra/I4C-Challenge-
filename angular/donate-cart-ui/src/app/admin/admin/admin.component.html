@@ -7,7 +7,7 @@
 </div>
 <h5 *ngIf="ngoRegRequests.length==0"> No pending approvals</h5>
 <div class="container" *ngIf = "!loadingFlag&&(ngoRegRequests.length!=0)">
-    <h3>Registrations waiting for Approval</h3>
+    <h3>NGO Registrations waiting for Approval</h3>
 <table class="table">
     <thead>
         <tr>  
@@ -46,4 +46,7 @@
     </tr>
 </tbody>
 </table>
+
+
+<p class="mt-3 fs-5 fw-bold lh-base">Income Tax Link for your reference is given<span class="text-muted"><a href="https://www.incometaxindia.gov.in/Pages/utilities/exempted-institutions.aspx">here</a></span></p>
 </div>
