@@ -1071,7 +1071,7 @@ def getUpdatesForNGO():
             result = []
             count = 0
             
-            print(res)
+            
             for obj in res["hits"]['hits']: 
                 
                 if obj["_source"]["docType"] == "requirement":
@@ -1111,7 +1111,7 @@ def getUpdatesForNGO():
                     if "ngoName" in obj["_source"]:
                         ngoName = obj["_source"]["ngoName"]
                     else: 
-                        donorId = ""
+                        ngoName = ""
                     if "quantity" in obj["_source"]:
                         itemQuantity = obj["_source"]["quantity"]
                     else:
@@ -1235,6 +1235,8 @@ def sendMessageToNgo():
             ngoId = data ["ngoId"]
             itemId = data["itemId"]
             donorId  = data["donorId"]
+            res = es.search(index="accounts",body={"query":{"term":{"_id":ngoId}}})
+            ngoName = res["hits"]["hits"][0]["_source"]["ngoName"]
             query = {
                 "docType" : "update",
                 "updateType" : "message",
@@ -1244,6 +1246,7 @@ def sendMessageToNgo():
                 "ngoId" : ngoId,
                 "itemId" : itemId,
                 "messageFrom": "donor",
+                "ngoName":ngoName,
                 "date": datetime.datetime.now(datetime.timezone.utc)
             }
             res = es.index(index = "donations", body =(query))
@@ -1264,6 +1267,8 @@ def sendMessageToDonor():
             ngoId = data ["ngoId"]
             itemId = data["itemId"]
             donorId  = data["donorId"]
+            res = es.search(index="accounts",body={"query":{"term":{"_id":ngoId}}})
+            ngoName = res["hits"]["hits"][0]["_source"]["ngoName"]
             query = {
                 "docType" : "update",
                 "updateType" : "message",
@@ -1273,6 +1278,7 @@ def sendMessageToDonor():
                 "ngoId" : ngoId,
                 "itemId" : itemId,
                 "messageFrom": "NGO",
+                "ngoName":ngoName,
                 "date": datetime.datetime.now(datetime.timezone.utc)
             }
             res = es.index(index = "donations", body =(query))

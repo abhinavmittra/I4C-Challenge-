@@ -23,7 +23,7 @@ export class DonorService {
   public donateItemUrl = "http://127.0.0.1:5000/respondToRequirement";
   public createDonationItemUrl = "http://127.0.0.1:5000/donateItemPublic";
   public viewItemUpdatesUrl = "http://127.0.0.1:5000/getUpdatesForDonor";
-  public sendMessageUrl = "http://127.0.0.1:5000/sendMessageToNGO"
+  public sendMessageUrl = "http://127.0.0.1:5000/sendMessageToNgo"
   public acceptOrRejectUrl = "http://127.0.0.1:5000/respondToDonationRequest"
   public deleteItemUrl = "http://127.0.0.1:5000/deleteItem"
 
