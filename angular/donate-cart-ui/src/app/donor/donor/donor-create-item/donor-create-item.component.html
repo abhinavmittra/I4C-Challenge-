@@ -2,7 +2,7 @@
 <div class="container">
     <h3>Enter the item details</h3>
     <form #itemDonationForm="ngForm" (ngSubmit)="onSubmit(itemDonationForm)">
-        <div class="form-group">
+        <div class="mb-3">
             <label for="itemName">Name</label>
             <input type="text" id="itemName" class="form-control" 
             ngModel
@@ -10,7 +10,7 @@
             required
             >
         </div>
-        <div class="form-group">
+        <div class="mb-3">
             <label for="itemCategory">Category</label>
             <input type="text" id="itemCategory" class="form-control" 
             ngModel
@@ -18,7 +18,7 @@
             required
             >
         </div>
-        <div class="form-group">
+        <div class="mb-3">
             <label for="itemSubcategory">Sub Category</label>
             <input type="text" id="itemSubcategory" class="form-control" 
             ngModel
@@ -26,7 +26,7 @@
             required
             >
         </div>
-        <div class="form-group">
+        <div class="mb-3">
             <label for="itemQuantity">Quantity</label>
             <input type="number" id="itemQuantity" class="form-control" 
             ngModel
@@ -35,7 +35,7 @@
            
             >
         </div>
-        <div class="form-group">
+        <div class="mb-3">
             <label for="itemQuality">Quality</label>
                     <input type="text" id="itemQuality" class="form-control" 
                     ngModel
@@ -43,7 +43,7 @@
                     required
                     >
             </div>
-        <div class="form-group">
+        <div class="mb-3">
         <label for="itemDetails">Details</label>
                 <input type="text" id="itemDetails" class="form-control" 
                 ngModel
@@ -51,7 +51,7 @@
                 required
                 >
         </div>
-        <div class="form-group">
+        <div class="mb-3">
         <label for="itemImage">Upload an Image</label>
         <input type="file" id="itemImage" class="form-control" (change)="onFileSelected($event)"
         ngModel

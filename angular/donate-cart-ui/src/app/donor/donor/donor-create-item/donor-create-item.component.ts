@@ -12,6 +12,7 @@ export class DonorCreateItemComponent implements OnInit {
 
   constructor(private donorService:DonorService,private authService:AuthService) { }
   selectedImage:File = null;
+  baseUrl = "http:127.0.0.1:5000"
   ngOnInit(): void {
     
 
@@ -35,11 +36,11 @@ export class DonorCreateItemComponent implements OnInit {
       var donorUpdates:DonorUpdate[];
       donorUpdates =  this.donorService.getDonorUpdates();
  
-      //TODO
-      var reqUpdates = {"updateType":"noupdate"}
-      //donorUpdates.push(new DonorUpdate(data["itemId"],form.value.name,form.value.category,
-      //form.value.subcategory,form.value.quantity,form.value.details,new Date().toISOString(),reqUpdates))
-      //this.donorService.setDonorUpdates(doneeUpdates);
+     
+      var itemUpdates = {"updateType":"noupdate"}
+      donorUpdates.push(new DonorUpdate(data["itemId"],form.value.name,form.value.category,
+      form.value.subcategory,form.value.quantity,form.value.quality,form.value.details,this.baseUrl+"/uploads/"+data["itemId"],new Date().toISOString(),itemUpdates))
+      this.donorService.setDonorUpdates(donorUpdates);
     });
   }
 
