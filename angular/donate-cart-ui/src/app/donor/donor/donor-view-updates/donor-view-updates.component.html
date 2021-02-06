@@ -1,4 +1,14 @@
-<div class="container">
+<div class="container" id="msgBody" *ngIf="msgMode">
+        
+    <div class="form-floating mb-3">
+      <textarea class="form-control" [(ngModel)]="messageBody" placeholder="Type your Message here" id="floatingTextarea2" style="height: 100px"></textarea>
+      <label for="floatingTextarea2">Your Message</label>
+    </div>
+    <button class="btn btn-outline-secondary" (click)="sendMessage()">Send</button>
+    <button class="btn btn-outline-secondary" (click)="showUpdates()">Back</button>
+</div>  
+
+<div class="container" *ngIf="!msgMode">
     <h3>Donations offered by you</h3>
     <ng-container *ngFor="let item of donorUpdates;index as i">  
             <div class="card mt-3">
@@ -93,7 +103,7 @@
                   <h5 class="card-title">{{update.updateDate | date:'medium'}}</h5>
                   <h6 class="card-subtitle mb-2 text-muted">{{update.updateType}}</h6>
                   <p class="card-text">You have accepted {{update.ngoName}}'s request</p>
-                  <button class="btn btn-outline-secondary" (click)="sendMessage(i,j)">Send Message</button>  
+                  <button class="btn btn-outline-secondary" (click)="setMsgIndex(i,j)">Send Message</button>  
                 </div>
               </div>
         </div>
@@ -112,7 +122,7 @@
                   <h5 class="card-title">{{update.updateDate | date:'medium'}}</h5>
                   <h6 class="card-subtitle mb-2 text-muted">{{update.updateType}}</h6>
                   <p class="card-text">{{update.ngoName}} accepted your offer</p>
-                  <button class="btn btn-outline-secondary" (click)="sendMessage(i,j)">Send Message</button>  
+                  <button class="btn btn-outline-secondary" (click)="setMsgIndex(i,j)">Send Message</button>  
                 </div>
               </div>
         </div>

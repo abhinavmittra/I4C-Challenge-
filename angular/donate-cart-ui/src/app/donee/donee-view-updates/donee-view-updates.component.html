@@ -1,26 +1,15 @@
-<div class="modal" id="exampleModal"  aria-labelledby="exampleModalLabel" aria-hidden="true" [class.hide]="!showModal">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Send Message</h5>
-        <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"></button>
-      </div>
-      <div class="modal-body">
-        <div class="form-floating">
+<div class="container" id="msgBody" *ngIf="msgMode">
+        
+        <div class="form-floating mb-3">
           <textarea class="form-control" [(ngModel)]="messageBody" placeholder="Type your Message here" id="floatingTextarea2" style="height: 100px"></textarea>
           <label for="floatingTextarea2">Your Message</label>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" (click)="closeModal()">Close</button>
-        <button type="button" class="btn btn-primary" (click)="sendMessage()">Send</button>
-      </div>
-    </div>
-  </div>
-</div>
+        <button class="btn btn-outline-secondary" (click)="sendMessage()">Send</button>
+        <button class="btn btn-outline-secondary" (click)="showUpdates()">Back</button>
+</div>   
 
 
-<div class="container">
+<div class="container" id="updates" *ngIf="!msgMode">
   <h3>Requirements posted by you</h3>
   <ng-container *ngFor="let item of doneeUpdates;index as i">  
           <div class="card mt-3">
@@ -145,7 +134,7 @@
                 <h5 class="card-title">{{update.updateDate | date:'medium'}}</h5>
                 <h6 class="card-subtitle mb-2 text-muted">{{update.updateType}}</h6>
                 <p class="card-text">You have accepted {{update.donorId}}'s offer</p>
-                <button class="btn btn-outline-secondary" (click)="sendMessage(i,j)">Send Message</button>  
+                <button class="btn btn-outline-secondary" (click)="setMsgIndex(i,j)">Send Message</button>  
                 <button type="button" class="btn btn-outline-secondary" (click)="markReceived(i,j)">
                   Mark Received
                 </button>

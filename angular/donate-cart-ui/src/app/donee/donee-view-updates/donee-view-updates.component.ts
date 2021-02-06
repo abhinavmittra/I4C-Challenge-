@@ -17,10 +17,10 @@ export class DoneeViewUpdatesComponent implements OnInit {
  baseUrlForImage = "http://127.0.0.1:5000/";
  doneeUpdates:DoneeUpdate[]=[];
  doneeUpdatesChanged:Subscription;
-  showModal :boolean = false;
+  
  selectedReqUpdates:RequirementUpdate[]=[];
  visibleReqUpdate:boolean[]=[]; //check which item's updates are being viewed
-  
+  msgMode :boolean = false;
  reqIdx:number = null;
  updateIdx:number = null;
  messageBody:string = "";
@@ -54,9 +54,7 @@ export class DoneeViewUpdatesComponent implements OnInit {
      
     }
 
-  closeModal(){
-    this.showModal = false;
-  }
+  
 
     viewReqUpdates(index:number){
 
@@ -128,34 +126,55 @@ export class DoneeViewUpdatesComponent implements OnInit {
   
     sendMessage(){
     
-      this.showModal = false;
-      //get text from input field for message and send post req to server with reqId,donorId,itemId,ngoId
+      const message = this.messageBody
+      this.doneeService.sendMessageToDonor(this.doneeUpdates[this.reqIdx].reqUpdates[this.updateIdx]["reqId"],
+      this.doneeUpdates[this.reqIdx].reqUpdates[this.updateIdx]["itemId"],
+      this.doneeUpdates[this.reqIdx].reqUpdates[this.updateIdx]["donorId"],
+      this.doneeUpdates[this.reqIdx].reqUpdates[this.updateIdx]["ngoId"],
+      message).subscribe((data)=>{
+        console.log(data)
+      }
+      )
 
-      //this.doneeService.sendMessageToDonor(this.doneeUpdates[this.reqIdx].reqUpdates[this.updateIdx]["reqId"],
-      //this.doneeUpdates[this.reqIdx].reqUpdates[this.updateIdx]["itemId"],
-      //this.doneeUpdates[this.reqIdx].reqUpdates[this.updateIdx]["donorId"],
-      //this.doneeUpdates[this.reqIdx].reqUpdates[this.updateIdx]["reqIdngoId"],
-      //this.messageBody).subscribe((data)=>{
-      //  console.log(data)
-      //})
-      this.messageBody="";
+      this.msgMode = false;
+      
+      
     }
-
+    showUpdates(){
+      this.msgMode = false;
+    }
     setMsgIndex(reqIdx:number,updateIdx:number){
       this.reqIdx = reqIdx;
       this.updateIdx = updateIdx;
-      this.showModal = true;
-
+     this.msgMode = true;
+      this.messageBody ="";
       console.log(this.reqIdx,this.updateIdx);
     }
 
     markReceived(reqIdx:number,updateIdx:number){
-      this.doneeService.markReceived(this.doneeUpdates[this.reqIdx].reqUpdates[updateIdx]["reqId"],
+      //check if received update already exists for itemId, if not then mark received otherwise 
+      
+      var receivedFlag = false;
+      const itemId = this.doneeUpdates[reqIdx].reqUpdates[updateIdx]["itemId"];
+      for(var i =0;i<this.doneeUpdates[reqIdx].reqUpdates.length;i++){
+        if(this.doneeUpdates[reqIdx].reqUpdates[i]["updateType"]=="received"&&itemId==this.doneeUpdates[reqIdx].reqUpdates[i]["itemId"]){
+          receivedFlag = true;
+          alert("Already received")
+          console.log("This item has already been received")
+        }
+      }
+    
+
+
+      if(!receivedFlag){
+
+      this.doneeService.markReceived(this.doneeUpdates[reqIdx].reqUpdates[updateIdx]["reqId"],
       this.doneeUpdates[reqIdx].reqUpdates[updateIdx]["itemId"],
       this.doneeUpdates[reqIdx].reqUpdates[updateIdx]["donorId"],
       this.doneeUpdates[reqIdx].reqUpdates[updateIdx]["ngoId"]).subscribe((data)=>{
        console.log(data)
       })
+    }
     }
 
     deleteReq(reqIndex:number){
@@ -168,6 +187,20 @@ export class DoneeViewUpdatesComponent implements OnInit {
     }
 
     acceptOrReject(reqIndex:number,updateIdx:number,actionTaken:string){
+      //validate first if it has been accepted or rejected
+      var actionPerformed = false;
+      const itemId = this.doneeUpdates[reqIndex].reqUpdates[updateIdx]["itemId"];
+      for(var i =0;i<this.doneeUpdates[reqIndex].reqUpdates.length;i++){
+        if((this.doneeUpdates[reqIndex].reqUpdates[i]["updateType"]=="acceptDonation"||this.doneeUpdates[reqIndex].reqUpdates[i]["updateType"]=="declineDonation")&&itemId==this.doneeUpdates[reqIndex].reqUpdates[i]["itemId"]){
+          actionPerformed= true;
+          alert("You have already accepted or declined this item")
+          
+        }
+      }
+
+
+      if(!actionPerformed){
+
       this.doneeService.acceptOrReject(
         this.doneeUpdates[this.reqIdx].reqUpdates[this.updateIdx]["reqId"],
       this.doneeUpdates[this.reqIdx].reqUpdates[this.updateIdx]["itemId"],
@@ -177,5 +210,6 @@ export class DoneeViewUpdatesComponent implements OnInit {
        console.log(data)
       });
     }
+  }
   
 }

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { AuthService } from 'src/app/auth/auth.service';
 import { DonorService } from '../../donor.service';
+import {DonorUpdate} from '../../../model/donor-update'
 @Component({
   selector: 'app-donor-create-item',
   templateUrl: './donor-create-item.component.html',
@@ -31,7 +32,14 @@ export class DonorCreateItemComponent implements OnInit {
 
     //send post req with submitForm attached to server to create new item in db
     this.donorService.createDonationItem(submitForm).subscribe((data)=>{
-    console.log(data)
+      var donorUpdates:DonorUpdate[];
+      donorUpdates =  this.donorService.getDonorUpdates();
+ 
+      //TODO
+      var reqUpdates = {"updateType":"noupdate"}
+      //donorUpdates.push(new DonorUpdate(data["itemId"],form.value.name,form.value.category,
+      //form.value.subcategory,form.value.quantity,form.value.details,new Date().toISOString(),reqUpdates))
+      //this.donorService.setDonorUpdates(doneeUpdates);
     });
   }
 

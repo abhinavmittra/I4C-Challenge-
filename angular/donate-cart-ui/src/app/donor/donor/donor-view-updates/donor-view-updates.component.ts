@@ -19,7 +19,10 @@ export class DonorViewUpdatesComponent implements OnInit {
 
   selectedItemUpdates:ItemUpdate[]=[];
   visibleItemUpdate:boolean[]=[]; //check which item's updates are being viewed
-  
+  messageBody:string="";
+  itemIdx:number=null;
+  updateIdx:number=null;
+  msgMode:boolean = false;
   ngOnInit(): void {
     this.getDonorUpdates();   
   }
@@ -108,11 +111,33 @@ export class DonorViewUpdatesComponent implements OnInit {
     console.log(actionTaken)
   }
 
-  sendMessage(itemIndex:number,updateIndex:number){
-    console.log("Item idx"+itemIndex);
-    console.log("update Idx"+updateIndex);
-    //get text from input field for message and send post req to server with reqId,donorId,itemId,ngoId
+  sendMessage(){
+    
+    const message = this.messageBody
+    this.donorService.sendMessageToNgo(this.donorUpdates[this.itemIdx].itemUpdates[this.updateIdx]["reqId"],
+    this.donorUpdates[this.itemIdx].itemUpdates[this.updateIdx]["itemId"],
+    this.donorUpdates[this.itemIdx].itemUpdates[this.updateIdx]["donorId"],
+    this.donorUpdates[this.itemIdx].itemUpdates[this.updateIdx]["ngoId"],
+    message).subscribe((data)=>{
+      console.log(data)
+    }
+    )
+
+    this.msgMode = false;
+    
+    
   }
+  showUpdates(){
+    this.msgMode = false;
+  }
+  setMsgIndex(itemIdx:number,updateIdx:number){
+    this.itemIdx = itemIdx;
+    this.updateIdx = updateIdx;
+   this.msgMode = true;
+    this.messageBody ="";
+    
+  }
+
   deleteItem(itemIndex:number){
 
     this.donorService.deleteItem(    
@@ -125,6 +150,23 @@ export class DonorViewUpdatesComponent implements OnInit {
 }
 
 acceptOrReject(itemIndex:number,updateIdx:number,actionTaken:string){
+
+  var actionPerformed = false;
+  const reqId = this.donorUpdates[itemIndex].itemUpdates[updateIdx]["requirementId"];
+  for(var i =0;i<this.donorUpdates[itemIndex].itemUpdates.length;i++){
+    if((this.donorUpdates[itemIndex].itemUpdates[i]["updateType"]=="accept"||this.donorUpdates[itemIndex].itemUpdates[i]["updateType"]=="decline")&&reqId==this.donorUpdates[itemIndex].itemUpdates[i]["requirementId"]){
+      actionPerformed= true;
+      alert("You have already accepted or declined this requirement")
+      
+    }
+  }
+
+
+  if(!actionPerformed){
+
+
+
+
   this.donorService.acceptOrReject(
     this.donorUpdates[itemIndex].itemUpdates[updateIdx]["reqId"],
   this.donorUpdates[itemIndex].itemUpdates[updateIdx]["itemId"],
@@ -134,6 +176,7 @@ acceptOrReject(itemIndex:number,updateIdx:number,actionTaken:string){
   actionTaken).subscribe((data)=>{
    console.log(data)
   });
+}
 }
 
   ngOnDestroy(){
