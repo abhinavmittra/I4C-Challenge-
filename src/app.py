@@ -57,7 +57,7 @@ class donationItem:
 #class to define an item requirement object
 class itemRequirement:
      def __init__(self,ID,name,category,subcategory,details,quantity,ngoId,ngo):
-        self.ID =ID
+        self.requirementId =ID
         self.name = name
         self.category = category
         self.subcategory = subcategory
@@ -411,7 +411,8 @@ def requestItem():
             print(e)
             print("Error in request item function")
             response = responsePackage("Failure","Something went wrong")
-        response =jsonpickle.encode(response,unpicklable=False)
+            return response
+        response = json.dumps({"status":"Success","requirementId":requirementID})
         return response
 
 #fn to test code
@@ -422,9 +423,9 @@ def test():
         #res = es.get(index="donations", id=itemId)
        
 
-#       ID=json.loads(request.data)["ID"]
- #       res = es.update(index="donations",id = ID, body = {"doc": {"ngoName":json.loads(request.data)["ngoName"]}})
-        res=""
+        ID=json.loads(request.data)["ID"]
+        res = es.update(index="donations",id = ID, body = {"doc": {"imageLink":json.loads(request.data)["imageLink"]}})
+        
         return res
         
         
@@ -557,7 +558,7 @@ def getRequirements():
     if request.method == "GET":
         try:
         #TODO FOR SRIRAM -> CHECK PUBLIC FLAG HERE for true otherwise it will get all requests
-            res = es.search(index="donations", body={"query":{"bool":{"must": [{"term" : {"docType" : "requirement" }},{"range" : {"quantity" : { "gte" : 0}}}]}}})
+            res = es.search(index="donations", body={"query":{"bool":{"must": [{"term" : {"docType" : "requirement" }},{"term":{"publicFlag":"true"}},{"range" : {"quantity" : { "gte" : 0}}}]}}})
             print(res["hits"]['hits'][0]['_source']['details'])
             dataList = []
             
@@ -588,7 +589,7 @@ def respondToRequirement():
         try:
             donorID = request.form['donorId']
             category = request.form['category']
-            subcategory = request.form['subCategory']
+            subcategory = request.form['subcategory']
             itemname = request.form['name']
             requirementID = request.form['requirementId']
             NGOID = request.form['ngoId']
@@ -599,7 +600,7 @@ def respondToRequirement():
             public = request.form['public']
             date = datetime.datetime.now(datetime.timezone.utc)
             query1 = {
-                "doctype":"item",
+                "docType":"item",
                 "category":category,
                 "subCategory":subcategory,
                 "itemName":itemname,
@@ -619,14 +620,14 @@ def respondToRequirement():
                 filename = ID + '.' + f.filename.split('.')[1]
                 f.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
                 #Update item created with ImgLink
-                res = es.update(index = "donations", id = ID, body = {"doc": {"imageLink":"/uploads/"+ID}})
+                res = es.update(index = "donations", id = ID, body = {"doc": {"imageLink":"/uploads/"+ID+'.' + f.filename.split('.')[1]}})
             except:
                 print("error in image upload in respond to requirement")
                 return jsonpickle.encode(responsePackage("Failure","Error in image upload"),unpicklable=False)
             #get ngoName via ngoId
             res = es.search(index="accounts",body={"query":{"term":{"_id":NGOID}}})
             ngoName = res["hits"]["hits"][0]["_source"]["ngoName"]
-            imageLink = "/uploads/"+ID
+            imageLink = "/uploads/"+ID+'.' + f.filename.split('.')[1]
             query2 = {
                 "docType":"update",
                 "updateType":"donate",
@@ -638,6 +639,7 @@ def respondToRequirement():
                 "ngoName":ngoName,
                 "quantity":quantity,
                 "quality":quality,
+                "details":details,
                 "pincode":pincode,
                 "imageLink": imageLink
             }
@@ -645,7 +647,7 @@ def respondToRequirement():
         except Exception as e:
             print(e)
             return jsonpickle.encode(responsePackage("Failure","Error in respond to requirement"),unpicklable=False)
-        return jsonpickle.encode(responsePackage("success","Responded to requirement successfully"),unpicklable=False)
+        return json.dumps({"status":"Success","itemId":ID})
 
 @app.route("/respondToDonationRequest",methods=['POST'])    
 def respondToDonationRequest():
@@ -949,6 +951,7 @@ def getUpdatesForDonor():
                             "itemQuality" :obj["_source"]["quality"],
                             "itemDetails" : obj["_source"]["details"],
                             "itemDate" : obj["_source"]["date"],
+                            "itemImageLink":obj["_source"]["imageLink"],
                             "itemUpdates" : []
                         }
                     }

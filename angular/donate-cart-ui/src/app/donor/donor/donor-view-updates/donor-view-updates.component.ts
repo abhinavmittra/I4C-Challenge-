@@ -104,6 +104,7 @@ export class DonorViewUpdatesComponent implements OnInit {
   }
 
   viewItemImage(index:number){
+    
     window.open(this.baseUrlForImage+this.donorUpdates[index].itemImageLink)
   }
   respondToDonateReq(itemIndex:number,updateIndex:number,actionTaken:string){

@@ -3,6 +3,7 @@ import { NgForm } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/auth/auth.service';
 import { DonorService } from 'src/app/donor/donor.service';
+import { DonorUpdate } from 'src/app/model/donor-update';
 import { ItemRequirement } from 'src/app/model/item-requirement';
 
 @Component({
@@ -16,6 +17,7 @@ export class DonorViewRequirementDetailsComponent implements OnInit {
   item:ItemRequirement=null;
   donateMode:boolean = null;
   selectedImage:File = null;
+  baseUrl = "127.0.0.1:5000"
   ngOnInit(): void {
     this.donateMode = false;
     const itemIdx = +this.route.snapshot.paramMap.get('id')-1
@@ -44,7 +46,17 @@ export class DonorViewRequirementDetailsComponent implements OnInit {
     
     //send post req with submitForm attached to server to create new item in db
     this.donorService.donateItem(submitForm).subscribe((data)=>{
+      var donorUpdates:DonorUpdate[];
+      donorUpdates =  this.donorService.getDonorUpdates();
+ 
+     
+      var itemUpdates = {"updateType":"noupdate"}
+      donorUpdates.push(new DonorUpdate(data["itemId"],this.item.name,this.item.category,
+     this.item.subcategory,form.value.quantity,form.value.quality,form.value.details,this.baseUrl+"/uploads/"+data["itemId"]+".jpg",new Date().toISOString(),itemUpdates))
+      this.donorService.setDonorUpdates(donorUpdates);
+
       form.reset();
+
       this.toggleDonateMode();
     });
   }
