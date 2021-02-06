@@ -704,7 +704,7 @@ def respondToDonationRequest():
                 itemQuantity = item["hits"]["hits"][0]["_source"]["quantity"]
                 # print(itemQuantity)
                 finalQuantity = reqQuantity - itemQuantity
-                source = "ctx._source.quantity = %d"%(finalQuantity)
+                source = "ctx._source.quantity = %d"%(int(finalQuantity))
                 result3 = es.update(index="donations" , id = reqId , body = {"script" : {"source": source}})
                 # return result3
             elif actionTaken == "decline":
@@ -754,7 +754,7 @@ def acceptDeclineDonation():
             ngoId = data ["ngoId"]
             requirementId = data["requirementId"]
             itemId = data["itemId"]
-            actionToken = data["actionToken"]
+            actionToken = data["actionTaken"]
             res = es.search(index="accounts",body={"query":{"term":{"_id":ngoId}}})
             ngoName = res["hits"]["hits"][0]["_source"]["ngoName"]
             date = datetime.datetime.now(datetime.timezone.utc)
@@ -775,7 +775,7 @@ def acceptDeclineDonation():
                 #updating the quantity
                 item = es.search(index = "donations", body = {"query": {"term": {"_id": itemId}}})
                 itemQuantity = item["hits"]["hits"][0]["_source"]["quantity"]
-                source = "ctx._source.quantity -= %d"%(itemQuantity)
+                source = "ctx._source.quantity -= %d"%(int(itemQuantity))
                 res3 = es.update(index="donations" , id = requirementId , body = {"script" : {"source": source}})
                 return jsonpickle.encode(responsePackage("success","Accepted donation"),unpicklable=False)
             elif actionToken == "decline":

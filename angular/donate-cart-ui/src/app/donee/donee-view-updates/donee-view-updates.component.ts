@@ -187,7 +187,8 @@ export class DoneeViewUpdatesComponent implements OnInit {
     }
 
     acceptOrReject(reqIndex:number,updateIdx:number,actionTaken:string){
-      //validate first if it has been accepted or rejected
+      //validate first if it has been accepted or rejected'
+      console.log(reqIndex,updateIdx,actionTaken)
       var actionPerformed = false;
       const itemId = this.doneeUpdates[reqIndex].reqUpdates[updateIdx]["itemId"];
       for(var i =0;i<this.doneeUpdates[reqIndex].reqUpdates.length;i++){
@@ -202,10 +203,10 @@ export class DoneeViewUpdatesComponent implements OnInit {
       if(!actionPerformed){
 
       this.doneeService.acceptOrReject(
-        this.doneeUpdates[this.reqIdx].reqUpdates[this.updateIdx]["reqId"],
-      this.doneeUpdates[this.reqIdx].reqUpdates[this.updateIdx]["itemId"],
-      this.doneeUpdates[this.reqIdx].reqUpdates[this.updateIdx]["donorId"],
-      this.doneeUpdates[this.reqIdx].reqUpdates[this.updateIdx]["ngoId"],
+        this.doneeUpdates[reqIndex].reqUpdates[updateIdx]["reqId"],
+      this.doneeUpdates[reqIndex].reqUpdates[updateIdx]["itemId"],
+      this.doneeUpdates[reqIndex].reqUpdates[updateIdx]["donorId"],
+      this.doneeUpdates[reqIndex].reqUpdates[updateIdx]["ngoId"],
       actionTaken).subscribe((data)=>{
        console.log(data)
       });
