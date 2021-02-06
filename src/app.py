@@ -540,14 +540,14 @@ def donateItem():
                 print(filename)
                 f.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
                 #Update item created with ImgLink
-                res = es.update(index = "donations", id = ID, body = {"doc": {"imageLink":"/uploads/"+ID}})
+                res = es.update(index = "donations", id = ID, body = {"doc": {"imageLink":"/uploads/"+ID+'.'+f.filename.split('.')[1]}})
             except:
                 print("error in image upload")
                 return jsonpickle.encode(responsePackage("Failure","Error in image upload"),unpicklable=False)
         except Exception as e: 
             print(e)
             return jsonpickle.encode(responsePackage("Failure","Could not create an item"),unpicklable=False)
-        return jsonpickle.encode(responsePackage({"status":"Success","itemId":ID}),unpicklable=False)
+        return json.dumps({"status":"Success","itemId":ID})
         
 
 
