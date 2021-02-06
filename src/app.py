@@ -773,7 +773,7 @@ def acceptDeclineDonation():
                 #updating the quantity
                 item = es.search(index = "donations", body = {"query": {"term": {"_id": itemId}}})
                 itemQuantity = item["hits"]["hits"][0]["_source"]["quantity"]
-                source = "ctx._source.quantity -= %s"%(str(itemQuantity))
+                source = "ctx._source.quantity -= %d"%(itemQuantity)
                 res3 = es.update(index="donations" , id = requirementId , body = {"script" : {"source": source}})
                 return jsonpickle.encode(responsePackage("success","Accepted donation"),unpicklable=False)
             elif actionToken == "decline":
