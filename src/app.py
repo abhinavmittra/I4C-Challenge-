@@ -447,8 +447,44 @@ def test():
 def getItems():
     if request.method == "GET":
         try:
-            res = es.search(index="donations", body={"query":{"bool":{"must": [{"term" : {"docType" : "item" }},{"term":{"publicFlag":"true"}}],"must_not": [{"term" : {"donatedFlag": "true" }}]}}})
-            print(res["hits"]['hits'])
+            data = json.loads(request.data)
+            ngoId = data["ngoId"]
+            #get category, subcategory and pincode
+            result = es.search(index = "donations", body = {"size": 10,"query": {"bool":{"must": [{ "term" : { "docType" : "requirement" } },{ "term" : { "ngoId" : ngoId } }]}}})
+            # print (result)
+            items = result["hits"]["hits"]
+            if len(items) > 0:
+                pincode = items[0]["_source"]["pincode"]
+                subcategory = []
+                category = []
+                for item in items:
+                    subcategory.append(item["_source"]["subCategory"])
+                    category.append(item["_source"]["category"])
+            else:
+                pincode = ""
+                category = []
+                subcategory = []
+            # res = es.search(index="donations", body={"query":{"bool":{"must": [{"term" : {"docType" : "item" }},{"term":{"publicFlag":"true"}}],"must_not": [{"term" : {"donatedFlag": "true" }}]}}})
+            res = es.search(index = "donations" , body = {
+                "size": 10000,
+                "query":{
+                "bool":{
+                    "must": [
+                    { "term" : { "docType" : "item" } },
+                    { "term" : { "publicFlag" : "true" } }
+                    ],
+                    "must_not": [
+                    { "term" : { "donatedFlag": "true" } }
+                    ], 
+                    "should": [
+                    { "term" : { "pincode" : pincode} },
+                    { "terms" : {"category": category } },
+                    { "terms" : {"subCategory": subcategory } }
+                    ]
+                }
+                }
+            })
+            # print(res["hits"]['hits'])
             dataList = []
             for item in res["hits"]['hits']:
                 ID = item['_id']
@@ -460,7 +496,7 @@ def getItems():
                         if f.split('.')[0] == ID:
                             imglink = "/uploads/" + f
                             break
-                    print(imglink)
+                    # print(imglink)
                 except Exception as e:
                     print("error in finding file")
                     print(e)
@@ -510,7 +546,7 @@ def deleteRequirementDocument():
             data = json.loads(request.data)
             reqId = data["requirementId"]
             res = es.delete(index = "donations", id = reqId)
-            print(res)
+            # print(res)
         except Exception as e:
             print(e)
             return jsonpickle.encode(responsePackage("Error","Couldn't delete requirement"),unpicklable=False)
@@ -550,7 +586,7 @@ def donateItem():
             try:
                 f = request.files['image']
                 filename = ID + '.' + f.filename.split('.')[1]
-                print(filename)
+                # print(filename)
                 f.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
                 #Update item created with ImgLink
                 res = es.update(index = "donations", id = ID, body = {"doc": {"imageLink":"/uploads/"+ID+'.'+f.filename.split('.')[1]}})
@@ -570,8 +606,34 @@ def getRequirements():
     if request.method == "GET":
         try:
         #TODO FOR SRIRAM -> CHECK PUBLIC FLAG HERE for true otherwise it will get all requests
-            res = es.search(index="donations", body={"query":{"bool":{"must": [{"term" : {"docType" : "requirement" }},{"term":{"publicFlag":"true"}},{"range" : {"quantity" : { "gte" : 0}}}]}}})
-            print(res["hits"]['hits'][0]['_source']['details'])
+            data = json.loads(request.data)
+            donorId = data["donorId"]
+            #get category, subcategory and pincode
+            result = es.search(index = "donations", body = {"size": 10,"query": {"bool":{"must": [{ "term" : { "docType" : "item" } },{ "term" : { "donorId" : donorId } }]}}})
+            # print (result)
+            items = result["hits"]["hits"]
+            if len(items) > 0:
+                pincode = items[0]["_source"]["pincode"]
+                subcategory = []
+                category = []
+                for item in items:
+                    subcategory.append(item["_source"]["subCategory"])
+                    category.append(item["_source"]["category"])
+            else:
+                pincode = ""
+                category = []
+                subcategory = []
+            # res = es.search(index="donations", body={"query":{"bool":{"must": [{"term" : {"docType" : "requirement" }},{"term":{"publicFlag":"true"}},{"range" : {"quantity" : { "gte" : 0}}}]}}})
+            res = es.search(index="donations",body = {"size": 10000,"query":{"bool":{"must": [{ "term" : { "docType" : "requirement" } },{ "term" : { "publicFlag" : "true" } },{"range" : {"quantity" : { "gte" : 0}}}],
+                    "should": [
+                        { "term" : { "pincode" : pincode} },
+                        { "terms" : {"category": category } },
+                        { "terms" : {"subCategory": subcategory } }
+                            ]
+                    }
+                }
+            })
+            # print(res["hits"]['hits'][0]['_source']['details'])
             dataList = []
             
             for item in res["hits"]['hits']:
@@ -717,7 +779,7 @@ def respondToDonationRequest():
                 # print(itemQuantity)
                 #finalQuantity = reqQuantity - itemQuantity
                 #print(finalQuantity)
-                print(itemQuantity)
+                # print(itemQuantity)
                 source = "ctx._source.quantity -= %d"%(int(itemQuantity))
                 result3 = es.update(index="donations" , id = reqId , body = {"script" : {"source": source}})
                 # return result3
@@ -847,7 +909,7 @@ def deleteItem():
             for item in res2["hits"]["hits"]:
                 if "requirementId" in item["_source"]:
                     requirementList.append(item["_source"])
-            print(requirementList)
+            # print(requirementList)
             #setting updateType as itemDeleted for each requirement Id
             if len(requirementList) > 0:
                 for requirement in requirementList:
@@ -901,7 +963,7 @@ def deleteRequirement():
             for item in res2["hits"]["hits"]:
                 if "requirementId" in item["_source"]:
                     requirementList.append(item["_source"])
-            print(requirementList)
+            # print(requirementList)
             #setting updateType as itemDeleted for each requirement Id
             if len(requirementList) > 0:
                 for requirement in requirementList:
@@ -1235,7 +1297,7 @@ def markItem():
                 "date": date
             }
             res = es.index(index = "donations",body =(query))
-            print(query)
+            # print(query)
         except Exception as e:
             print (e)
             return jsonpickle.encode(responsePackage("Error","Couldn't mark item as received"),unpicklable=False)
@@ -1267,7 +1329,7 @@ def sendMessageToNgo():
                 "date": datetime.datetime.now(datetime.timezone.utc)
             }
             res = es.index(index = "donations", body =(query))
-            print(res)
+            # print(res)
         except Exception as e:
             print(e)
             return jsonpickle.encode(responsePackage("Error","Couldn't send message to NGO"),unpicklable=False)
@@ -1299,7 +1361,7 @@ def sendMessageToDonor():
                 "date": datetime.datetime.now(datetime.timezone.utc)
             }
             res = es.index(index = "donations", body =(query))
-            print(res)
+            # print(res)
         except Exception as e:
             print(e)
             return jsonpickle.encode(responsePackage("Error","Couldn't send message to donor"),unpicklable=False)
