@@ -379,11 +379,7 @@ def requestItem():
             public = request.form["public"]
             ngoName = request.form["ngoName"]
             print(itemId)
-            
-            
-            
-            
-            date = datetime.datetime.now(datetime.timezone.utc) #changed to using utc format or else time and date will be different for users living in different areas
+            # date = datetime.datetime.now(datetime.timezone.utc) #changed to using utc format or else time and date will be different for users living in different areas
             query = {
                         "docType":"requirement",
                         "category":category,
@@ -395,7 +391,7 @@ def requestItem():
                         "ngoName":ngoName,
                         "pincode":pincode,
                         "publicFlag":public,
-                        "date":date
+                        "date":datetime.datetime.now(datetime.timezone.utc)
                     }
             res = es.index(index="donations", body=(query))
             requirementID = res["_id"]  
@@ -412,7 +408,7 @@ def requestItem():
             "donorId":donorId,
             "requirementId":requirementID,
             "quantity":quantity,
-            "date":date,
+            "date":datetime.datetime.now(datetime.timezone.utc),
             "details":details,
             "ngoName":ngoName,
             "pincode":pincode
@@ -672,7 +668,7 @@ def respondToRequirement():
             pincode = request.form['pincode']
             details = request.form['details']
             public = request.form['public']
-            date = datetime.datetime.now(datetime.timezone.utc)
+            # date = datetime.datetime.now(datetime.timezone.utc)
             query1 = {
                 "docType":"item",
                 "category":category,
@@ -685,7 +681,7 @@ def respondToRequirement():
                 "details":details,
                 "publicFlag":public,
                 "donorId":donorID,
-                "date":date
+                "date":datetime.datetime.now(datetime.timezone.utc)
             }
             result = es.index(index="donations", body=(query1))
             ID = result["_id"]
@@ -709,7 +705,7 @@ def respondToRequirement():
                 "requirementId":requirementID,
                 "donorId":donorID,
                 "itemId":ID,
-                "date":date,
+                "date":datetime.datetime.now(datetime.timezone.utc),
                 "ngoName":ngoName,
                 "quantity":quantity,
                 "quality":quality,
@@ -734,7 +730,7 @@ def respondToDonationRequest():
             donorId = data["donorId"]
             reqId = data["requirementId"],
             actionTaken = data["actionTaken"] #Added actionTaken by Donor (accept/decline)
-            date = datetime.datetime.now(datetime.timezone.utc)
+            # date = datetime.datetime.now(datetime.timezone.utc)
             
             if actionTaken == "accept":
                 query1 = {
@@ -745,7 +741,7 @@ def respondToDonationRequest():
                     "itemId" : itemId,
                     "donorId" : donorId,
                     "requirementId" : reqId,
-                    "date": date
+                    "date": datetime.datetime.now(datetime.timezone.utc)
                 }
             
                 
@@ -765,7 +761,7 @@ def respondToDonationRequest():
                         "itemId" : itemId,
                         "donorId" : donorId,
                         "requirementId" : reqId,
-                        "date": date
+                        "date": datetime.datetime.now(datetime.timezone.utc)
                         }
                         if "ngoName" in ngo["_source"]:
                             query["ngoName"] = ngo["_source"]["ngoName"]
@@ -792,7 +788,7 @@ def respondToDonationRequest():
                     "itemId" : itemId,
                     "donorId" : donorId,
                     "requirementId" : reqId,
-                    "date": date
+                    "date": datetime.datetime.now(datetime.timezone.utc)
                 }           
                 #adding document with updateType "decline"
                 result1 = es.index(index = "donations", body = (query1))
