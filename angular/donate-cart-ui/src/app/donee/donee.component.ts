@@ -17,7 +17,7 @@ export class DoneeComponent implements OnInit {
   
   this.loadingItemsFlag = true;
   this.loadingUpdatesFlag = true;
-  this.doneeService.getAvailableDonationsFromServer().subscribe((data)=>{
+  this.doneeService.getAvailableDonationsFromServer(this.authService.getUserId()).subscribe((data)=>{
       this.loadingItemsFlag=false
       
     });

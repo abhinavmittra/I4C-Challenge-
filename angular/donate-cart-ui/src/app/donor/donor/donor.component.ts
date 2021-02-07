@@ -22,7 +22,7 @@ export class DonorComponent implements OnInit {
   //disable requirements button until data is fetched
   this.loadingReqFlag = true;
   this.loadingUpdatesFlag=true;
-  this.donorService.getRequirementsFromServer().subscribe((data)=>{
+  this.donorService.getRequirementsFromServer(this.authService.getUserId()).subscribe((data)=>{
       this.loadingReqFlag=false
     });
     this.donorService.getDonorUpdatesFromServer(this.authService.getUserId()).subscribe((data)=>{

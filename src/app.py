@@ -445,7 +445,7 @@ def test():
 #function to get all items (For NGO)
 @app.route("/getItems",methods=['POST','GET'])
 def getItems():
-    if request.method == "GET":
+    if request.method == "POST":
         try:
             data = json.loads(request.data)
             ngoId = data["ngoId"]
@@ -603,7 +603,7 @@ def donateItem():
 #function to get all public requirements
 @app.route("/getRequirements",methods=['POST','GET'])
 def getRequirements():
-    if request.method == "GET":
+    if request.method == "POST":
         try:
         #TODO FOR SRIRAM -> CHECK PUBLIC FLAG HERE for true otherwise it will get all requests
             data = json.loads(request.data)

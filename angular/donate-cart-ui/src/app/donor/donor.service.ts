@@ -58,8 +58,8 @@ export class DonorService {
   }
   
   
-  public getRequirementsFromServer(){
-    return this.httpClient.get(this.getRequirementsUrl).pipe(tap((data)=>{
+  public getRequirementsFromServer(donorId:string){
+    return this.httpClient.post<any>(this.getRequirementsUrl,{"donorId":donorId}).pipe(tap((data)=>{
       this.setItemRequirements(data);
     }));;
   }

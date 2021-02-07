@@ -67,8 +67,8 @@ public options = {
     return this.httpClient.post<any>(this.requestItemUrl,form);
   }
 
-  getAvailableDonationsFromServer(){
-    return this.httpClient.get(this.viewItemDonationsUrl).pipe(tap((data)=>{
+  getAvailableDonationsFromServer(ngoId:string){
+    return this.httpClient.post<any>(this.viewItemDonationsUrl,JSON.stringify({"ngoId":ngoId})).pipe(tap((data)=>{
       this.setPublicItems(data);
     }));
   }
