@@ -83,8 +83,8 @@ export class DonorViewUpdatesComponent implements OnInit {
         reqQuantity = this.donorUpdates[index].itemUpdates[i]["reqQuantity"];
       if(this.donorUpdates[index].itemUpdates[i]["reqDetails"])
         reqDetails = this.donorUpdates[index].itemUpdates[i]["reqDetails"];
-      if( this.donorUpdates[index].itemUpdates[i]["date"]) 
-        var tempDate = this.donorUpdates[index].itemUpdates[i]["date"]
+      if( this.donorUpdates[index].itemUpdates[i]["updateDate"]) 
+        var tempDate = this.donorUpdates[index].itemUpdates[i]["updateDate"]
         var formattedDate = new Date(tempDate)
         updateDate = formattedDate.toLocaleString()
 
@@ -164,7 +164,34 @@ acceptOrReject(itemIndex:number,updateIdx:number,actionTaken:string){
 
 
   if(!actionPerformed){
-
+    var updates:DonorUpdate[];
+        updates =  this.donorService.getDonorUpdates();
+        var itemUpdates = {};
+        if(actionTaken=="accept"){
+       itemUpdates = {
+        "updateType":"accept",
+        "reqId":this.donorUpdates[itemIndex].itemUpdates[updateIdx]["reqId"],
+        "itemId":this.donorUpdates[itemIndex].itemUpdates[updateIdx]["itemId"],
+        "ngoId":this.donorUpdates[itemIndex].itemUpdates[updateIdx]["ngoId"],
+        "ngoName":this.donorUpdates[itemIndex].itemUpdates[updateIdx]["ngoName"],
+        "donorId":this.donorUpdates[itemIndex].itemUpdates[updateIdx]["donorId"],
+        "updateDate":new Date().toISOString()
+    }
+  }
+    else if(actionTaken=="decline"){
+       itemUpdates = {
+        "updateType":"decline",
+        "reqId":this.donorUpdates[itemIndex].itemUpdates[updateIdx]["reqId"],
+        "itemId":this.donorUpdates[itemIndex].itemUpdates[updateIdx]["itemId"],
+        "ngoId":this.donorUpdates[itemIndex].itemUpdates[updateIdx]["ngoId"],
+        "ngoName":this.donorUpdates[itemIndex].itemUpdates[updateIdx]["ngoName"],
+        "donorId":this.donorUpdates[itemIndex].itemUpdates[updateIdx]["donorId"],
+        "updateDate":new Date().toISOString()
+    }
+    }
+      updates[itemIndex].itemUpdates.push(itemUpdates)
+      console.log(updates)
+      this.donorService.setDonorUpdates(updates);
 
 
 

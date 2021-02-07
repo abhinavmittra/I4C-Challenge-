@@ -4,6 +4,7 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { SubmitRequirement } from 'src/app/model/submit-requirement';
 import {DoneeService} from '../donee.service'
 import {DoneeUpdate} from '../../model/donee-update';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-donee-create-item',
   templateUrl: './donee-create-item.component.html',
@@ -11,7 +12,7 @@ import {DoneeUpdate} from '../../model/donee-update';
 })
 export class DoneeCreateItemComponent implements OnInit {
 
-  constructor(private doneeService:DoneeService,private authService:AuthService) { }
+  constructor(private doneeService:DoneeService,private authService:AuthService,private router:Router) { }
 
   ngOnInit(): void {
   }
@@ -25,13 +26,19 @@ export class DoneeCreateItemComponent implements OnInit {
         doneeUpdates =  this.doneeService.getDoneeUpdates();
    
         
-        var reqUpdates = {"updateType":"noupdate"}
+        var reqUpdates = [{
+          "updateType":"noupdate",
+          "ngoId":this.authService.getUserId(),
+          "reqId":data["requirementId"],
+          "updateDate":new Date().toISOString()
+      }]
         doneeUpdates.push(new DoneeUpdate(data["requirementId"],form.value.name,form.value.category,
         form.value.subcategory,form.value.quantity,form.value.details,new Date().toISOString(),reqUpdates))
         this.doneeService.setDoneeUpdates(doneeUpdates);
        
        
         form.reset();
+        this.router.navigate(['/donee/updates'])
       });
       //add this requirement to updates as well
      

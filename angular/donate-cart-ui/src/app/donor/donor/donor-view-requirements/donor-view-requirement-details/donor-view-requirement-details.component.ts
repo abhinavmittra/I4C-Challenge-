@@ -50,14 +50,24 @@ export class DonorViewRequirementDetailsComponent implements OnInit {
       donorUpdates =  this.donorService.getDonorUpdates();
  
      
-      var itemUpdates = {"updateType":"noupdate"}
+      var itemUpdates = [{
+        "updateType":"donate",
+        "itemId":data["itemId"],
+        "reqId":this.item.requirementId,
+        "ngoId":this.item.ngoId,
+        "donorId":this.authService.getUserId(),
+        "updateDate":new Date().toISOString()
+      }]
+
+                        
       donorUpdates.push(new DonorUpdate(data["itemId"],this.item.name,this.item.category,
-     this.item.subcategory,form.value.quantity,form.value.quality,form.value.details,this.baseUrl+"/uploads/"+data["itemId"]+".jpg",new Date().toISOString(),itemUpdates))
+      this.item.subcategory,form.value.quantity,form.value.quality,form.value.details,"/uploads/"+data["itemId"]+".jpg",new Date().toISOString(),itemUpdates))
       this.donorService.setDonorUpdates(donorUpdates);
       console.log(donorUpdates);
       form.reset();
 
       this.toggleDonateMode();
+      this.router.navigate(['/donor/updates'])
     });
   }
 

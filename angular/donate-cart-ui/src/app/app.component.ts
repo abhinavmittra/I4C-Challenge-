@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
 import { AuthService } from './auth/auth.service';
 
@@ -12,14 +13,18 @@ export class AppComponent {
 
   showLogOut:boolean=false;
   showLogOutSubscription:Subscription;
-  constructor(private authService:AuthService){}
+  constructor(private authService:AuthService,private router:Router){}
   ngOnInit(){
    this.showLogOutSubscription = this.authService.showLogout.subscribe((data:boolean)=>{
     this.showLogOut = data;
     })
     
   }
+  routeToLogin(){
+    this.router.navigate(['/login'])
+    this.authService.showLogout.next(false)
+  }
   ngOnDestroy(){
-      this,this.showLogOutSubscription.unsubscribe();
+      this.showLogOutSubscription.unsubscribe();
   }
 }

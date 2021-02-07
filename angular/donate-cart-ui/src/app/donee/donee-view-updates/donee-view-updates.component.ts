@@ -29,6 +29,7 @@ export class DoneeViewUpdatesComponent implements OnInit {
 
   ngOnInit(): void {
     this.getDoneeUpdates()
+    
   
   }
   getDoneeUpdates(){
@@ -42,7 +43,7 @@ export class DoneeViewUpdatesComponent implements OnInit {
       }
   
     this.doneeUpdatesChanged= this.doneeService.doneeUpdatesChanged.subscribe((data:DoneeUpdate[])=>{
-      this.doneeUpdates=data; //get Donor Updates
+      this.doneeUpdates=data; //get Donee Updates
       //clear flag array first
       this.visibleReqUpdate.length  = 0;
       //set view flags for each item's updates to be false
@@ -57,10 +58,8 @@ export class DoneeViewUpdatesComponent implements OnInit {
   
 
     viewReqUpdates(index:number){
-
-
-
-
+      console.log(this.visibleReqUpdate[index])
+      console.log(this.doneeUpdates[index])
       if(this.visibleReqUpdate[index]!=true){
       //clear the updates array first
       this.selectedReqUpdates.length = 0;
@@ -96,17 +95,17 @@ export class DoneeViewUpdatesComponent implements OnInit {
           itemQuantity = this.doneeUpdates[index].reqUpdates[i]["itemQuantity"];
         if(this.doneeUpdates[index].reqUpdates[i]["itemDetails"])
           itemDetails = this.doneeUpdates[index].reqUpdates[i]["itemDetails"];
-        if( this.doneeUpdates[index].reqUpdates[i]["date"]) 
-          updateDate = this.doneeUpdates[index].reqUpdates[i]["date"]
+        if( this.doneeUpdates[index].reqUpdates[i]["updateDate"]) 
+          updateDate = this.doneeUpdates[index].reqUpdates[i]["updateDate"]
         if( this.doneeUpdates[index].reqUpdates[i]["itemImageLink"]) 
           itemImageLink = this.doneeUpdates[index].reqUpdates[i]["itemImageLink"]
          if( this.doneeUpdates[index].reqUpdates[i]["itemQuality"]) 
           itemQuality = this.doneeUpdates[index].reqUpdates[i]["itemQuality"]
           if( this.doneeUpdates[index].reqUpdates[i]["pincode"]) 
           pincode = this.doneeUpdates[index].reqUpdates[i]["pincode"]
-
+       // console.log("about to set updates")
         this.selectedReqUpdates.push(new RequirementUpdate(updateType,itemId,reqId,ngoId,donorId,pincode,ngoName,itemQuantity,itemQuality,itemImageLink,itemDetails,msgFrom,msg,updateDate));
-      
+        console.log(this.selectedReqUpdates);
       }
       //set visible flag for this itemUpdates to true and all others to false
       for(var i =0;i<this.doneeUpdates.length;i++){
@@ -188,7 +187,7 @@ export class DoneeViewUpdatesComponent implements OnInit {
 
     acceptOrReject(reqIndex:number,updateIdx:number,actionTaken:string){
       //validate first if it has been accepted or rejected'
-      console.log(reqIndex,updateIdx,actionTaken)
+      
       var actionPerformed = false;
       const itemId = this.doneeUpdates[reqIndex].reqUpdates[updateIdx]["itemId"];
       for(var i =0;i<this.doneeUpdates[reqIndex].reqUpdates.length;i++){
@@ -201,6 +200,33 @@ export class DoneeViewUpdatesComponent implements OnInit {
 
 
       if(!actionPerformed){
+        //Add Updates to local copy
+        var updates:DoneeUpdate[];
+        updates =  this.doneeService.getDoneeUpdates();
+        var reqUpdates = {};
+        if(actionTaken=="accept"){
+       reqUpdates = {
+        "updateType":"acceptDonation",
+        "reqId":this.doneeUpdates[reqIndex].reqUpdates[updateIdx]["reqId"],
+        "itemId":this.doneeUpdates[reqIndex].reqUpdates[updateIdx]["itemId"],
+        "ngoId":this.doneeUpdates[reqIndex].reqUpdates[updateIdx]["ngoId"],
+        "donorId":this.doneeUpdates[reqIndex].reqUpdates[updateIdx]["donorId"],
+        "updateDate":new Date().toISOString()
+    }
+  }
+    else if(actionTaken=="decline"){
+       reqUpdates = {
+        "updateType":"declineDonation",
+        "reqId":this.doneeUpdates[reqIndex].reqUpdates[updateIdx]["reqId"],
+        "itemId":this.doneeUpdates[reqIndex].reqUpdates[updateIdx]["itemId"],
+        "ngoId":this.doneeUpdates[reqIndex].reqUpdates[updateIdx]["ngoId"],
+        "donorId":this.doneeUpdates[reqIndex].reqUpdates[updateIdx]["donorId"],
+        "updateDate":new Date().toISOString()
+    }
+    }
+      updates[reqIndex].reqUpdates.push(reqUpdates)
+      console.log(updates)
+      this.doneeService.setDoneeUpdates(updates);
 
       this.doneeService.acceptOrReject(
         this.doneeUpdates[reqIndex].reqUpdates[updateIdx]["reqId"],

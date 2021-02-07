@@ -9,7 +9,8 @@
 </div>  
 
 <div class="container" *ngIf="!msgMode">
-    <h3>Donations offered by you</h3>
+    <h3 *ngIf="donorUpdates.length!=0">Donations offered by you</h3>
+    <h3 *ngIf="donorUpdates.length==0">No Donations offered by you</h3>
     <ng-container *ngFor="let item of donorUpdates;index as i">  
             <div class="card mt-3">
                 <div class="card-body">

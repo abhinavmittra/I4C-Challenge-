@@ -3,6 +3,7 @@ import { NgForm } from '@angular/forms';
 import { AuthService } from 'src/app/auth/auth.service';
 import { DonorService } from '../../donor.service';
 import {DonorUpdate} from '../../../model/donor-update'
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-donor-create-item',
   templateUrl: './donor-create-item.component.html',
@@ -10,7 +11,7 @@ import {DonorUpdate} from '../../../model/donor-update'
 })
 export class DonorCreateItemComponent implements OnInit {
 
-  constructor(private donorService:DonorService,private authService:AuthService) { }
+  constructor(private donorService:DonorService,private authService:AuthService,private router:Router) { }
   selectedImage:File = null;
   
   ngOnInit(): void {
@@ -19,7 +20,7 @@ export class DonorCreateItemComponent implements OnInit {
   }
 
   onSubmit(form:NgForm){
-    console.log(form);
+    //console.log(form);
     const submitForm = new FormData();
     submitForm.append('image',this.selectedImage,this.selectedImage.name);
     submitForm.append('name',form.value.name);
@@ -37,10 +38,17 @@ export class DonorCreateItemComponent implements OnInit {
       donorUpdates =  this.donorService.getDonorUpdates();
  
      
-      var itemUpdates = {"updateType":"noupdate"}
+      var itemUpdates = [{
+        "updateType":"noupdate",
+        "donorId":this.authService.getUserId(),
+        "itemId":data["itemId"],
+        "updateDate":new Date().toISOString()
+      }]
       donorUpdates.push(new DonorUpdate(data["itemId"],form.value.name,form.value.category,
       form.value.subcategory,form.value.quantity,form.value.quality,form.value.details,"/uploads/"+data["itemId"]+".jpg",new Date().toISOString(),itemUpdates))
       this.donorService.setDonorUpdates(donorUpdates);
+      form.reset();
+      this.router.navigate(['/donor/updates'])
     });
   }
 

@@ -10,7 +10,8 @@
 
 
 <div class="container" id="updates" *ngIf="!msgMode">
-  <h3>Requirements posted by you</h3>
+  <h3 *ngIf="doneeUpdates.length!=0">Requirements posted by you</h3>
+  <h3 *ngIf="doneeUpdates.length==0">No Requirements posted by you</h3>
   <ng-container *ngFor="let item of doneeUpdates;index as i">  
           <div class="card mt-3">
               <div class="card-body">

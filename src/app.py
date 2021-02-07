@@ -5,6 +5,7 @@ from elasticsearch import Elasticsearch
 import json
 import jsonpickle
 import datetime
+from datetime import timedelta
 from werkzeug.utils import secure_filename
 import os
 from os import listdir
@@ -44,7 +45,7 @@ except Exception as e:
 
 #class to define a donation Item object
 class donationItem:
-    def __init__(self,itemId,name,category,subcategory,details,quantity,quality,imglink):
+    def __init__(self,itemId,name,category,subcategory,details,quantity,quality,imglink,donorId):
         self.itemId = itemId
         self.name = name
         self.category = category
@@ -53,6 +54,7 @@ class donationItem:
         self.quantity = quantity
         self.quality = quality
         self.imgLink = imglink
+        self.donorId = donorId
 
 #class to define an item requirement object
 class itemRequirement:
@@ -408,7 +410,7 @@ def requestItem():
             "donorId":donorId,
             "requirementId":requirementID,
             "quantity":quantity,
-            "date":datetime.datetime.now(datetime.timezone.utc),
+            "date":datetime.datetime.now(datetime.timezone.utc)+timedelta(seconds=10),
             "details":details,
             "ngoName":ngoName,
             "pincode":pincode
@@ -496,7 +498,7 @@ def getItems():
                 except Exception as e:
                     print("error in finding file")
                     print(e)
-                dataList.append(donationItem(item['_id'],item['_source']['itemName'],item['_source']['category'],item['_source']['subCategory'],item['_source']['details'],item['_source']['quantity'],item['_source']['quality'],imglink))
+                dataList.append(donationItem(item['_id'],item['_source']['itemName'],item['_source']['category'],item['_source']['subCategory'],item['_source']['details'],item['_source']['quantity'],item['_source']['quality'],imglink,item['_source']['donorId']))
             for obj in dataList:
                 print(obj.name)
             result = donationItemPackage(dataList,"success","object contains list of items up for donation")
@@ -705,7 +707,7 @@ def respondToRequirement():
                 "requirementId":requirementID,
                 "donorId":donorID,
                 "itemId":ID,
-                "date":datetime.datetime.now(datetime.timezone.utc),
+                "date":datetime.datetime.now(datetime.timezone.utc)+timedelta(seconds=10),
                 "ngoName":ngoName,
                 "quantity":quantity,
                 "quality":quality,
@@ -1098,7 +1100,7 @@ def getUpdatesForDonor():
                         "messageFrom":messageFrom,
                         "message":message,
                         "pincode":pincode,
-                        "date":date
+                        "updateDate":date
                     }
                     # update = donorUpdatePackage(updateDetails,"success")
                     
@@ -1241,7 +1243,7 @@ def getUpdatesForNGO():
                         "messageFrom":messageFrom,
                         "message":message,
                         "pincode":pincode,
-                        "date":date
+                        "updateDate":date
                     }
                     
                     

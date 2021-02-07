@@ -23,7 +23,7 @@ export class AppLoginComponent implements OnInit {
           this.authService.setPincode(data['pincode']);
           this.authService.setName(data['name'])
           this.authService.showLogout.next(true);
-          this.router.navigate(['donor']);
+          this.router.navigate(['donor/requirements/list']);
           
         }
 
@@ -34,7 +34,10 @@ export class AppLoginComponent implements OnInit {
           this.authService.setPincode(data['pincode']);
           this.authService.setName(data['ngoName']);
           this.authService.showLogout.next(true);
-          this.router.navigate(['donee']);
+          this.router.navigate(['donee/donations/list']);
+        }
+        else if(data['pass']==true&&data['verified']!=true){
+          alert("Your registration hasn't been approved yet")
         }
       }
       else if(data['role']=="admin"){
@@ -43,6 +46,7 @@ export class AppLoginComponent implements OnInit {
           this.authService.showLogout.next(true);
           this.router.navigate(['admin']);
         }
+       
       }
     console.log(data);
   });

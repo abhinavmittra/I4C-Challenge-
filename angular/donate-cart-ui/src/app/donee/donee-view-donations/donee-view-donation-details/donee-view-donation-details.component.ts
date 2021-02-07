@@ -3,6 +3,7 @@ import { NgForm } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/auth/auth.service';
 import { DonationItem } from 'src/app/model/donation-item';
+import { DoneeUpdate } from 'src/app/model/donee-update';
 import { DoneeService } from '../../donee.service';
 
 @Component({
@@ -42,8 +43,23 @@ export class DoneeViewDonationDetailsComponent implements OnInit {
     submitForm.append('ngoName',this.authService.getName())
 
     this.doneeService.requestItem(submitForm).subscribe((data)=>{
+      var doneeUpdates:DoneeUpdate[];
+        doneeUpdates =  this.doneeService.getDoneeUpdates();
+      var reqUpdates = [{
+        "updateType":"donateRequest",
+        "reqId":data["requirementId"],
+        "itemId":this.item.itemId,
+        "ngoId":this.authService.getUserId(),
+        "donorId":this.item.donorId,
+        "updateDate":new Date().toISOString()
+    }]
+      doneeUpdates.push(new DoneeUpdate(data["requirementId"],this.item.name,this.item.category,
+      this.item.subcategory,this.item.quantity.toString(),form.value.details,new Date().toISOString(),reqUpdates))
+      this.doneeService.setDoneeUpdates(doneeUpdates);
+
       form.reset();
       this.toggleRequestMode();
+      this.router.navigate(['/donee/updates'])
     });
   }
   viewItemImage(){

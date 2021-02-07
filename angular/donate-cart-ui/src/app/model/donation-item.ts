@@ -1,4 +1,7 @@
+import { ThrowStmt } from "@angular/compiler";
+
 export class DonationItem {
+    donorId:string;
     itemId:string;
     name:string;
     category:string;
@@ -9,6 +12,7 @@ export class DonationItem {
     imgLink:string;
 
     constructor(itemId:string,name:string,category:string,subcat:string,details:string,quantity:number,quality:number,donorId:string,imgLink:string){
+        this.donorId=donorId;
         this.itemId = itemId;
         this.name=name;
         this.category=category;

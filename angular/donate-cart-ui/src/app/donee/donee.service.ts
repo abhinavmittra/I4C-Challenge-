@@ -56,7 +56,7 @@ public options = {
   setDoneeUpdates(data:DoneeUpdate[]){
     
     this.doneeUpdates = data;
-    this.doneeUpdatesChanged.next(this.doneeUpdates);
+    this.doneeUpdatesChanged.next(this.doneeUpdates.slice());
     
   }
   constructor(private httpClient:HttpClient) { }

@@ -7,7 +7,7 @@
     </h1>
     
    
-   <div class="ms-1"> <a routerLink="/login" *ngIf="showLogOut">Log out</a></div>
+   <div class="ms-3 pt-1" (click)="routeToLogin()"> <span *ngIf="showLogOut" style="cursor:pointer" class="text-white">Log out</span></div>
     
   </div>
 </header>
