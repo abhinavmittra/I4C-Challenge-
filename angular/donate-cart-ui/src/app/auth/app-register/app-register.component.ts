@@ -38,6 +38,7 @@ export class AppRegisterComponent implements OnInit {
       const pincode = form.value.pincode;
       var donor:Donor = new Donor(name,address,pincode,phone,email,pass);
       this.authService.registerDonor(donor).subscribe((data)=>{
+        this.router.navigate(['/login'])
         console.log(data)
       });
      
@@ -54,6 +55,7 @@ export class AppRegisterComponent implements OnInit {
       const desc = form.value.description;
       var donee:Donee = new Donee(name,address,pincode,phone,panno,website,desc,email,pass);
       this.authService.registerDonee(donee).subscribe((data)=>{
+        this.router.navigate(['/login'])
         console.log(data)
       });
       //send post request to server to save data

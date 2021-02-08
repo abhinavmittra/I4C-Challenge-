@@ -6,11 +6,19 @@
   </div>
 
 <div class="container mt-3" *ngIf="(!loadingUpdatesFlag)&&(!loadingReqFlag)">
+
+  <div class="row mt-3 mb-3">
+    <div class="col">
+     <button class="btn btn-outline-dark btn-sm" (click)="getFreshData()"> Refresh Data </button>
+    </div>
+  </div>
+
   <div class="btn-group" id="navigationBtns">
-<button class="btn btn-outline-dark" (click)="donateItem()">Donate Item</button>
-<button class="btn btn-outline-dark" (click)="viewRequirements()">Requirements</button>
-<button class="btn btn-outline-dark" (click)="viewUpdates()">Updates</button>
+<button class="btn btn-outline-dark" [ngClass]="{'active':currentPage=='donate'}" (click)="donateItem()">Donate Item</button>
+<button class="btn btn-outline-dark" [class.active]="currentPage=='requirements'" (click)="viewRequirements()">Requirements</button>
+<button class="btn btn-outline-dark" [class.active]="currentPage=='updates'"(click)="viewUpdates()">Updates</button>
 </div>
+
 </div>
 <div id="seperator" style="height:30px">
 

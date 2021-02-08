@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient,HttpHeaders } from '@angular/common/http';
 import {SubmitRequirement} from '../model/submit-requirement';
 import { DonationItem } from '../model/donation-item';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject, Subscription } from 'rxjs';
 import {tap} from 'rxjs/operators';
 import {DoneeUpdate} from '../model/donee-update';
 import { ngModuleJitUrl } from '@angular/compiler';
@@ -35,10 +35,25 @@ public options = {
   public markReceivedUrl = "http://127.0.0.1:5000/markItem"
   public deleteRequirementUrl = "http://127.0.0.1:5000/deleteRequirement"
   public acceptOrRejectUrl = "http://127.0.0.1:5000/accept_decline_donation"
+  
   publicItemsList:DonationItem[]=[];
   publicItemsChanged = new Subject<DonationItem[]>();
   doneeUpdates:DoneeUpdate[]=[]
   doneeUpdatesChanged = new Subject<DoneeUpdate[]>();
+
+  currentPage:string = "donations";
+  currentPageChanged = new BehaviorSubject<string>("donations");
+
+  getCurrentPage(){
+    return this.currentPage;
+  }
+  setCurrentPage(currentPage:string){
+    this.currentPage=currentPage;
+    this.currentPageChanged.next(this.currentPage);
+  }
+
+
+
   setPublicItems(data:any){
     this.publicItemsList = data['donationItems']
     this.publicItemsChanged.next(this.publicItemsList.slice());

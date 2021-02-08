@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { ItemRequirement } from '../model/item-requirement';
 import {DonorUpdate} from '../model/donor-update';
 import {tap} from 'rxjs/operators'
-import {Subject} from 'rxjs'
+import {BehaviorSubject, Subject} from 'rxjs'
 @Injectable({
   providedIn: 'root'
 })
@@ -32,8 +32,20 @@ export class DonorService {
   
   donorUpdates:DonorUpdate[]=[]
   donorUpdatesChanged = new Subject<DonorUpdate[]>();
+  currentPage:string = "requirements";
+  currentPageChanged = new BehaviorSubject<string>("requirements");
   constructor(private httpClient:HttpClient) { }
 
+
+
+
+  getCurrentPage(){
+    return this.currentPage;
+  }
+  setCurrentPage(currentPage:string){
+    this.currentPage=currentPage;
+    this.currentPageChanged.next(this.currentPage);
+  }
   
   getDonorUpdates(){
     return this.donorUpdates.slice()

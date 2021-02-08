@@ -20,7 +20,8 @@ export class DonorCreateItemComponent implements OnInit {
   }
 
   onSubmit(form:NgForm){
-    //console.log(form);
+    
+    console.log(form);
     const submitForm = new FormData();
     submitForm.append('image',this.selectedImage,this.selectedImage.name);
     submitForm.append('name',form.value.name);
@@ -45,13 +46,14 @@ export class DonorCreateItemComponent implements OnInit {
         "updateDate":new Date().toISOString()
       }]
       donorUpdates.push(new DonorUpdate(data["itemId"],form.value.name,form.value.category,
-      form.value.subcategory,form.value.quantity,form.value.quality,form.value.details,"/uploads/"+data["itemId"]+".jpg",new Date().toISOString(),itemUpdates))
+      form.value.subcategory,form.value.quantity,form.value.quality,form.value.details,data["imageLink"],new Date().toISOString(),itemUpdates))
       this.donorService.setDonorUpdates(donorUpdates);
       form.reset();
+      //update currentPage in service
+      this.donorService.currentPageChanged.next("updates");
       this.router.navigate(['/donor/updates'])
     });
   }
-
   onFileSelected(event){
     this.selectedImage = <File>event.target.files[0];
   }

@@ -1,4 +1,3 @@
-
 <div class="container">
     <h3>Enter the item details</h3>
     <form #itemDonationForm="ngForm" (ngSubmit)="onSubmit(itemDonationForm)">
@@ -11,23 +10,47 @@
             >
         </div>
         <div class="mb-3">
-            <label for="itemCategory">Category</label>
-            <input type="text" id="itemCategory" class="form-control" 
-            ngModel
+            <label for="itemCategory" class="form-label">Category</label>
+            <input #itemCat class="form-control" list="itemCategories" id="itemCategory" placeholder="Type to search category" 
+            ngModel 
             name="category"
             required
             >
+            <datalist id="itemCategories">
+                <option value="Electronics">
+                <option value="Clothes">
+                <option value="Books">
+            </datalist>
         </div>
+
         <div class="mb-3">
-            <label for="itemSubcategory">Sub Category</label>
-            <input type="text" id="itemSubcategory" class="form-control" 
-            ngModel
+            <label for="itemSubcategory" class="form-label">Sub Category</label>
+            <input class="form-control" list="itemSubcategories" id="itemSubcategory" placeholder="Type to search Sub-Category" 
+            ngModel 
             name="subcategory"
             required
             >
+            <datalist id="itemSubcategories" *ngIf="itemCat.value=='Electronics'">
+                <option value="Phones">
+                <option value="TV">
+                <option value="Computers">
+            </datalist>
+            <datalist id="itemSubcategories" *ngIf="itemCat.value=='Clothes'">
+                <option value="Men">
+                <option value="Women">
+                <option value="Children">
+                <option value="Winter">
+                <option value="Bedsheets">
+            </datalist>
+            <datalist id="itemSubcategories" *ngIf="itemCat.value=='Books'">
+                <option value="Story Books">
+                <option value="Non-Fiction">
+                <option value="Textbooks">
+                <option value="Notebooks">
+            </datalist>
         </div>
         <div class="mb-3">
-            <label for="itemQuantity">Quantity</label>
+            <label for="itemQuantity" class="form-label">Quantity</label>
             <input type="number" id="itemQuantity" class="form-control" 
             ngModel
             name="quantity"
@@ -36,7 +59,7 @@
             >
         </div>
         <div class="mb-3">
-            <label for="itemQuality">Quality</label>
+            <label for="itemQuality" class="form-label">Quality</label>
                     <input type="text" id="itemQuality" class="form-control" 
                     ngModel
                     name="quality"
@@ -44,7 +67,7 @@
                     >
             </div>
         <div class="mb-3">
-        <label for="itemDetails">Details</label>
+        <label for="itemDetails" class="form-label">Details</label>
                 <input type="text" id="itemDetails" class="form-control" 
                 ngModel
                 name="details"
@@ -52,7 +75,7 @@
                 >
         </div>
         <div class="mb-3">
-        <label for="itemImage">Upload an Image</label>
+        <label for="itemImage" class="form-label">Upload an Image</label>
         <input type="file" id="itemImage" class="form-control" (change)="onFileSelected($event)"
         ngModel
         name="image"

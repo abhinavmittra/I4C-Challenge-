@@ -75,7 +75,7 @@
                 <div class="card-body">
                   <h5 class="card-title">{{update.updateDate | date:'medium'}}</h5>
                   <h6 class="card-subtitle mb-2 text-muted">{{update.updateType}}</h6>
-                  <p class="card-text">Waiting for NGO Approval</p>
+                  <p class="card-text">Waiting for {{update.ngoName}}'s Approval</p>
                 </div>
               </div>
         </div>
@@ -84,7 +84,7 @@
                 <div class="card-body">
                   <h5 class="card-title">{{update.updateDate | date:'medium'}}</h5>
                   <h6 class="card-subtitle mb-2 text-muted">{{update.updateType}}</h6>
-                  <p class="card-text">NGO has received your item</p>
+                  <p class="card-text">{{update.ngoName}} has received your item</p>
                 </div>
               </div>
         </div>

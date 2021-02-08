@@ -19,28 +19,30 @@ export class DoneeCreateItemComponent implements OnInit {
 
   onSubmit(form:NgForm){
     console.log(form);
-    this.doneeService.createItemRequirement(new SubmitRequirement(form.value.name,
-      form.value.category,form.value.subcategory,form.value.details,form.value.quantity,
-      this.authService.getUserId(),this.authService.getPincode(),this.authService.getName())).subscribe((data)=>{
-        var doneeUpdates:DoneeUpdate[];
-        doneeUpdates =  this.doneeService.getDoneeUpdates();
+    // this.doneeService.createItemRequirement(new SubmitRequirement(form.value.name,
+    //   form.value.category,form.value.subcategory,form.value.details,form.value.quantity,
+    //   this.authService.getUserId(),this.authService.getPincode(),this.authService.getName())).subscribe((data)=>{
+    //     var doneeUpdates:DoneeUpdate[];
+    //     doneeUpdates =  this.doneeService.getDoneeUpdates();
    
         
-        var reqUpdates = [{
-          "updateType":"noupdate",
-          "ngoId":this.authService.getUserId(),
-          "reqId":data["requirementId"],
-          "updateDate":new Date().toISOString()
-      }]
-        doneeUpdates.push(new DoneeUpdate(data["requirementId"],form.value.name,form.value.category,
-        form.value.subcategory,form.value.quantity,form.value.details,new Date().toISOString(),reqUpdates))
-        this.doneeService.setDoneeUpdates(doneeUpdates);
+    //     var reqUpdates = [{
+    //       "updateType":"noupdate",
+    //       "ngoId":this.authService.getUserId(),
+    //       "reqId":data["requirementId"],
+    //       "updateDate":new Date().toISOString()
+    //   }]
+    //     doneeUpdates.push(new DoneeUpdate(data["requirementId"],form.value.name,form.value.category,
+    //     form.value.subcategory,form.value.quantity,form.value.details,new Date().toISOString(),reqUpdates))
+    //     this.doneeService.setDoneeUpdates(doneeUpdates);
        
        
-        form.reset();
-        this.router.navigate(['/donee/updates'])
-      });
-      //add this requirement to updates as well
+    //     form.reset();
+    //     //update currentPage local variable
+    //     this.doneeService.setCurrentPage("updates")
+    //     this.router.navigate(['/donee/updates'])
+    //   });
+      
      
     
   }

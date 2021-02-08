@@ -7,10 +7,15 @@
 
 
 <div class="container mt-3" *ngIf="(!loadingUpdatesFlag)&&(!loadingItemsFlag)">
+  <div class="row mt-3 mb-3">
+    <div class="col">
+     <button class="btn btn-outline-dark btn-sm" (click)="getFreshData()"> Refresh Data </button>
+    </div>
+  </div>
   <div class="btn-group" id="navigationBtns">
-    <button class="btn btn-outline-dark" (click)="createItemRequirement()">Request an item</button>
-    <button class="btn btn-outline-dark" (click)="viewDonations()">view Donations</button>
-    <button class="btn btn-outline-dark" (click)="viewMyRequirements()">My Requirements</button>
+    <button class="btn btn-outline-dark" [class.active]="currentPage=='request'" (click)="createItemRequirement()">Request an item</button>
+    <button class="btn btn-outline-dark" [class.active]="currentPage=='donations'" (click)="viewDonations()">view Donations</button>
+    <button class="btn btn-outline-dark"  [class.active]="currentPage=='updates'"(click)="viewMyRequirements()">My Requirements</button>
 
     </div>
   </div>

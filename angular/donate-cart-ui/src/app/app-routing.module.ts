@@ -15,10 +15,12 @@ import { DoneeViewDonationDetailsComponent } from './donee/donee-view-donations/
 import { DonorViewRequirementDetailsComponent } from './donor/donor/donor-view-requirements/donor-view-requirement-details/donor-view-requirement-details.component';
 import { DonorViewRequirementsListComponent } from './donor/donor/donor-view-requirements/donor-view-requirements-list/donor-view-requirements-list.component';
 import { DoneeViewDonationListComponent } from './donee/donee-view-donations/donee-view-donation-list/donee-view-donation-list.component';
+import {AuthGuard} from './auth/auth.guard';
 const routes: Routes = [
+  
   {path:'login',component:AppLoginComponent},
   {path:'register',component:AppRegisterComponent},
-  {path:'admin',component:AdminComponent},
+  {path:'admin',component:AdminComponent,canActivate:[AuthGuard]},
   {path:'donor',component:DonorComponent,children:
 [
   {path:'updates',component:DonorViewUpdatesComponent},
@@ -27,7 +29,7 @@ const routes: Routes = [
     {path:'list',component:DonorViewRequirementsListComponent}
   ]},
   {path:'donate',component:DonorCreateItemComponent}
-]
+],canActivate:[AuthGuard]
 },
 {path:'donee',component:DoneeComponent,children:[
   {path:'create',component:DoneeCreateItemComponent},
@@ -37,8 +39,10 @@ const routes: Routes = [
   ]
 },
   {path:'updates',component:DoneeViewUpdatesComponent}
-]},
-{path:'',redirectTo:'/login',pathMatch:'full'}];
+], canActivate:[AuthGuard]},
+{path:'',redirectTo:'/login',pathMatch:'full'},
+{path:'**',redirectTo:'/login',pathMatch:'full'}
+];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

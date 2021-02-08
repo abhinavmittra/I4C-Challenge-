@@ -8,6 +8,7 @@ import { BehaviorSubject} from 'rxjs'
 })
 export class AuthService {
 
+  isAuth:boolean=false;
   userId:string=null;
   name:string = null;
   email:string = null;
@@ -28,6 +29,15 @@ export class AuthService {
   public headerOptions = {
     headers: this.httpHeaders
        };    
+
+
+  getAuthInfo(){
+    return this.isAuth;
+  }
+  setAuthInfo(isAuth:boolean){
+    this.isAuth = isAuth;
+  }
+
   registerDonor(donor:Donor){
 
     return this.httpClient.post<any>(this.registerDonorUrl,{"Address":donor.address,"Phone":donor.phone,

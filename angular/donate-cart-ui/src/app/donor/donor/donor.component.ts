@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
 import {DonorService} from '../donor.service';
 
@@ -13,34 +14,47 @@ export class DonorComponent implements OnInit {
   constructor(private donorService:DonorService,private router:Router,private route:ActivatedRoute,private authService:AuthService) { }
   loadingReqFlag:boolean = true;
   loadingUpdatesFlag:boolean = true;
-  
-  
+  currentPage :string;
+  currentPageChangedSub:Subscription;
   ngOnInit(): void {
-  //make get request to server to fetch all item requirements
-  //make get request to server to fetch all item updates for this donor
-  //use a service to store all this data
-  //disable requirements button until data is fetched
-  this.loadingReqFlag = true;
-  this.loadingUpdatesFlag=true;
-  this.donorService.getRequirementsFromServer(this.authService.getUserId()).subscribe((data)=>{
-      this.loadingReqFlag=false
-    });
-    this.donorService.getDonorUpdatesFromServer(this.authService.getUserId()).subscribe((data)=>{
-      this.loadingUpdatesFlag=false;
-    });
+  
+    this.getFreshData()
+    this.currentPageChangedSub=this.donorService.currentPageChanged.subscribe((currentPage:string)=>{
+      this.currentPage=currentPage;
+    })
   }
 
   viewRequirements(){
+    this.donorService.currentPageChanged.next("requirements");
     this.router.navigate(['requirements/list'],{relativeTo:this.route})
   }
 
   viewUpdates(){
+    this.donorService.currentPageChanged.next("updates");
     this.router.navigate(['updates'],{relativeTo:this.route})
   }
   donateItem(){
+    this.donorService.currentPageChanged.next("donate");
     this.router.navigate(['donate'],{relativeTo:this.route})
   }
 
+  getFreshData(){
+    this.loadingReqFlag = true;
+    this.loadingUpdatesFlag=true;
+  
+   
+  
+    this.donorService.getRequirementsFromServer(this.authService.getUserId()).subscribe((data)=>{
+        this.loadingReqFlag=false
+      });
+      this.donorService.getDonorUpdatesFromServer(this.authService.getUserId()).subscribe((data)=>{
+        this.loadingUpdatesFlag=false;
+      });
+  }
+
+  ngOnDestroy(){
+    this.currentPageChangedSub.unsubscribe()
+  }
   
 
   

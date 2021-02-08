@@ -19,6 +19,7 @@ export class AppLoginComponent implements OnInit {
     this.authService.loginUser(form.value.email,form.value.password).subscribe((data)=>{
       if(data['role']=="donor"){
         if(data['pass']=true){
+          this.authService.setAuthInfo(true);
           this.authService.setUserId(data['id']);
           this.authService.setPincode(data['pincode']);
           this.authService.setName(data['name'])
@@ -30,6 +31,7 @@ export class AppLoginComponent implements OnInit {
       }
       else if(data['role']=="NGO"){
         if(data['pass']==true&&data['verified']==true){
+          this.authService.setAuthInfo(true);
           this.authService.setUserId(data['id']);
           this.authService.setPincode(data['pincode']);
           this.authService.setName(data['ngoName']);
@@ -42,6 +44,7 @@ export class AppLoginComponent implements OnInit {
       }
       else if(data['role']=="admin"){
         if(data['pass']==true){
+          this.authService.setAuthInfo(true);
           this.authService.setUserId(data['id']);
           this.authService.setName(data["name"])
           this.authService.showLogout.next(true);

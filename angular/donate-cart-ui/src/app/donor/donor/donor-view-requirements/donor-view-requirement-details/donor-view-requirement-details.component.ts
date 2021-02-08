@@ -61,12 +61,13 @@ export class DonorViewRequirementDetailsComponent implements OnInit {
 
                         
       donorUpdates.push(new DonorUpdate(data["itemId"],this.item.name,this.item.category,
-      this.item.subcategory,form.value.quantity,form.value.quality,form.value.details,"/uploads/"+data["itemId"]+".jpg",new Date().toISOString(),itemUpdates))
+      this.item.subcategory,form.value.quantity,form.value.quality,form.value.details,data['imageLink'],new Date().toISOString(),itemUpdates))
       this.donorService.setDonorUpdates(donorUpdates);
       console.log(donorUpdates);
       form.reset();
 
       this.toggleDonateMode();
+      this.donorService.currentPageChanged.next("updates");
       this.router.navigate(['/donor/updates'])
     });
   }
@@ -79,6 +80,7 @@ export class DonorViewRequirementDetailsComponent implements OnInit {
   }
 
   routeToRequirements(){
+    this.donorService.currentPageChanged.next("requirements");
     this.router.navigate(['/donor/requirements/list'])
   }
 }

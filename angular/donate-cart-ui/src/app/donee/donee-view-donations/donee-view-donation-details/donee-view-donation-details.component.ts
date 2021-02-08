@@ -59,6 +59,7 @@ export class DoneeViewDonationDetailsComponent implements OnInit {
 
       form.reset();
       this.toggleRequestMode();
+      this.doneeService.setCurrentPage("updates")
       this.router.navigate(['/donee/updates'])
     });
   }
@@ -68,6 +69,7 @@ export class DoneeViewDonationDetailsComponent implements OnInit {
 
   }
   routeToDonations(){
+    this.doneeService.setCurrentPage("donations")
     this.router.navigate(['/donee/donations/list'])
   }
 }
