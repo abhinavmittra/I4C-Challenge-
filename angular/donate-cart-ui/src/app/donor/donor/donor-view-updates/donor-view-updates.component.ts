@@ -107,14 +107,32 @@ export class DonorViewUpdatesComponent implements OnInit {
     
     window.open(this.baseUrlForImage+this.donorUpdates[index].itemImageLink)
   }
-  respondToDonateReq(itemIndex:number,updateIndex:number,actionTaken:string){
-    //send reqId,itemId,ngoId,donorId, actionTaken to backend
-    console.log(actionTaken)
-  }
+ 
 
   sendMessage(){
-    
-    const message = this.messageBody
+  const message = this.messageBody
+  var updates:DonorUpdate[];
+    //get local copy of updates
+        updates =  this.donorService.getDonorUpdates();
+        var itemUpdates = {};
+    itemUpdates = {
+      "updateType":"message",
+      "reqId":this.donorUpdates[this.itemIdx].itemUpdates[this.updateIdx]["reqId"],
+      "itemId":this.donorUpdates[this.itemIdx].itemUpdates[this.updateIdx]["itemId"],
+      "ngoId":this.donorUpdates[this.itemIdx].itemUpdates[this.updateIdx]["ngoId"],
+      "ngoName":this.donorUpdates[this.itemIdx].itemUpdates[this.updateIdx]["ngoName"],
+      "donorId":this.donorUpdates[this.itemIdx].itemUpdates[this.updateIdx]["donorId"],
+      "message":message,
+      "messageFrom":"donor",
+      "updateDate":new Date().toISOString()
+  }
+  updates[this.itemIdx].itemUpdates.push(itemUpdates)
+
+  this.donorService.setDonorUpdates(updates)
+
+
+
+  //Call API
     this.donorService.sendMessageToNgo(this.donorUpdates[this.itemIdx].itemUpdates[this.updateIdx]["reqId"],
     this.donorUpdates[this.itemIdx].itemUpdates[this.updateIdx]["itemId"],
     this.donorUpdates[this.itemIdx].itemUpdates[this.updateIdx]["donorId"],
@@ -140,14 +158,58 @@ export class DonorViewUpdatesComponent implements OnInit {
   }
 
   deleteItem(itemIndex:number){
-    console.log(this.donorUpdates[itemIndex].itemId)
+
+
+  var actionPerformed = false;
+  const itemId = this.donorUpdates[itemIndex].itemId;
+  for(var i =0;i<this.donorUpdates[itemIndex].itemUpdates.length;i++){
+    if(this.donorUpdates[itemIndex].itemUpdates[i]["updateType"]=="itemDeleted"&&itemId==this.donorUpdates[itemIndex].itemUpdates[i]["itemId"]){
+      actionPerformed= true;
+      alert("You have already deleted this item")
+      
+    }
+  }
+
+
+
+  if(!actionPerformed){
+
+    var updates:DonorUpdate[];
+    //get local copy of updates
+        updates =  this.donorService.getDonorUpdates();
+        var itemUpdates = {};
+        
+       itemUpdates = {
+        "updateType":"itemDeleted",
+        "itemId":updates[itemIndex].itemId,
+        "updateDate":new Date().toISOString()
+    }
+  
+      updates[itemIndex].itemUpdates.push(itemUpdates)
+      
+
+
+      
+      //Remove any noupdate type objects because now we have a deleteItem type update
+      for(var i =0;i<updates[itemIndex].itemUpdates.length;i++){
+        if(updates[itemIndex].itemUpdates[i]["updateType"]=="noupdate"){
+          updates[itemIndex].itemUpdates.splice(i,1)
+          
+        }
+      }
+      
+
+      this.donorService.setDonorUpdates(updates);
+
+
+      //call API
     this.donorService.deleteItem(    
     this.donorUpdates[itemIndex].itemId,
     this.authService.getUserId()
     ).subscribe((data)=>{
      console.log(data)
     });
-
+  }
 }
 
 acceptOrReject(itemIndex:number,updateIdx:number,actionTaken:string){

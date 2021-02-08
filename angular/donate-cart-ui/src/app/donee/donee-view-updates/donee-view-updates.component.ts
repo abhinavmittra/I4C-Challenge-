@@ -126,6 +126,30 @@ export class DoneeViewUpdatesComponent implements OnInit {
     sendMessage(){
     
       const message = this.messageBody
+
+      
+      var updates:DoneeUpdate[];
+        //get local copy of updates
+        updates =  this.doneeService.getDoneeUpdates();
+        var reqUpdates = {};
+        reqUpdates = {
+          "updateType":"message",
+          "reqId":this.doneeUpdates[this.reqIdx].reqUpdates[this.updateIdx]["reqId"],
+          "itemId":this.doneeUpdates[this.reqIdx].reqUpdates[this.updateIdx]["itemId"],
+          "ngoId":this.doneeUpdates[this.reqIdx].reqUpdates[this.updateIdx]["ngoId"],
+          "ngoName":this.doneeUpdates[this.reqIdx].reqUpdates[this.updateIdx]["ngoName"],
+          "donorId":this.doneeUpdates[this.reqIdx].reqUpdates[this.updateIdx]["donorId"],
+          "message":message,
+          "messageFrom":"NGO",
+          "updateDate":new Date().toISOString()
+      }
+      updates[this.reqIdx].reqUpdates.push(reqUpdates)
+    //update local copy
+      this.doneeService.setDoneeUpdates(updates)
+
+
+
+      //Call API
       this.doneeService.sendMessageToDonor(this.doneeUpdates[this.reqIdx].reqUpdates[this.updateIdx]["reqId"],
       this.doneeUpdates[this.reqIdx].reqUpdates[this.updateIdx]["itemId"],
       this.doneeUpdates[this.reqIdx].reqUpdates[this.updateIdx]["donorId"],
@@ -147,7 +171,7 @@ export class DoneeViewUpdatesComponent implements OnInit {
       this.updateIdx = updateIdx;
      this.msgMode = true;
       this.messageBody ="";
-      console.log(this.reqIdx,this.updateIdx);
+     
     }
 
     markReceived(reqIdx:number,updateIdx:number){
@@ -167,6 +191,27 @@ export class DoneeViewUpdatesComponent implements OnInit {
 
       if(!receivedFlag){
 
+        var updates:DoneeUpdate[];
+        //get local copy of updates
+        updates =  this.doneeService.getDoneeUpdates();
+        var reqUpdates = {};
+        reqUpdates = {
+          "updateType":"received",
+          "reqId":this.doneeUpdates[reqIdx].reqUpdates[updateIdx]["reqId"],
+          "itemId":this.doneeUpdates[reqIdx].reqUpdates[updateIdx]["itemId"],
+          "ngoId":this.doneeUpdates[reqIdx].reqUpdates[updateIdx]["ngoId"],
+          "donorId":this.doneeUpdates[reqIdx].reqUpdates[updateIdx]["donorId"],
+          "updateDate":new Date().toISOString()
+      }
+      updates[reqIdx].reqUpdates.push(reqUpdates)
+    //update local copy
+      this.doneeService.setDoneeUpdates(updates)
+
+
+
+
+
+      //Call API
       this.doneeService.markReceived(this.doneeUpdates[reqIdx].reqUpdates[updateIdx]["reqId"],
       this.doneeUpdates[reqIdx].reqUpdates[updateIdx]["itemId"],
       this.doneeUpdates[reqIdx].reqUpdates[updateIdx]["donorId"],
@@ -177,11 +222,60 @@ export class DoneeViewUpdatesComponent implements OnInit {
     }
 
     deleteReq(reqIndex:number){
+      var actionPerformed = false;
+    const reqId = this.doneeUpdates[reqIndex].reqId;
+    for(var i =0;i<this.doneeUpdates[reqIndex].reqUpdates.length;i++){
+      if(this.doneeUpdates[reqIndex].reqUpdates[i]["updateType"]=="requirementDeleted"&&reqId==this.doneeUpdates[reqIndex].reqUpdates[i]["reqId"]){
+      actionPerformed= true;
+      alert("You have already deleted this requirement")
+      
+      }
+   }
 
-        this.doneeService.deleteRequirement(this.doneeUpdates[reqIndex].reqId,
+
+
+   if(!actionPerformed){
+
+
+    var updates:DoneeUpdate[];
+    //get local copy of updates
+        updates =  this.doneeService.getDoneeUpdates();
+        var itemUpdates = {};
+        
+       itemUpdates = {
+        "updateType":"requirementDeleted",
+        "reqId":updates[reqIndex].reqId,
+        "updateDate":new Date().toISOString()
+    }
+  
+      updates[reqIndex].reqUpdates.push(itemUpdates)
+      
+
+
+      
+      //Remove any noupdate type objects because now we have a deleteItem type update
+      for(var i =0;i<updates[reqIndex].reqUpdates.length;i++){
+        if(updates[reqIndex].reqUpdates[i]["updateType"]=="noupdate"){
+          updates[reqIndex].reqUpdates.splice(i,1)
+          
+        }
+      }
+      
+      console.log(updates)
+      this.doneeService.setDoneeUpdates(updates);
+
+
+
+    //Call API
+   this.doneeService.deleteRequirement(this.doneeUpdates[reqIndex].reqId,
           this.authService.getUserId()).subscribe((data)=>{
          console.log(data)
         });
+   }
+
+
+
+     
   
     }
 

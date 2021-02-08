@@ -93,8 +93,8 @@
                 <div class="card-body">
                   <h5 class="card-title">{{update.updateDate | date:'medium'}}</h5>
                   <h6 class="card-subtitle mb-2 text-muted">{{update.updateType}}</h6>
-                  <p class="card-text" *ngIf="update.messageFrom=='donor'">From: {{update.ngoName}}</p>
-                <p class="card-text" *ngIf="update.messageFrom=='NGO'">To: {{update.ngoName}}</p>
+                  <p class="card-text" *ngIf="update.messageFrom=='donor'">To: {{update.ngoName}}</p>
+                <p class="card-text" *ngIf="update.messageFrom=='NGO'">From: {{update.ngoName}}</p>
                   <p>{{update.message}}</p>
                 </div>
               </div>
