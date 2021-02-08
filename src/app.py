@@ -753,7 +753,7 @@ def respondToDonationRequest():
                 #adding document with updateType "accept"
                 result1 = es.index(index = "donations", body = (query1))
                 #setting donatedFlag to true
-                result2 = es.update(index = "donations", id = reqId, body = {"doc": {"donatedFlag": "true"}})
+                result2 = es.update(index = "donations", id = itemId, body = {"doc": {"donatedFlag": "true"}})
                 #getting remaining NGOs and setting updateType "decline"
                 ngoList = es.search(index="donations" , body = {"query":{"bool":{"must": [{ "term" : { "updateType": "donateRequest" } },{ "term" : { "itemId": itemId }}]}}})
                 # print(ngoList)
@@ -782,8 +782,15 @@ def respondToDonationRequest():
                 # finalQuantity = reqQuantity - itemQuantity
                 #print(finalQuantity)
                 # print(itemQuantity)
+                # print(reqId)
                 source = "ctx._source.quantity -= %d"%(int(itemQuantity))
-                result3 = es.update(index="donations" , id = reqId , body = {"script" : {"source": source}})
+                # print("{\"script\" : {\"source\": %s}}"%(source))
+                query = {
+                    "script" : {
+                        "source" : source
+                    }
+                }
+                result3 = es.update(index="donations" , id = reqId , body = (query))
                 # return result3
             elif actionTaken == "decline":
                 query1 = {
@@ -854,7 +861,12 @@ def acceptDeclineDonation():
                 item = es.search(index = "donations", body = {"query": {"term": {"_id": itemId}}})
                 itemQuantity = item["hits"]["hits"][0]["_source"]["quantity"]
                 source = "ctx._source.quantity -= %d"%(int(itemQuantity))
-                res3 = es.update(index="donations" , id = requirementId , body = {"script" : {"source": source}})
+                query = {
+                    "script" : {
+                        "source" : source
+                    }
+                }
+                res3 = es.update(index="donations" , id = requirementId , body = (query))
                 return jsonpickle.encode(responsePackage("success","Accepted donation"),unpicklable=False)
                
             elif actionToken == "decline":
@@ -874,11 +886,14 @@ def acceptDeclineDonation():
             print(e)
             return jsonpickle.encode(responsePackage("Error","Couldn't respond to donation"),unpicklable=False)
 
-@app.route('/uploads/<filename>')
+@app.route('/uploads/<filename>',methods = ["GET"])
 def uploaded_file(filename):
-    url = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
-    return send_from_directory(url,
-                               filename)
+    if request.method == "GET":
+        print("in uploads")
+        print(filename)
+        url = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
+        return send_from_directory(url,
+                                filename)
 
 
 #function to remove document (Changine name from deleteItem to deleteDocument)
