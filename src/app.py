@@ -733,7 +733,7 @@ def respondToDonationRequest():
             ngoName = data["ngoName"]
             itemId = data["itemId"]
             donorId = data["donorId"]
-            reqId = data["requirementId"],
+            reqId = data["requirementId"]
             actionTaken = data["actionTaken"] #Added actionTaken by Donor (accept/decline)
             # date = datetime.datetime.now(datetime.timezone.utc)
             
@@ -771,14 +771,15 @@ def respondToDonationRequest():
                         if "ngoName" in ngo["_source"]:
                             query["ngoName"] = ngo["_source"]["ngoName"]
                         res = es.index(index = "donations", body = (query1))
-                #updating the quantites
-                requirement = es.search(index = "donations", body = {"query": {"term": {"_id": reqId}}})
-                reqQuantity = requirement["hits"]["hits"][0]["_source"]["quantity"]
+                # updating the quantites
+                # print(reqId)
+                # requirement = es.search(index = "donations", body = {"query": {"term": {"_id": reqId}}})
+                # reqQuantity = requirement["hits"]["hits"][0]["_source"]["quantity"]
                 # print(reqQuantity)
                 item = es.search(index = "donations", body = {"query": {"term": {"_id": itemId}}})
                 itemQuantity = item["hits"]["hits"][0]["_source"]["quantity"]
                 # print(itemQuantity)
-                #finalQuantity = reqQuantity - itemQuantity
+                # finalQuantity = reqQuantity - itemQuantity
                 #print(finalQuantity)
                 # print(itemQuantity)
                 source = "ctx._source.quantity -= %d"%(int(itemQuantity))
