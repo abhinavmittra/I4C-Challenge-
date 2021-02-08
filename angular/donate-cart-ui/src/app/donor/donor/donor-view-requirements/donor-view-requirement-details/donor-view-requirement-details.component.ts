@@ -77,4 +77,8 @@ export class DonorViewRequirementDetailsComponent implements OnInit {
   onFileSelected(event){
     this.selectedImage = <File>event.target.files[0];
   }
+
+  routeToRequirements(){
+    this.router.navigate(['/donor/requirements/list'])
+  }
 }

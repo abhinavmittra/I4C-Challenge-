@@ -43,6 +43,7 @@ export class AppLoginComponent implements OnInit {
       else if(data['role']=="admin"){
         if(data['pass']==true){
           this.authService.setUserId(data['id']);
+          this.authService.setName(data["name"])
           this.authService.showLogout.next(true);
           this.router.navigate(['admin']);
         }

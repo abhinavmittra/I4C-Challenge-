@@ -1,8 +1,36 @@
+<div class="container">
+<div class="mb-3">
+    <button class="btn btn-secondary" (click)="routeToRequirements()">Back</button>
+    </div>
+    <h5>Enter quantity & details</h5>
+    <div class="card text-center">
+        <div class="card-header">
+          {{item.name}}
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">{{item.category}}</h5>
+          <h6 class="card-subtitle mb-2 text-muted">{{item.subcategory}}</h6>
+          <div class="row">
+            <div class="col">
+                <span class="fw-bold">NGO:</span> {{item.ngo}}
+            </div>
+              <div class="col">
+                  <span class="fw-bold">Quantity:</span> {{item.quantity}}
+              </div>
+              
+          </div>
+          <p class="card-text">{{item.details}}</p>
+          
+          <button class="btn btn-secondary" *ngIf="!donateMode" (click)="toggleDonateMode()">Offer Item</button>
+          <button class="btn btn-secondary" (click)="toggleDonateMode()" *ngIf="donateMode">Cancel</button>
+        </div>
+        <div class="card-footer text-muted">
+          {{item.date | date:'medium'}}
+        </div>
+      </div>
 
-<button class="btn btn-secondary" *ngIf="!donateMode" (click)="toggleDonateMode()">Want to Donate?</button>
-<button class="btn btn-secondary" (click)="toggleDonateMode()" *ngIf="donateMode">Cancel</button>
 <div id="donateFormContainer" class="container" *ngIf="donateMode">
-    <h5>Enter quantity, quality,details,image</h5>
+    <h5>Please Enter the following details</h5>
 <form #donateForm="ngForm" (ngSubmit)="onSubmit(donateForm)">
 
     <div class="mb-3">
@@ -47,37 +75,11 @@
        <label for="itemPublic"> Check this box to make this donation <b>public</b></label>
         
     </div>
-        <div>
+        <div class="mb-3">
         <button class="btn btn-secondary" type="submit" [disabled]="!donateForm.valid">Donate</button> 
     </div>
 </form>
 </div>
-<div class = "row">
-    <div class="col">
-        <label>NGO:</label><span>{{item.ngo}}</span>
-    </div>
-    <div class="col">
-        <label>Item Name: </label><span>{{item.name}}</span>
-    </div>
-    <div class="col">
-        <label>Quantity:</label><span>{{item.quantity}}</span>
-    </div>
-    
-</div>
-<div class = "row">
-    <div class="col">
-        <label>Category: </label><span>{{item.category}}</span>
-    </div>
-    <div class="col">
-        <label>SubCategory: </label><span>{{item.subcategory}}</span>
-    </div>
-    
-</div>
-<div class = "row">
-    <div class="col">
-        <label>Details: </label><span>{{item.details}}</span>
-    </div>
-    
 </div>
 
             

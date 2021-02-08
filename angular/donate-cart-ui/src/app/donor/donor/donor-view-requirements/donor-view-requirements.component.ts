@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {DonorService} from '../../donor.service';
-import {ItemRequirement} from '../../../model/item-requirement';
+
 import { ActivatedRoute, Router } from '@angular/router';
 @Component({
   selector: 'app-donor-view-requirements',
@@ -9,12 +8,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class DonorViewRequirementsComponent implements OnInit {
 
-  constructor(private donorService:DonorService,private router:Router,private route:ActivatedRoute) { }
-  itemRequirementList:ItemRequirement[] = [];
+  constructor(private router:Router,private route:ActivatedRoute) { }
+
   ngOnInit(): void {
     //fetch item requirement list from service
 
-    this.itemRequirementList.push(new ItemRequirement("1","science class 10 ncert","Education","books","Need 5 text books for children","50","U&I","some ngo id"));
+    
   }
   viewDetails(index:number){
     

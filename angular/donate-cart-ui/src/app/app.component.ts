@@ -10,13 +10,17 @@ import { AuthService } from './auth/auth.service';
 })
 export class AppComponent {
   title = 'donate-cart-ui';
-
+  userName:string = "";
+  userNameChangedSubscription:Subscription;
   showLogOut:boolean=false;
   showLogOutSubscription:Subscription;
   constructor(private authService:AuthService,private router:Router){}
   ngOnInit(){
    this.showLogOutSubscription = this.authService.showLogout.subscribe((data:boolean)=>{
     this.showLogOut = data;
+    })
+    this.userNameChangedSubscription = this.authService.userNameChanged.subscribe((name:string)=>{
+      this.userName=name;
     })
     
   }
@@ -26,5 +30,6 @@ export class AppComponent {
   }
   ngOnDestroy(){
       this.showLogOutSubscription.unsubscribe();
+      this.userNameChangedSubscription.unsubscribe();
   }
 }

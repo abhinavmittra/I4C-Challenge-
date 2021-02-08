@@ -15,6 +15,7 @@ export class AuthService {
   pincode:string = null;
   pan:string = null;
   showLogout = new BehaviorSubject<boolean>(false);
+  userNameChanged = new BehaviorSubject<string>("Test-User");
   constructor(private httpClient: HttpClient) { }
   public loginUrl = "http://127.0.0.1:5000/authenticate";
   public registerDonorUrl = "http://127.0.0.1:5000/createUserAccount";
@@ -53,6 +54,7 @@ export class AuthService {
   }
   setName(name:string){
     this.name = name;
+    this.userNameChanged.next(name);
   }
 
   getPincode(){

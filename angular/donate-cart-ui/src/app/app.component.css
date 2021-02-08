@@ -1,6 +1,10 @@
 footer {
+   /* min-height: 100%;
+    height: auto !important;*/
+    height:40px;
+    width:100%;
     position: fixed;
-    height: 60px;
     bottom: 0;
-    width: 100%;
+    
+    
 }

@@ -67,4 +67,7 @@ export class DoneeViewDonationDetailsComponent implements OnInit {
    window.open(imgPath);
 
   }
+  routeToDonations(){
+    this.router.navigate(['/donee/donations/list'])
+  }
 }
