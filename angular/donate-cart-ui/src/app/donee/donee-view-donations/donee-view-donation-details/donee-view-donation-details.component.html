@@ -2,7 +2,6 @@
     <div class="mb-3">
     <button class="btn btn-secondary" (click)="routeToDonations()">Back</button>
     </div>
-    <h5>Enter quantity & details</h5>
     <div class="card text-center">
         <div class="card-header">
           {{item.name}}
@@ -17,8 +16,16 @@
               <div class="col">
                 <span class="fw-bold">Quality:</span> {{item.quality}}
             </div>
+            <div class="col">
+              <span class="fw-bold">Pincode:</span> {{item.pincode}}
           </div>
-          <p class="card-text">{{item.details}}</p>
+          </div>
+          <div class="row">
+            <div class="col">
+              <p class="card-text">{{item.details}}</p>
+            </div>
+          
+          </div>
           <div class="btn-group">
           <button class="btn btn-secondary" (click)="viewItemImage()">View Image</button>
           <button class="btn btn-secondary" *ngIf="!requestMode" (click)="toggleRequestMode()">Request Item</button>

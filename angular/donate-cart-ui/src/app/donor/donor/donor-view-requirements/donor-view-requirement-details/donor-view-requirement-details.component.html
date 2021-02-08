@@ -17,9 +17,17 @@
               <div class="col">
                   <span class="fw-bold">Quantity:</span> {{item.quantity}}
               </div>
+              <div class="col">
+                <span class="fw-bold">Pincode:</span> {{item.pincode}}
+            </div>
               
           </div>
-          <p class="card-text">{{item.details}}</p>
+          <div class="row">
+            <div class="col">
+              <p class="card-text">{{item.details}}</p>
+            </div>
+          
+          </div>
           
           <button class="btn btn-secondary" *ngIf="!donateMode" (click)="toggleDonateMode()">Offer Item</button>
           <button class="btn btn-secondary" (click)="toggleDonateMode()" *ngIf="donateMode">Cancel</button>

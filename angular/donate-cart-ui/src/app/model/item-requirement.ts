@@ -8,8 +8,9 @@ export class ItemRequirement {
     ngoId:string;
     ngo:string;
     date:string;
+    pincode:string;
 
-    constructor(requirementId:string,name:string,category:string,subcategory:string,details:string,quantity:string,ngoId:string,ngo:string,date:string){
+    constructor(requirementId:string,name:string,category:string,subcategory:string,details:string,quantity:string,ngoId:string,ngo:string,date:string,pincode:string){
         this.requirementId = requirementId;
         this.name = name;
         this.category=category;
@@ -20,5 +21,6 @@ export class ItemRequirement {
         this.ngo= ngo;
         var formattedDate = new Date(date)
         this.date = formattedDate.toLocaleString()
+        this.pincode = pincode;
     }
 }

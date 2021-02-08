@@ -45,7 +45,7 @@ except Exception as e:
 
 #class to define a donation Item object
 class donationItem:
-    def __init__(self,itemId,name,category,subcategory,details,quantity,quality,imglink,donorId,date):
+    def __init__(self,itemId,name,category,subcategory,details,quantity,quality,imglink,donorId,date,pincode):
         self.itemId = itemId
         self.name = name
         self.category = category
@@ -56,10 +56,11 @@ class donationItem:
         self.imgLink = imglink
         self.donorId = donorId
         self.date = date
+        self.pincode=pincode
 
 #class to define an item requirement object
 class itemRequirement:
-     def __init__(self,ID,name,category,subcategory,details,quantity,ngoId,ngo,date):
+     def __init__(self,ID,name,category,subcategory,details,quantity,ngoId,ngo,date,pincode):
         self.requirementId =ID
         self.name = name
         self.category = category
@@ -69,6 +70,7 @@ class itemRequirement:
         self.ngoId = ngoId
         self.ngo = ngo
         self.date=date
+        self.pincode=pincode
 #class to define unverifiedNgo object
 class ngo:
     def __init__(self,ngoId,name,email,phone,pan,address,pincode):
@@ -501,7 +503,7 @@ def getItems():
                 except Exception as e:
                     print("error in finding file")
                     print(e)
-                dataList.append(donationItem(item['_id'],item['_source']['itemName'],item['_source']['category'],item['_source']['subCategory'],item['_source']['details'],item['_source']['quantity'],item['_source']['quality'],imglink,item['_source']['donorId'],item['_source']['date']))
+                dataList.append(donationItem(item['_id'],item['_source']['itemName'],item['_source']['category'],item['_source']['subCategory'],item['_source']['details'],item['_source']['quantity'],item['_source']['quality'],imglink,item['_source']['donorId'],item['_source']['date'],item['_source']['pincode']))
             for obj in dataList:
                 print(obj.name)
             result = donationItemPackage(dataList,"success","object contains list of items up for donation")
@@ -646,7 +648,7 @@ def getRequirements():
                     details = item['_source']['details']
                 else:
                     details = ""
-                dataList.append(itemRequirement(item['_id'],item['_source']['itemName'],item['_source']['category'],item['_source']['subCategory'],details,item['_source']['quantity'],item['_source']['ngoId'],ngo,item['_source']['date']))
+                dataList.append(itemRequirement(item['_id'],item['_source']['itemName'],item['_source']['category'],item['_source']['subCategory'],details,item['_source']['quantity'],item['_source']['ngoId'],ngo,item['_source']['date'],item['_source']['pincode']))
             # for obj in dataList:
                 # print(obj.name)
             result = itemRequirementPackage(dataList,"success","object contains list of requirements")
