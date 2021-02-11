@@ -25,7 +25,7 @@ NGO
   description
   passwordHash
   userType: NGO
-  pincode
+  city
   verifiedNGOFlag ( Do not set on account creation)
 
 
@@ -37,7 +37,7 @@ User
   email
   passwordHash
   userType: donor
-  pincode
+  city
   numberOfRatings: 0 
   averageRating: 0
 
@@ -58,7 +58,8 @@ Requirement
   itemName
   details
   quantity
-  pincode
+  city
+  shippingAddress
   date
   publicFlag
   ngoName
@@ -74,7 +75,7 @@ Item
   quality
   imageLink [ ]
   donorId
-  pincode
+  city
   date
   publicFlag
   donatedFlag ( do not set on creation )
@@ -93,6 +94,8 @@ Updates
   ngoName
   quantity
   quality
+  city ( for donate and donateRequest )
+  shippingAddress ( donateRequest )
 
 
 INDEX
@@ -111,7 +114,7 @@ PUT /accounts
       "passwordHash": { "type": "keyword" },
       "userType": { "type": "keyword" },
       "name": { "type": "keyword" },
-      "pincode": { "type": "keyword" },
+      "city": { "type": "keyword" },
       "verifiedNgoFlag": { "type": "boolean" },
       "numberOfRatings" : { "type" : "integer"},
       "averageRating" : { "type" : "keyword"}	
@@ -141,7 +144,6 @@ PUT /donations
       "quality":{ "type" : "keyword"},
       "imageLink":{ "type" : "keyword"},
       "donorId":{ "type" : "keyword"},
-      "pincode":{ "type" : "keyword"},
       "donatedFlag":{ "type" : "keyword"},
       "updateType":{"type" : "keyword"},
       "itemId":{"type" : "keyword"},
@@ -150,7 +152,12 @@ PUT /donations
       "requirementId" : { "type" : "keyword"},
       "publicFlag" : { "type" : "keyword"},
       "ngoName" : { "type" : "keyword"},
-      "messageFrom" : { "type" : "keyword"}
+      "messageFrom" : { "type" : "keyword"},
+      "city": { "type": "keyword" },
+      "shippingAddress": {
+        "type": "text",
+        "fields": { "keyword": { "type":  "keyword" } }
+        }
     }
   }
 }
@@ -171,7 +178,7 @@ NGO Account Creation:
     "description": "You can give stuff for poorest people",
     "passwordHash": "password123",
     "userType": "NGO",
-    "pincode": "576103"
+    "city": ""
   }
 
 
@@ -183,7 +190,7 @@ User Account Creation:
     "email": "person@gmail.com",
     "passwordHash": "password123",
     "userType": "donor",
-    "pincode": "576123",
+    "city": "",
     "name": "John Doe",
     "numberOfRatings": 0,
     "averageRating" : "0"
@@ -232,7 +239,7 @@ NGO QUERIES
 
 View Available Items:
   
-  Fetch all requirements of that ngo. From this, make a list of category, subcategory. Extract pincode
+  Fetch all requirements of that ngo. From this, make a list of category, subcategory. Extract city
 
   GET /donations/_search
   {
@@ -247,7 +254,7 @@ View Available Items:
     }
   }
   
-  Add category, subcategory, pincode while fetching available items
+  Add category, subcategory, city while fetching available items
 
   GET /donations/_search
   {
@@ -262,7 +269,7 @@ View Available Items:
           { "term" : { "donatedFlag": "true" } }
         ], 
         "should": [
-          { "term" : { "pincode" : "123410"} },
+          { "term" : { "city.keyword" : "123410"} },
           { "terms" : {"category": ["clothing", "xyz"] } },
           { "terms" : {"subCategory": ["laptops","xyz"] } }
         ]
@@ -278,8 +285,10 @@ Request an item (Use itemID) :
 	   "docType": "requirement",
      "ngoId" : "ceo@ngo.com",
      "ngoName" : "",
-     "date" : ""
-	   category, subCategory, itemName, quantity from the item; pincode from NGO account;
+     "date" : "",
+     "shippingAddress":"",
+     "city"
+	   category, subCategory, itemName, quantity from the item;
 	   publicFlag, details from frontend
   }
 
@@ -293,7 +302,7 @@ Request an item (Use itemID) :
     "itemId": "5zDLKHcBAiLz3dKLgBiN",
     "requirementId": frompreviousquery
     "date":"",
-    details, pincode from requirement
+    details, city, shippingAddress from requirement
   }
 
 Post a requirement (Creates requirementID) :
@@ -308,7 +317,8 @@ Post a requirement (Creates requirementID) :
     "details" : "Need some textbooks for grade 7 students",
     "quantity": 10,
     "ngoId" : "ceo@ngo.com",
-    "pincode": "576123",
+    "city": "",
+    "shippingAddress"
     "publicFlag": "true",
     "ngoName": ""
   }
@@ -433,7 +443,7 @@ Delete a requirement :
 DONOR QUERIES
 
 View requirements:
-  Fetch all items of that donor. From this, make a list of category, subcategory. Extract pincode
+  Fetch all items of that donor. From this, make a list of category, subcategory. Extract city
 
   GET /donations/_search
   {
@@ -448,7 +458,7 @@ View requirements:
     }
   }
   
-  Add category, subcategory, pincode while fetching requirements
+  Add category, subcategory, city while fetching requirements
 
   GET /donations/_search
   {
@@ -461,7 +471,7 @@ View requirements:
           {"range" : {"quantity" : { "gte" : 0}}}
         ],
         "should": [
-          { "term" : { "pincode" : "123410"} },
+          { "term" : { "city.keyword" : ""} },
           { "terms" : {"category": ["clothing"] } },
           { "terms" : {"subCategory": ["laptops"] } }
         ]
@@ -483,7 +493,7 @@ Put an item up for donation (Creates itemID(:
     "quality": "Good",
     "imageLink" : "https://www.incimages.com/uploaded_files/image/1920x1080/getty_883231284_200013331818843182490_335833.jpg",
     "donorId" : "lXMDXHcBd3Y4wJFJIB4P",
-    "pincode": "576123",
+    "city": "",
     "publicFlag": "true",
     "date": "2020-12-21T11:10:30Z"
   }
@@ -497,7 +507,7 @@ Respond to requirement (Use requirementID) :
     "donorId" : "person@gmail.com",
     date: ""
 	 category, subCategory, itemName from requirement; 
-	 pincode from the account;
+	 city from the account;
 	 publicFlag, imageLink, quality, quantity, details from frontend
   }
 
@@ -510,7 +520,7 @@ Respond to requirement (Use requirementID) :
     "ngoName": ""
     "requirementId" : "5jDBKHcBAiLz3dKLexiF",
     "itemId":""
-    imageLink, quality, quantity, pincode, details from the Item
+    imageLink, quality, quantity, city, details from the Item
     "date": ""
   }
 
