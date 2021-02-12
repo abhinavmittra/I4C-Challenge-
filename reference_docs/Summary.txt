@@ -80,6 +80,13 @@ Item
   publicFlag
   donatedFlag ( do not set on creation )
 
+ Image
+  donorId
+  ngoId
+  date
+  imageName
+  image 
+
 Updates
 
   docType: update
@@ -162,6 +169,29 @@ PUT /donations
   }
 }
 
+PUT images
+{
+  "mappings": {
+    "properties": {
+      "donorId": {
+        "type": "keyword"
+      },
+      "ngoid": {
+        "type": "keyword"
+      },
+      "date":{
+        "type": "date"
+      },
+      "imageName":{
+        "type": "keyword"
+      },
+      "image": {
+        "type": "binary",
+        "doc_values": false
+      }
+    }
+  }
+}
 
 
 ACCOUNT QUERIES
@@ -648,6 +678,13 @@ Send a message:
     "ngoName"
   }
 		
+  POST /images/_doc
+  {
+    "donorId"/ngoId: "",
+    "imageName": "",
+    "date": "",
+    "image": ""
+  }  
 		
 
 
