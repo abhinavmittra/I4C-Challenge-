@@ -17,6 +17,7 @@ export class AuthService {
   pan:string = null;
   showLogout = new BehaviorSubject<boolean>(false);
   userNameChanged = new BehaviorSubject<string>("Test-User");
+  ngoSubmitForm:FormData;
   constructor(private httpClient: HttpClient) { }
   public loginUrl = "http://127.0.0.1:5000/authenticate";
   public registerDonorUrl = "http://127.0.0.1:5000/createUserAccount";
@@ -44,9 +45,8 @@ export class AuthService {
     "Email":donor.email,"PasswordHash":donor.password,"UserType":"donor","Pincode":donor.pincode,"Name":donor.name},this.headerOptions);
 
   }
-  registerDonee(donee:Donee){
-    return this.httpClient.post<any>(this.registerDoneeUrl,{"NGOName":donee.name,"Website":donee.website,"PAN":donee.panno,"Address":donee.address,"description":donee.description,
-  "Phone":donee.phone,"Email":donee.email,"Pincode":donee.pincode,"PasswordHash":donee.password,"UserType":"NGO"},this.headerOptions);
+  registerDonee(doneeForm:FormData){
+    return this.httpClient.post<any>(this.registerDoneeUrl,doneeForm);
   }
   loginUser(email:string,pass:string){
     return this.httpClient.post<any>(this.loginUrl,{"email":email,"password":pass},this.headerOptions);
