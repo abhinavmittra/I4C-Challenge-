@@ -13,6 +13,7 @@ from os.path import isfile, join
 from donor import userAccountCreation,donateItem,getRequirements, respondToRequirement ,respondToDonationRequest, deleteItem, getUpdatesForDonor, sendMessageToNgo
 from ngo import getNgoInfo,createNgoAccount,getNgoListUnverified,requestItem,getItems,createRequirement, acceptDeclineDonation, deleteRequirement, getUpdatesForNGO, markItem, sendMessageToDonor
 from admin import authenticate,approveRejectNGO
+import base64
 app = Flask(__name__)
 
 #defining the default temporary upload folder
@@ -172,6 +173,26 @@ def getUpdatesDonor():
 def sendMessageToNgoFromDonor():
     result = sendMessageToNgo(request,es)
     return result
+
+#function to test if image gets converted to base64
+@app.route("/imageConvert",methods=['POST'])    
+def imagConvertTest():
+    if request.method == "POST":
+        try:
+                f = request.files['image']
+                filename = f.filename
+                #saving image as it needs to be opened while encoding
+                f.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
+                imagepath = './Upload_folder/' + filename
+                with open(imagepath, "rb") as image_file:
+                    encoded_string = base64.b64encode(image_file.read())
+                #deleting the saved image
+                if os.path.exists(imagepath):
+                    os.remove(imagepath)
+        except Exception as e:
+                print(e,"error in image converion")
+                return jsonpickle.encode("Failure","Error in image upload")
+        return(encoded_string)
    
 #Other functions ----------------------------------------------------------------
 #function that returns the image when the url is hit
