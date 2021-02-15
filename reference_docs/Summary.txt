@@ -81,8 +81,7 @@ Item
   donatedFlag ( do not set on creation )
 
  Image
-  donorId
-  ngoId
+  userId
   date
   imageName
   image 
@@ -124,7 +123,9 @@ PUT /accounts
       "city": { "type": "keyword" },
       "verifiedNgoFlag": { "type": "boolean" },
       "numberOfRatings" : { "type" : "integer"},
-      "averageRating" : { "type" : "keyword"}	
+      "averageRating" : { "type" : "keyword"},
+      "imageLink" : { "type": "keyword" },
+      "additionalComments" : { "type": "keyword" }	
     }
   }
 }
@@ -680,7 +681,7 @@ Send a message:
 		
   POST /images/_doc
   {
-    "donorId"/ngoId: "",
+    "userId": "",
     "imageName": "",
     "date": "",
     "image": ""

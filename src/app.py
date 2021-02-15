@@ -13,6 +13,7 @@ from os.path import isfile, join
 from donor import userAccountCreation,donateItem,getRequirements, respondToRequirement ,respondToDonationRequest, deleteItem, getUpdatesForDonor, sendMessageToNgo
 from ngo import getNgoInfo,createNgoAccount,getNgoListUnverified,requestItem,getItems,createRequirement, acceptDeclineDonation, deleteRequirement, getUpdatesForNGO, markItem, sendMessageToDonor
 from admin import authenticate,approveRejectNGO
+from common import getImage
 app = Flask(__name__)
 
 #defining the default temporary upload folder
@@ -39,8 +40,8 @@ try:
 
     #using new db for testing functionalities
     es = Elasticsearch(
-               ['https://5ea0807d2db24793b2ae5f6ee4f413bd.ap-south-1.aws.elastic-cloud.com:9243'],
-               http_auth=("elastic","JEjJFXwITPboNUxEIcnxwsYs"),
+               ['https://afd0050243e24ef7a14f2f29d8c109d2.ap-south-1.aws.elastic-cloud.com:9243'],
+               http_auth=("elastic","eNL7CixjMY4owQlRmiHjvCi6"),
                 scheme = "https",
                 )
     print("Connected")
@@ -174,6 +175,11 @@ def sendMessageToNgoFromDonor():
     return result
    
 #Other functions ----------------------------------------------------------------
+@app.route("/getImage",methods=['POST'])
+def getBase64Image():
+    result = getImage(request,es)
+    return result;
+
 #function that returns the image when the url is hit
 @app.route('/uploads/<filename>',methods = ["GET"])
 def uploaded_file(filename):
