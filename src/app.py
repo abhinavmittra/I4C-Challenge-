@@ -179,7 +179,8 @@ def sendMessageToNgoFromDonor():
 @app.route("/imageConvert",methods=['POST'])    
 def imagConvertTest():
     if request.method == "POST":
-        imageId = saveImage(request,es,app)
+        f = request.files['image']
+        imageId = saveImage(f,'123',es,app)
         return(imageId)
    
 #Other functions ----------------------------------------------------------------

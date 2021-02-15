@@ -42,12 +42,11 @@ def getImage(request,es):
             return jsonpickle.encode(responsePackage("Error","Couldn't get image"),unpicklable=False)
         return imageInfo
 
-def saveImage(request,es,app):
+def saveImage(file,userId,es,app):
     try:
-        f = request.files['image']
-        filename = f.filename
+        filename = file.filename
         #saving image as it needs to be opened while encoding
-        f.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
         imagepath = './Upload_folder/' + filename
         with open(imagepath, "rb") as image_file:
             encoded_string = base64.b64encode(image_file.read())
@@ -59,9 +58,9 @@ def saveImage(request,es,app):
 
         query = {
             "image": encoded_string.decode('utf-8'),
-            "userId" : request.form.get('userId'),
+            "userId" : userId,
             "date": date,
-            "imageName": f.filename
+            "imageName": file.filename
         }
 
         res = es.index(index = "images", body = query)
