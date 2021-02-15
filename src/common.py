@@ -1,5 +1,7 @@
 # from flask import Flask, request, url_for , redirect , send_from_directory
 from ssl import create_default_context
+import datetime
+from datetime import timedelta
 import json
 import jsonpickle
 import datetime
@@ -8,6 +10,8 @@ from werkzeug.utils import secure_filename
 import os
 from os import listdir
 from os.path import isfile, join
+from base64 import b64encode
+import base64
 
 class image:
     def __init__(self,userId,date,imageName,image):
@@ -38,22 +42,32 @@ def getImage(request,es):
             return jsonpickle.encode(responsePackage("Error","Couldn't get image"),unpicklable=False)
         return imageInfo
 
-def xxx(request,es):
-    if request.method == "GET":
-        try:
-            res = es.search(index="accounts", body={"query":{"bool":{"must":{"term" : {"userType" : "NGO"  }},"must_not":{"term" : { "verifiedNgoFlag" : "true" }}}}})
-            
-            ngoList = []
-            for item in res["hits"]['hits']:
-                ngoList.append(ngo(item['_id'],item['_source']['ngoName'],item['_source']['email'],item['_source']['phone'],item['_source']['pan'],item['_source']['address'],item['_source']['pincode']))
-            
-            
-            res = ngoPackage(ngoList,"Success","Fetched all items")
-        except Exception as e: 
-            print(e)
-            return jsonpickle.encode(ngoPackage([],"Failure","error occured"),unpicklable=False)
-        return jsonpickle.encode(res,unpicklable=False)
+def saveImage(request,es,app):
+    try:
+        f = request.files['image']
+        filename = f.filename
+        #saving image as it needs to be opened while encoding
+        f.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
+        imagepath = './Upload_folder/' + filename
+        with open(imagepath, "rb") as image_file:
+            encoded_string = base64.b64encode(image_file.read())
+            #deleting the saved image
+        if os.path.exists(imagepath):
+            os.remove(imagepath)
 
+        date = datetime.datetime.now(datetime.timezone.utc)   
 
+        query = {
+            "image": encoded_string.decode('utf-8'),
+            "userId" : request.form.get('userId'),
+            "date": date,
+            "imageName": f.filename
+        }
 
+        res = es.index(index = "images", body = query)
+        imageId = res["_id"]
 
+    except Exception as e:
+        print(e,"error in image converion")
+        return "-1"
+    return imageId    
