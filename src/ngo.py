@@ -575,36 +575,3 @@ def markItem(request,es):
             print (e)
             return jsonpickle.encode(responsePackage("Error","Couldn't mark item as received"),unpicklable=False)
         return jsonpickle.encode(responsePackage("success","Item marked as received"),unpicklable=False)
-
-#function to send a message to donor
-def sendMessageToDonor(request,es):
-    if request.method=="POST":
-        try:
-            data = json.loads(request.data)
-            message = data["message"]
-            reqId = data["requirementId"]
-            ngoId = data ["ngoId"]
-            itemId = data["itemId"]
-            donorId  = data["donorId"]
-            res = es.search(index="accounts",body={"query":{"term":{"_id":ngoId}}})
-            ngoName = res["hits"]["hits"][0]["_source"]["ngoName"]
-            query = {
-                "docType" : "update",
-                "updateType" : "message",
-                "details": message,
-                "requirementId": reqId,
-                "donorId": donorId,
-                "ngoId" : ngoId,
-                "itemId" : itemId,
-                "messageFrom": "NGO",
-                "ngoName":ngoName,
-                "date": datetime.datetime.now(datetime.timezone.utc)
-            }
-            res = es.index(index = "donations", body =(query))
-            # print(res)
-        except Exception as e:
-            print(e)
-            return jsonpickle.encode(responsePackage("Error","Couldn't send message to donor"),unpicklable=False)
-        return jsonpickle.encode(responsePackage("Success","Message sent to donor"),unpicklable=False)
-
-

@@ -10,11 +10,11 @@ from werkzeug.utils import secure_filename
 import os
 from os import listdir
 from os.path import isfile, join
-from donor import userAccountCreation,donateItem,getRequirements, respondToRequirement ,respondToDonationRequest, deleteItem, getUpdatesForDonor, sendMessageToNgo
-from ngo import getNgoInfo,createNgoAccount,getNgoListUnverified,requestItem,getItems,createRequirement, acceptDeclineDonation, deleteRequirement, getUpdatesForNGO, markItem, sendMessageToDonor
+from donor import userAccountCreation,donateItem,getRequirements, respondToRequirement ,respondToDonationRequest, deleteItem, getUpdatesForDonor
+from ngo import getNgoInfo,createNgoAccount,getNgoListUnverified,requestItem,getItems,createRequirement, acceptDeclineDonation, deleteRequirement, getUpdatesForNGO, markItem
 from admin import authenticate,approveRejectNGO
 import base64
-from common import getImage, saveImage
+from common import getImage, saveImage, sendMessage
 app = Flask(__name__)
 
 #defining the default temporary upload folder
@@ -123,7 +123,7 @@ def markItemReceived():
 #function to send message TO-Donor from NGO
 @app.route("/sendMessageToDonor",methods=['POST'])    
 def sendMessageToDonorFromNgo():
-    result = sendMessageToDonor(request,es)
+    result = sendMessage(request,es,'NGO',app)
     return result
 
 
@@ -172,7 +172,7 @@ def getUpdatesDonor():
 #function to send a message TO-ngo FROM-Donor
 @app.route("/sendMessageToNgo",methods=['POST'])    
 def sendMessageToNgoFromDonor():
-    result = sendMessageToNgo(request,es)
+    result = sendMessage(request,es,"donor",app)
     return result
 
 #function to test if image gets converted to base64

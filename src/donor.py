@@ -222,7 +222,7 @@ def respondToRequirement(request,es,app):
                 "details":details,
                 "publicFlag":public,
                 "donorId":donorID,
-                "date":datetime.datetime.now(datetime.timezone.utc)
+                "date":datetime.datetime.now(datetime.timezone.utc),
                 "imageLink": imageId
             }
 
@@ -523,34 +523,3 @@ def getUpdatesForDonor(request,es):
             return jsonpickle.encode(responsePackage("Error","Couldn't fetch updates for donor"),unpicklable=False)
          
         return json.dumps({"updatesForDonor":result})
-
-#function to send a message to NGO
-def sendMessageToNgo(request,es):
-    if request.method=="POST":
-        try:
-            data = json.loads(request.data)
-            message = data["message"]
-            reqId = data["requirementId"]
-            ngoId = data ["ngoId"]
-            itemId = data["itemId"]
-            donorId  = data["donorId"]
-            res = es.search(index="accounts",body={"query":{"term":{"_id":ngoId}}})
-            ngoName = res["hits"]["hits"][0]["_source"]["ngoName"]
-            query = {
-                "docType" : "update",
-                "updateType" : "message",
-                "details": message,
-                "requirementId": reqId,
-                "donorId": donorId,
-                "ngoId" : ngoId,
-                "itemId" : itemId,
-                "messageFrom": "donor",
-                "ngoName":ngoName,
-                "date": datetime.datetime.now(datetime.timezone.utc)
-            }
-            res = es.index(index = "donations", body =(query))
-            # print(res)
-        except Exception as e:
-            print(e)
-            return jsonpickle.encode(responsePackage("Error","Couldn't send message to NGO"),unpicklable=False)
-        return jsonpickle.encode(responsePackage("Success","Message sent to NGO"),unpicklable=False)
