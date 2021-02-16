@@ -13,6 +13,11 @@ from os.path import isfile, join
 from base64 import b64encode
 import base64
 
+class responsePackage:
+    def __init__(self,status,message):
+        self.status = status
+        self.message = message
+
 class image:
     def __init__(self,userId,date,imageName,image):
         self.userId = userId
@@ -69,4 +74,46 @@ def saveImage(file,userId,es,app):
     except Exception as e:
         print(e,"error in image converion")
         return "-1"
-    return imageId    
+    return imageId
+
+def sendMessage(request,es, messageFrom,app):
+    if request.method=="POST":
+        try:
+            message = request.form.get('message')
+            reqId = request.form.get('requirementId')
+            ngoId = request.form.get('ngoId')
+            itemId = request.form.get('itemId')
+            donorId  = request.form.get('donorId')
+
+            imageId = "-1"
+            try:
+                f= f = request.files['image']
+                if messageFrom == "NGO":
+                    userId = ngoId
+                else:
+                    userId = donorId    
+                imageId = saveImage(f,userId,es,app)
+            except Exception:
+                print("No image inserted")    
+
+            res = es.search(index="accounts",body={"query":{"term":{"_id":ngoId}}})
+            ngoName = res["hits"]["hits"][0]["_source"]["ngoName"]
+            query = {
+                "docType" : "update",
+                "updateType" : "message",
+                "details": message,
+                "requirementId": reqId,
+                "donorId": donorId,
+                "ngoId" : ngoId,
+                "itemId" : itemId,
+                "messageFrom": messageFrom,
+                "ngoName":ngoName,
+                "date": datetime.datetime.now(datetime.timezone.utc),
+                "imageLink": imageId
+            }
+            res = es.index(index = "donations", body =(query))
+            # print(res)
+        except Exception as e:
+            print(e)
+            return jsonpickle.encode(responsePackage("Error","Couldn't send message"),unpicklable=False)
+        return jsonpickle.encode(responsePackage("Success","Message sent"),unpicklable=False)        

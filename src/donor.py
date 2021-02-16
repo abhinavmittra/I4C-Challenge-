@@ -7,6 +7,7 @@ from werkzeug.utils import secure_filename
 import os
 from os import listdir
 from os.path import isfile, join
+from common import saveImage
 
 class responsePackage:
     def __init__(self,status,message):
@@ -84,7 +85,7 @@ def userAccountCreation(request,es):
         return result
 
 #function to donate an item 
-def donateItem(request,es):
+def donateItem(request,es,app):
     if request.method == "POST":
         try:
             category = request.form["category"]
@@ -96,6 +97,16 @@ def donateItem(request,es):
             donorID = request.form["donorId"]
             pincode = request.form["pincode"]
             date = datetime.datetime.now(datetime.timezone.utc)
+
+            try:
+                f = request.files['image']
+                imageId = saveImage(f,donorID,es,app)
+                if imageId == "-1":
+                	raise ValueError("failed to save image")
+            except Exception as e:
+                print(e)
+                return jsonpickle.encode(responsePackage("Failure","Error in image upload"),unpicklable=False)
+
             query = {
                         "docType":"item",
                         "category":category,
@@ -107,26 +118,17 @@ def donateItem(request,es):
                         "donorId":donorID,
                         "pincode":pincode,
                         "publicFlag": "true",
-                        "date":date
+                        "date":date,
+                        "imageLink": imageId
                     }
                     
             res = es.index(index="donations", body=(query))
             ID = res["_id"]
-            try:
-                f = request.files['image']
-                filename = ID + '.' + f.filename.split('.')[1]
-                # print(filename)
-                f.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
-                #Update item created with ImgLink
-                res = es.update(index = "donations", id = ID, body = {"doc": {"imageLink":"/uploads/"+ID+'.'+f.filename.split('.')[1]}})
-                imgLink = "/uploads/"+ID+'.'+f.filename.split('.')[1]
-            except:
-                print("error in image upload")
-                return jsonpickle.encode(responsePackage("Failure","Error in image upload"),unpicklable=False)
+
         except Exception as e: 
             print(e)
             return jsonpickle.encode(responsePackage("Failure","Could not create an item"),unpicklable=False)
-        return json.dumps({"status":"Success","itemId":ID,"imageLink":imgLink})
+        return json.dumps({"status":"Success","itemId":ID,"imageId":imageId})
 
 #function to get requirements
 
@@ -183,7 +185,7 @@ def getRequirements(request,es):
         return result
 
 #function to respond to a requirement
-def respondToRequirement(request,es):
+def respondToRequirement(request,es,app):
     if request.method == "POST":
         try:
             donorID = request.form['donorId']
@@ -198,6 +200,16 @@ def respondToRequirement(request,es):
             details = request.form['details']
             public = request.form['public']
             # date = datetime.datetime.now(datetime.timezone.utc)
+
+            try:
+                f = request.files['image']
+                imageId = saveImage(f,donorID,es,app)
+                if imageId == "-1":
+                	raise ValueError("failed to save image")
+            except Exception as e:
+                print(e)
+                return jsonpickle.encode(responsePackage("Failure","Error in image upload"),unpicklable=False)
+
             query1 = {
                 "docType":"item",
                 "category":category,
@@ -210,23 +222,17 @@ def respondToRequirement(request,es):
                 "details":details,
                 "publicFlag":public,
                 "donorId":donorID,
-                "date":datetime.datetime.now(datetime.timezone.utc)
+                "date":datetime.datetime.now(datetime.timezone.utc),
+                "imageLink": imageId
             }
+
             result = es.index(index="donations", body=(query1))
             ID = result["_id"]
-            try:
-                f = request.files['image']
-                filename = ID + '.' + f.filename.split('.')[1]
-                f.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
-                #Update item created with ImgLink
-                res = es.update(index = "donations", id = ID, body = {"doc": {"imageLink":"/uploads/"+ID+'.' + f.filename.split('.')[1]}})
-            except:
-                print("error in image upload in respond to requirement")
-                return jsonpickle.encode(responsePackage("Failure","Error in image upload"),unpicklable=False)
+            
             #get ngoName via ngoId
             res = es.search(index="accounts",body={"query":{"term":{"_id":NGOID}}})
             ngoName = res["hits"]["hits"][0]["_source"]["ngoName"]
-            imageLink = "/uploads/"+ID+'.' + f.filename.split('.')[1]
+            
             query2 = {
                 "docType":"update",
                 "updateType":"donate",
@@ -240,7 +246,7 @@ def respondToRequirement(request,es):
                 "quality":quality,
                 "details":details,
                 "pincode":pincode,
-                "imageLink": imageLink
+                "imageLink": imageId
             }
             res = es.index(index="donations", body=(query2))
         except Exception as e:
@@ -517,34 +523,3 @@ def getUpdatesForDonor(request,es):
             return jsonpickle.encode(responsePackage("Error","Couldn't fetch updates for donor"),unpicklable=False)
          
         return json.dumps({"updatesForDonor":result})
-
-#function to send a message to NGO
-def sendMessageToNgo(request,es):
-    if request.method=="POST":
-        try:
-            data = json.loads(request.data)
-            message = data["message"]
-            reqId = data["requirementId"]
-            ngoId = data ["ngoId"]
-            itemId = data["itemId"]
-            donorId  = data["donorId"]
-            res = es.search(index="accounts",body={"query":{"term":{"_id":ngoId}}})
-            ngoName = res["hits"]["hits"][0]["_source"]["ngoName"]
-            query = {
-                "docType" : "update",
-                "updateType" : "message",
-                "details": message,
-                "requirementId": reqId,
-                "donorId": donorId,
-                "ngoId" : ngoId,
-                "itemId" : itemId,
-                "messageFrom": "donor",
-                "ngoName":ngoName,
-                "date": datetime.datetime.now(datetime.timezone.utc)
-            }
-            res = es.index(index = "donations", body =(query))
-            # print(res)
-        except Exception as e:
-            print(e)
-            return jsonpickle.encode(responsePackage("Error","Couldn't send message to NGO"),unpicklable=False)
-        return jsonpickle.encode(responsePackage("Success","Message sent to NGO"),unpicklable=False)
