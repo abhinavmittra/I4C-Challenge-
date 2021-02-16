@@ -138,13 +138,13 @@ def createUserAccount():
 #function to donate an item 
 @app.route("/donateItemPublic",methods=['POST'])
 def donateItemDonor():
-    result = donateItem(request,es)
+    result = donateItem(request,es,app)
     return result
 
 #function to respond to a requirement
 @app.route("/respondToRequirement",methods=['POST'])
 def respondToRequirementDonor():
-    result = respondToRequirement(request,es)
+    result = respondToRequirement(request,es,app)
     return result
 
 @app.route("/respondToDonationRequest",methods=['POST'])    
