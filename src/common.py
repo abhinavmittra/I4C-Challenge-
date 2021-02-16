@@ -85,6 +85,17 @@ def sendMessage(request,es, messageFrom,app):
             itemId = request.form.get('itemId')
             donorId  = request.form.get('donorId')
 
+            imageId = "-1"
+            try:
+                f= f = request.files['image']
+                if messageFrom == "NGO":
+                    userId = ngoId
+                else:
+                    userId = donorId    
+                imageId = saveImage(f,userId,es,app)
+            except Exception:
+                print("No image inserted")    
+
             res = es.search(index="accounts",body={"query":{"term":{"_id":ngoId}}})
             ngoName = res["hits"]["hits"][0]["_source"]["ngoName"]
             query = {
@@ -97,7 +108,8 @@ def sendMessage(request,es, messageFrom,app):
                 "itemId" : itemId,
                 "messageFrom": messageFrom,
                 "ngoName":ngoName,
-                "date": datetime.datetime.now(datetime.timezone.utc)
+                "date": datetime.datetime.now(datetime.timezone.utc),
+                "imageLink": imageId
             }
             res = es.index(index = "donations", body =(query))
             # print(res)
