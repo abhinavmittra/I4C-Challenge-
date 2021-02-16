@@ -66,8 +66,10 @@ def createNgoAccount(request,es):
     if request.method == "POST":
         try:
             # print (request.data)
-            data = json.loads(request.data)
-            email = data ["Email"]
+            print(request.form)
+            print(request.files)
+            print(request.form['comments'])
+            email = request.form["Email"]
             # print (data)
             query = '{"query":{"term":{"email": "%s"}}}'%(email)
             emailExists = es.search(index="accounts", body=query)
@@ -77,23 +79,30 @@ def createNgoAccount(request,es):
                 result = jsonpickle.encode(result)
                 return result
             else :
-            #commenting it out because new architecture requires the field to be missing to check for unverified ngos
-                #data["verifiedNgoFlag"] = "false" 
+                form12aFile = request.files['ngoForm80g']
+                form80gFile = request.files['ngoForm12a']
+                fileName12a = form12aFile.filename
+                fileName80g = form80gFile.filename
+                print("Form 12a "+fileName12a)
+                print("Form 80g "+fileName80g)
+                
                 query = {
-                    "ngoName":data["NGOName"],
-                    "address":data["Address"],
-                    "email":data["Email"],
-                    "phone":data["Phone"],
-                    "website":data["Website"],
-                    "pincode":data["Pincode"],
-                    "passwordHash":data["PasswordHash"],
+                    "ngoName":request.form["NGOName"],
+                    "address":request.form["Address"],
+                    "email":request.form["Email"],
+                    "phone":request.form["Phone"],
+                    "website":request.form["Website"],
+                    "pincode":request.form["Pincode"],
+                    "passwordHash":request.form["PasswordHash"],
                     "userType":"NGO",
-                    "pan":data["PAN"],
-                    "description":data["description"]
+                    "pan":request.form["PAN"],
+                    "description":request.form["description"]
+                   
                     
                 }
-                
-                res = es.index(index = "accounts", body = query)
+                #Testing endpoint so avoiding to add any data
+                #TODO SRIRAM - > Change elastic search connection String to new db and then save image in image index and save that imageId in form12aImageId, form80gImageId in accounts index
+                #res = es.index(index = "accounts", body = query)
                 result = responsePackage("Success","Ngo Account created successfully")
                 result = jsonpickle.encode(result,unpicklable=False)
         except Exception as e: 
