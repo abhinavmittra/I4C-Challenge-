@@ -4,8 +4,11 @@
     <div class="btn-group col">
     <button class="btn btn-outline-dark btn-lg" *ngIf="registerType=='none'" (click)="setRegisterType('donor')">Donor</button> 
     <button class="btn btn-outline-dark btn-lg" *ngIf="registerType=='none'" (click)="setRegisterType('donee')">NGO</button>  
-</div>   
+    </div>   
 
+
+    <!--Testing image view fn-->
+<img src = "{{imageString}}" *ngIf="imageLoaded">
 </div>
 
 <div class="row">

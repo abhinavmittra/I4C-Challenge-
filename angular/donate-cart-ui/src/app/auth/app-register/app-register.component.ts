@@ -18,9 +18,15 @@ export class AppRegisterComponent implements OnInit {
   ngoForm12a:File=null;
   ngoForm80g:File=null;
   ngoForm:FormData=new FormData();
+
+
+  imageLoaded:boolean=false;
+  imageString:string;
   ngOnInit(): void {
     this.registerType="none";
     this.ngoPanMode = false;
+    //Testing base64 image view fn
+    this.getImageTest()
   }
 
   setRegisterType(regType:string){
@@ -88,6 +94,15 @@ export class AppRegisterComponent implements OnInit {
       console.log(data)
     });
 
+  }
+//To test base64 image viewing
+  getImageTest(){
+    this.authService.getImageFromServer("BLKipXcBxkTH7-pAhZ6I").subscribe((data)=>{
+      console.log(data)
+      this.imageString = "data:image/jpeg;base64,"+data["image"]
+      console.log(this.imageString)
+      this.imageLoaded=true;
+    })
   }
 
 
