@@ -140,7 +140,7 @@ def donateItem(request,es,app):
                         "publicFlag": "true",
                         "date":date,
                         "imageLink": imageId,
-                        "limit": limit
+                        "requestLimit": limit
                     }
                     
             res = es.index(index="donations", body=(query))
@@ -244,7 +244,8 @@ def respondToRequirement(request,es,app):
                 "publicFlag":public,
                 "donorId":donorID,
                 "date":datetime.datetime.now(datetime.timezone.utc),
-                "imageLink": imageId
+                "imageLink": imageId,
+                "requestLimit": quantity
             }
 
             result = es.index(index="donations", body=(query1))
