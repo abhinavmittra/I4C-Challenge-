@@ -78,7 +78,7 @@ Item
   city
   date
   publicFlag
-  donatedFlag ( do not set on creation )
+  quantity
 
  Image
   userId
@@ -319,8 +319,8 @@ Request an item (Use itemID) :
      "date" : "",
      "shippingAddress":"",
      "city"
-	   category, subCategory, itemName, quantity from the item;
-	   publicFlag, details from frontend
+	   category, subCategory, itemName from the item;
+	   publicFlag, details, quantity from frontend
   }
 
   POST /donations/_doc
@@ -333,6 +333,7 @@ Request an item (Use itemID) :
     "itemId": "5zDLKHcBAiLz3dKLgBiN",
     "requirementId": frompreviousquery
     "date":"",
+    "quantity": "",
     details, city, shippingAddress from requirement
   }
 
@@ -580,7 +581,7 @@ Updates feed:
   }
 
 Respond to donation request (Use itemID):
-  Insert into donations with docType update and updateType accept. For all other NGOs who requested that item, insert updateType decline. Then change the donatedflag to true. For the NGO's request donor accepts, quantity
+  Insert into donations with docType update and updateType accept. Update quantity of the item. For the NGO's request that donor accepts, update quantity.
 
   POST /donations/_doc
   {
@@ -594,10 +595,11 @@ Respond to donation request (Use itemID):
     "date" : "2020-01-01T14:10:30Z"
   }
 
+  
   POST donations/_update/itemId
   {
-    "doc": {
-      "donatedFlag": "true"
+    "script" : {
+      "source": "ctx._source.quantity -= 1"
     }
   }
 
@@ -606,19 +608,6 @@ Respond to donation request (Use itemID):
     "script" : {
       "source": "ctx._source.quantity -= 1"
     }
-  }
-
-  GET /donations/_search
-  {
-  	"size": 10000,
-  	"query":{
-  		"bool":{
-  			"must": [
-  				{ "term" : { "updateType": "donateRequest" } },
-  				{ "term" : { "itemId": "" } }
-  			]
-  		}
-  	}
   }
 
 Delete an item:
