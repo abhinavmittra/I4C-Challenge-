@@ -27,6 +27,7 @@ NGO
   userType: NGO
   city
   verifiedNGOFlag ( Do not set on account creation)
+  imageLink
 
 
 User
@@ -174,10 +175,7 @@ PUT images
 {
   "mappings": {
     "properties": {
-      "donorId": {
-        "type": "keyword"
-      },
-      "ngoid": {
+      "userId": {
         "type": "keyword"
       },
       "date":{
