@@ -36,11 +36,18 @@ export class DonorViewUpdatesComponent implements OnInit {
     this.selectedImage = <File>event.target.files[0];
   }
   viewMsgImage(itemIdx:number,updateIdx:number){
-    //TODO Change to id saved in the object instead of hardcoding this.donorUpdates[this.itemIdx].itemUpdates[this.updateIdx]["imageLink"]
+    
     this.imgMode=true;
-    this.utilityService.getImageFromServer("BLKipXcBxkTH7-pAhZ6I").subscribe((data)=>{
-      this.imageString = "data:image/jpeg;base64,"+data["image"]
-      this.imageLoaded=true;
+    this.utilityService.getImageFromServer(this.donorUpdates[itemIdx].itemUpdates[updateIdx]["imageLink"]).subscribe((data)=>{
+      if(data["image"]!="-1"){
+        this.imageString = "data:image/jpeg;base64,"+data["image"]
+        this.imageLoaded=true;
+        }
+        else{
+          this.imageString=="-1";
+          this.imageLoaded=false;
+        }
+      
     })
   }
   getDonorUpdates(){
@@ -121,10 +128,17 @@ export class DonorViewUpdatesComponent implements OnInit {
 
   viewItemImage(index:number){
     //TODO Change to id saved in object instead of hard coding
+    this.imageString="";
     this.imgMode=true;
-    this.utilityService.getImageFromServer("BLKipXcBxkTH7-pAhZ6I").subscribe((data)=>{
+    this.utilityService.getImageFromServer(this.donorUpdates[index].itemImageLink).subscribe((data)=>{
+      if(data["image"]!="-1"){
       this.imageString = "data:image/jpeg;base64,"+data["image"]
       this.imageLoaded=true;
+      }
+      else{
+        this.imageString=="-1";
+        this.imageLoaded=false;
+      }
     })
     //window.open(this.baseUrlForImage+this.donorUpdates[index].itemImageLink)
   }
@@ -176,6 +190,7 @@ export class DonorViewUpdatesComponent implements OnInit {
   showUpdates(){
     this.msgMode = false;
     this.imgMode=false;
+    this.imageLoaded = false;
   }
   setMsgIndex(itemIdx:number,updateIdx:number){
     this.itemIdx = itemIdx;

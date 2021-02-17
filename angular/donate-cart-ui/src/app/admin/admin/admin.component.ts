@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { UtilityService } from 'src/app/shared/utility.service';
 import { DoneeApproveReq} from '../../model/donee-approve-req';
 import {AdminService} from '../admin.service';
 @Component({
@@ -8,9 +9,13 @@ import {AdminService} from '../admin.service';
 })
 export class AdminComponent implements OnInit {
 
-  constructor(private adminService:AdminService) { }
+  constructor(private adminService:AdminService,private utilityService:UtilityService) { }
   public ngoRegRequests : DoneeApproveReq[] = [];
   loadingFlag:boolean  = null;
+  imgMode:boolean=false;
+  imageString:string="";
+  imageLoaded:boolean=false;
+
   ngOnInit(): void {
     //Make a get request to server to fetch all donee objects with pending registration.
 
@@ -19,7 +24,7 @@ export class AdminComponent implements OnInit {
       if(data['ngoList'].length!=0){
       for(var index in data['ngoList']){
         this.ngoRegRequests.push(new DoneeApproveReq(data['ngoList'][index]['ngoId'],data['ngoList'][index]['name'],data['ngoList'][index]['email'],
-        data['ngoList'][index]['phone'],data['ngoList'][index]['pan'],data['ngoList'][index]['address'],data['ngoList'][index]['pincode']));
+        data['ngoList'][index]['phone'],data['ngoList'][index]['pan'],data['ngoList'][index]['address'],data['ngoList'][index]['pincode'],data['imageLink']));
       }
     }
     else{
@@ -30,6 +35,27 @@ export class AdminComponent implements OnInit {
     })
 
     
+  }
+  viewImage(index:number){
+    this.imageString="";
+    this.imgMode=true;
+    
+    this.utilityService.getImageFromServer(this.ngoRegRequests[index].imageLink).subscribe((data)=>{
+      if(data["image"]!="-1"){
+      this.imageString = "data:image/jpeg;base64,"+data["image"]
+      this.imageLoaded=true;
+      }
+      else{
+        this.imageString=="-1";
+        this.imageLoaded=false;
+      }
+    })
+  }
+
+
+  showRequests(){
+    this.imgMode=false;
+    this.imageLoaded=false;
   }
   approveRequest(index:number){
     console.log(index);

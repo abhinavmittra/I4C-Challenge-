@@ -4,12 +4,35 @@
           <textarea class="form-control" [(ngModel)]="messageBody" placeholder="Type your Message here" id="floatingTextarea2" style="height: 100px"></textarea>
           <label for="floatingTextarea2">Your Message</label>
         </div>
+        <div class="mb-3">
+          <label for="itemImage" class="form-label">Upload an Image</label>
+          <input type="file" id="itemImage" class="form-control" (change)="onFileSelected($event)"
+          ngModel
+          name="image"
+          required
+          >
+          </div>
         <button class="btn btn-outline-secondary" (click)="sendMessage()">Send</button>
         <button class="btn btn-outline-secondary" (click)="showUpdates()">Back</button>
 </div>   
 
 
-<div class="container" id="updates" *ngIf="!msgMode">
+<div class="container" id="imgBody" *ngIf="imgMode">
+  <!--Loader for Image-->
+  <div class="d-flex justify-content-center" *ngIf="!imageLoaded">
+  <div class="spinner-border" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+  </div>
+<h4 *ngIf="imageString=='-1'">No Image found</h4>
+  <button *ngIf="imageLoaded" class="btn btn-outline-secondary" (click)="showUpdates()" style="display:block">Back</button>
+  <div class="text-center">
+  <img src = "{{imageString}}" *ngIf="imageLoaded" height="500" width="500">
+</div>
+</div>
+
+
+<div class="container" id="updates" *ngIf="(!msgMode)&&(!imgMode)">
   <h3 *ngIf="doneeUpdates.length!=0">Requirements posted by you</h3>
   <h3 *ngIf="doneeUpdates.length==0">No Requirements posted by you</h3>
   <ng-container *ngFor="let item of doneeUpdates;index as i">  
@@ -67,7 +90,7 @@
                       </div>
                   </div>
                   <div class="btn-group"  role="group" aria-label="Basic outlined example">
-                    <button class="btn btn-outline-secondary" (click)="viewItemImage(i,j)">View Image</button>
+                    <button class="btn btn-outline-secondary" (click)="viewImage(i,j,'item')">View Image</button>
                       <button class="btn btn-outline-secondary" (click)="acceptOrReject(i,j,'accept')">Accept</button>
                       <button class="btn btn-outline-secondary" (click)="acceptOrReject(i,j,'decline')">Decline</button>
                       
@@ -101,6 +124,7 @@
                 <p class="card-text" *ngIf="update.messageFrom=='donor'">From: {{update.donorId}}</p>
                 <p class="card-text" *ngIf="update.messageFrom=='NGO'">To: {{update.donorId}}</p>
                 <p>{{update.message}}</p>
+                <button class="btn btn-outline-secondary" *ngIf="update.imageLink!='-1'"(click)="viewImage(i,j,'message')">View Image</button>  
               </div>
             </div>
        </div>

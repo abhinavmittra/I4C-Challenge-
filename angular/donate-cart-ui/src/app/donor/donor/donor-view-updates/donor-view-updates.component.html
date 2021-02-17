@@ -25,7 +25,7 @@
     <span class="visually-hidden">Loading...</span>
   </div>
   </div>
-
+<h4 *ngIf="imageString=='-1'">No Image found</h4>
   <button *ngIf="imageLoaded" class="btn btn-outline-secondary" (click)="showUpdates()" style="display:block">Back</button>
   <div class="text-center">
   <img src = "{{imageString}}" *ngIf="imageLoaded" height="500" width="500">

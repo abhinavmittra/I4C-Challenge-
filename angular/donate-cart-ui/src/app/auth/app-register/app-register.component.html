@@ -156,24 +156,17 @@
                 >
             </div>
             <div class="mb-3">
-                <label for="doneeForm12">Upload Form 12a</label>
+                <label for="doneeForm12">Upload any supporting document (Form12a or Form80g) </label>
                 <input type="file" id="doneeForm" class="form-control" 
                 ngModel
-                name="panForm12a"
-                (change)="onForm12aSelected($event)"
+                name="supportDocument"
+                (change)="onDocSelected($event)"
                 required
                 
                 >
+                
             </div>
-            <div class="mb-3">
-                <label for="doneePan">Upload Form80g</label>
-                <input type="file" id="doneePan" class="form-control" 
-                ngModel
-                name="panForm80g"
-                (change)="onForm80gSelected($event)"
-                required
-                
-                >
+            
                 <div class="mb-3">
                     <label for="doneeComments" class="form-label">Comments</label>
                     <textarea class="form-control" id="doneeComments" rows="3"
@@ -181,7 +174,7 @@
                     ngModel
                     name="doneeComments"></textarea>
                   </div>
-            </div>
+            
             <div class="btn-group">
                 <button class="btn btn-outline-dark" (click)="switchToNgoPanMode(false)">Back</button>  
                 <button class="btn btn-outline-dark" type="submit" [disabled]="!ngoAdditionalInfo.valid">Register</button> 

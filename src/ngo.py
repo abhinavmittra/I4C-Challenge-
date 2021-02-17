@@ -15,7 +15,7 @@ class responsePackage:
         self.status = status
         self.message = message
 class ngo:
-    def __init__(self,ngoId,name,email,phone,pan,address,pincode):
+    def __init__(self,ngoId,name,email,phone,pan,address,pincode,imageLink):
         self.ngoId = ngoId
         self.name = name
         self.email = email
@@ -23,6 +23,7 @@ class ngo:
         self.pan = pan
         self.address = address
         self.pincode = pincode
+        self.imageLink = imageLink
 
 class ngoPackage:
     def __init__(self,ngoList,status,message):
@@ -67,9 +68,7 @@ def createNgoAccount(request,es,app):
     if request.method == "POST":
         try:
             # print (request.data)
-            print(request.form)
-            print(request.files)
-            print(request.form['comments'])
+            
             email = request.form["Email"]
             # print (data)
             query = '{"query":{"term":{"email": "%s"}}}'%(email)
@@ -80,13 +79,9 @@ def createNgoAccount(request,es,app):
                 result = jsonpickle.encode(result)
                 return result
             else :
-                form80gFile = request.files['ngoForm80g']
-                form12aFile = request.files['ngoForm12a']
+                
                 image = request.files['image']
-                fileName12a = form12aFile.filename
-                fileName80g = form80gFile.filename
-                print("Form 12a "+fileName12a)
-                print("Form 80g "+fileName80g)
+                
                 
                 query = {
                     "ngoName":request.form["NGOName"],
@@ -98,10 +93,12 @@ def createNgoAccount(request,es,app):
                     "passwordHash":request.form["PasswordHash"],
                     "userType":"NGO",
                     "pan":request.form["PAN"],
-                    "description":request.form["description"]
+                    "description":request.form["description"],
+                    "comments":request.form["comments"],
+                    "imageLink":"-1" #keeping default value as -1
                 }
-                #Testing endpoint so avoiding to add any data
-                #TODO SRIRAM - > Change elastic search connection String to new db and then save image in image index and save that imageId in form12aImageId, form80gImageId in accounts index
+           
+                
                 res = es.index(index = "accounts", body = query)
                 ngoId = res["_id"]
                 #saving Image
@@ -154,7 +151,10 @@ def getNgoListUnverified(request,es):
             
             ngoList = []
             for item in res["hits"]['hits']:
-                ngoList.append(ngo(item['_id'],item['_source']['ngoName'],item['_source']['email'],item['_source']['phone'],item['_source']['pan'],item['_source']['address'],item['_source']['pincode']))
+                imgLink="-1"
+                if "imageLink" in item['_source']:
+                    imgLink=item['_source']['imageLink']
+                ngoList.append(ngo(item['_id'],item['_source']['ngoName'],item['_source']['email'],item['_source']['phone'],item['_source']['pan'],item['_source']['address'],item['_source']['pincode'],imgLink))
             
             
             res = ngoPackage(ngoList,"Success","Fetched all items")

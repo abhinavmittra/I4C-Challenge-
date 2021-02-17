@@ -15,8 +15,8 @@ export class AppRegisterComponent implements OnInit {
 
   registerType:string=null;
   ngoPanMode:boolean=false;
-  ngoForm12a:File=null;
-  ngoForm80g:File=null;
+  imageDoc:File=null;
+ 
   ngoForm:FormData=new FormData();
 
 
@@ -73,18 +73,15 @@ export class AppRegisterComponent implements OnInit {
       
     }
   }
-  onForm12aSelected(event){
-    this.ngoForm12a = <File>event.target.files[0];
+  onDocSelected(event){
+    this.imageDoc = <File>event.target.files[0];
   }
-  onForm80gSelected(event){
-    this.ngoForm80g = <File>event.target.files[0];
-  }
+  
 
   onSubmitNgoAdditonalInfo(form:NgForm){
     const panno = form.value.panno;
     this.ngoForm.append("PAN",panno)
-    this.ngoForm.append('ngoForm12a',this.ngoForm12a,this.ngoForm12a.name);
-    this.ngoForm.append('ngoForm80g',this.ngoForm80g,this.ngoForm80g.name);
+    this.ngoForm.append('image',this.imageDoc,this.imageDoc.name);
     this.ngoForm.append('comments',form.value.doneecomments)
     console.log(this.ngoForm)
     //var donee:Donee = new Donee(name,address,pincode,phone,panno,website,desc,email,pass);

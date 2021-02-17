@@ -116,15 +116,8 @@ public options = {
     return this.httpClient.post<any>(this.createItemRequirementItemUrl,JSON.stringify(item),this.headerOptions);
   }
 
-  sendMessageToDonor(reqId:string,itemId:string,donorId:string,ngoId:string,message:string){
-    return this.httpClient.post<any>(this.sendMessageUrl,JSON.stringify({
-      'requirementId':reqId,
-    'itemId':itemId,
-    'ngoId':ngoId,
-    'donorId':donorId,
-    'message':message
-  
-  }),this.headerOptions);
+  sendMessageToDonor(form:FormData){
+    return this.httpClient.post<any>(this.sendMessageUrl,form);
   }
 
 

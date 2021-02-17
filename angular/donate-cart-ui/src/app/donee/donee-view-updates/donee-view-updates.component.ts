@@ -5,6 +5,7 @@ import { DoneeService } from '../donee.service';
 import {Subscription} from 'rxjs'
 import { DoneeUpdate } from 'src/app/model/donee-update';
 import {RequirementUpdate} from '../../model/requirement-update';
+import { UtilityService } from 'src/app/shared/utility.service';
 @Component({
   selector: 'app-donee-view-updates',
   templateUrl: './donee-view-updates.component.html',
@@ -12,15 +13,19 @@ import {RequirementUpdate} from '../../model/requirement-update';
 })
 export class DoneeViewUpdatesComponent implements OnInit {
 
-  constructor(private authService:AuthService,private doneeService:DoneeService) { }
+  constructor(private authService:AuthService,private doneeService:DoneeService,private utilityService:UtilityService) { }
   
- baseUrlForImage = "http://127.0.0.1:5000";
+ 
  doneeUpdates:DoneeUpdate[]=[];
  doneeUpdatesChanged:Subscription;
   
  selectedReqUpdates:RequirementUpdate[]=[];
  visibleReqUpdate:boolean[]=[]; //check which item's updates are being viewed
   msgMode :boolean = false;
+  imgMode:boolean=false;
+  imageLoaded:boolean=false;
+  imageString:string=""
+  selectedImage:File=null;
  reqIdx:number = null;
  updateIdx:number = null;
  messageBody:string = "";
@@ -31,6 +36,9 @@ export class DoneeViewUpdatesComponent implements OnInit {
     this.getDoneeUpdates()
     
   
+  }
+  onFileSelected(event){
+    this.selectedImage = <File>event.target.files[0];
   }
   getDoneeUpdates(){
     this.doneeUpdates=this.doneeService.getDoneeUpdates()
@@ -118,9 +126,7 @@ export class DoneeViewUpdatesComponent implements OnInit {
     }
   }
   
-    viewItemImage(reqIdx:number,updateIdx:number){
-      window.open(this.baseUrlForImage + this.doneeUpdates[reqIdx].reqUpdates[updateIdx]["itemImageLink"])
-    }
+  
     
   
     sendMessage(){
@@ -128,7 +134,24 @@ export class DoneeViewUpdatesComponent implements OnInit {
       const message = this.messageBody
 
       
-      var updates:DoneeUpdate[];
+      
+
+      var submitForm = new FormData()
+      submitForm.append("requirementId",this.doneeUpdates[this.reqIdx].reqUpdates[this.updateIdx]["reqId"])
+      submitForm.append("itemId",this.doneeUpdates[this.reqIdx].reqUpdates[this.updateIdx]["itemId"])
+      submitForm.append("message",message)
+      submitForm.append("donorId",this.doneeUpdates[this.reqIdx].reqUpdates[this.updateIdx]["donorId"],)
+      submitForm.append("ngoId",this.doneeUpdates[this.reqIdx].reqUpdates[this.updateIdx]["ngoId"])
+      if(this.selectedImage!=null)
+      submitForm.append("image",this.selectedImage)
+
+
+
+
+
+      //Call API
+      this.doneeService.sendMessageToDonor(submitForm).subscribe((data)=>{
+        var updates:DoneeUpdate[];
         //get local copy of updates
         updates =  this.doneeService.getDoneeUpdates();
         var reqUpdates = {};
@@ -141,30 +164,24 @@ export class DoneeViewUpdatesComponent implements OnInit {
           "donorId":this.doneeUpdates[this.reqIdx].reqUpdates[this.updateIdx]["donorId"],
           "message":message,
           "messageFrom":"NGO",
-          "updateDate":new Date().toISOString()
+          "updateDate":new Date().toISOString(),
+          "imageLink":data["imageId"]
       }
       updates[this.reqIdx].reqUpdates.push(reqUpdates)
     //update local copy
       this.doneeService.setDoneeUpdates(updates)
-
-
-
-      //Call API
-      this.doneeService.sendMessageToDonor(this.doneeUpdates[this.reqIdx].reqUpdates[this.updateIdx]["reqId"],
-      this.doneeUpdates[this.reqIdx].reqUpdates[this.updateIdx]["itemId"],
-      this.doneeUpdates[this.reqIdx].reqUpdates[this.updateIdx]["donorId"],
-      this.doneeUpdates[this.reqIdx].reqUpdates[this.updateIdx]["ngoId"],
-      message).subscribe((data)=>{
-        console.log(data)
+      this.msgMode = false;
       }
       )
 
-      this.msgMode = false;
+      
       
       
     }
     showUpdates(){
       this.msgMode = false;
+      this.imgMode = false;
+      this.imageLoaded = false;
     }
     setMsgIndex(reqIdx:number,updateIdx:number){
       this.reqIdx = reqIdx;
@@ -220,6 +237,40 @@ export class DoneeViewUpdatesComponent implements OnInit {
       })
     }
     }
+
+    viewImage(reqIndex:number,updateIndex:number,serviceType:string){
+      this.imageString="";
+    this.imgMode=true;
+    //replace hardcoded value with this.doneeUpdates[reqIndex].reqUpdates[updateIndex]["imageLink"]
+
+
+    if(serviceType=='message'){
+    this.utilityService.getImageFromServer("ESk9qncBnssMJ-PIcb6J").subscribe((data)=>{
+      if(data["image"]!="-1"){
+      this.imageString = "data:image/jpeg;base64,"+data["image"]
+      this.imageLoaded=true;
+      }
+      else{
+        this.imageString=="-1";
+        this.imageLoaded=false;
+      }
+    })
+    }
+  
+  else if(serviceType=='item'){
+   //replace hardcoded by this.doneeUpdates[reqIdx].reqUpdates[updateIdx]["itemImageLink"]
+    this.utilityService.getImageFromServer("ESk9qncBnssMJ-PIcb6J").subscribe((data)=>{
+      if(data["image"]!="-1"){
+      this.imageString = "data:image/jpeg;base64,"+data["image"]
+      this.imageLoaded=true;
+      }
+      else{
+        this.imageString=="-1";
+        this.imageLoaded=false;
+      }
+    })
+  }
+}
 
     deleteReq(reqIndex:number){
       var actionPerformed = false;

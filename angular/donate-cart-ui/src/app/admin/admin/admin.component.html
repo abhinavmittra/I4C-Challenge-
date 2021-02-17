@@ -6,7 +6,21 @@
       </div>
 </div>
 <h5 *ngIf="ngoRegRequests.length==0"> No pending approvals</h5>
-<div class="container" *ngIf = "!loadingFlag&&(ngoRegRequests.length!=0)">
+<div class="container mt-3" *ngIf = "!loadingFlag&&(ngoRegRequests.length!=0)">
+    
+    <div class="container" id="imgBody" *ngIf="imgMode">
+        <!--Loader for Image-->
+        <div class="d-flex justify-content-center" *ngIf="!imageLoaded">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        </div>
+        <button *ngIf="imageLoaded" class="btn btn-outline-secondary" (click)="showRequests()" style="display:block">Back</button>
+        <div class="text-center">
+        <img src = "{{imageString}}" *ngIf="imageLoaded" height="500" width="500">
+      </div>
+      </div>
+    <div id="ngoReqs" *ngIf="!imgMode">
     <h3>NGO Registrations waiting for Approval</h3>
 <table class="table">
     <thead>
@@ -14,7 +28,8 @@
             <th>NGO</th> 
             <th>PAN No.</th>
             <th>Address</th>
-            <th>Contact No.</th>                
+            <th>Contact No.</th>
+            <th>Document</th>                
             <th>Accept/Reject</th>                                                  
         </tr>
     </thead>
@@ -44,7 +59,14 @@
             <span>{{item.phone}}</span>                                               
         </div>
     </div>
-  </td>                       
+  </td>     
+  <td> <div class="form-group">
+    <div class="form-group__text">
+        <span *ngIf="item.imageLink=='-1'">No Document</span>
+        <button class="btn btn-outline-secondary" (click)="viewImage(i)" *ngIf="item.imageLink!='-1'">View Image</button>                         
+    </div>
+    </div>
+    </td>                  
           <td> <div class="form-group">
             <div class="form-group__text">
                 <button class="btn btn-secondary" (click)="approveRequest(i)">Accept</button> | <button class="btn btn-secondary" (click)="rejectRequest(i)">Reject</button>                                              
@@ -54,7 +76,9 @@
     </tr>
 </tbody>
 </table>
-
-
 <p class="mt-3 fs-5 fw-bold lh-base">Income Tax Link for your reference is given<span class="text-muted"><a href="https://www.incometaxindia.gov.in/Pages/utilities/exempted-institutions.aspx">here</a></span></p>
+</div>
+
+
+
 </div>
