@@ -4,6 +4,7 @@ import { DonorService } from 'src/app/donor/donor.service';
 import {Subscription} from 'rxjs'
 import { DonorUpdate } from 'src/app/model/donor-update';
 import { ItemUpdate } from 'src/app/model/item-update';
+import {UtilityService} from '../../../shared/utility.service'
 @Component({
   selector: 'app-donor-view-updates',
   templateUrl: './donor-view-updates.component.html',
@@ -11,7 +12,7 @@ import { ItemUpdate } from 'src/app/model/item-update';
 })
 export class DonorViewUpdatesComponent implements OnInit {
 
-  constructor(private donorService:DonorService,private authService:AuthService) { }
+  constructor(private donorService:DonorService,private authService:AuthService,private utilityService:UtilityService) { }
 
  baseUrlForImage = "http://127.0.0.1:5000";
   donorUpdates:DonorUpdate[]=[];
@@ -23,10 +24,25 @@ export class DonorViewUpdatesComponent implements OnInit {
   itemIdx:number=null;
   updateIdx:number=null;
   msgMode:boolean = false;
+  imgMode:boolean=false;
+  imageLoaded:boolean=false;
+  imageString:string;
+  selectedImage:File=null;
   ngOnInit(): void {
     this.getDonorUpdates();   
   }
 
+  onFileSelected(event){
+    this.selectedImage = <File>event.target.files[0];
+  }
+  viewMsgImage(itemIdx:number,updateIdx:number){
+    //TODO Change to id saved in the object instead of hardcoding this.donorUpdates[this.itemIdx].itemUpdates[this.updateIdx]["imageLink"]
+    this.imgMode=true;
+    this.utilityService.getImageFromServer("BLKipXcBxkTH7-pAhZ6I").subscribe((data)=>{
+      this.imageString = "data:image/jpeg;base64,"+data["image"]
+      this.imageLoaded=true;
+    })
+  }
   getDonorUpdates(){
   this.donorUpdates=this.donorService.getDonorUpdates()
 
@@ -104,13 +120,32 @@ export class DonorViewUpdatesComponent implements OnInit {
   }
 
   viewItemImage(index:number){
-    
-    window.open(this.baseUrlForImage+this.donorUpdates[index].itemImageLink)
+    //TODO Change to id saved in object instead of hard coding
+    this.imgMode=true;
+    this.utilityService.getImageFromServer("BLKipXcBxkTH7-pAhZ6I").subscribe((data)=>{
+      this.imageString = "data:image/jpeg;base64,"+data["image"]
+      this.imageLoaded=true;
+    })
+    //window.open(this.baseUrlForImage+this.donorUpdates[index].itemImageLink)
   }
+
  
 
   sendMessage(){
-  const message = this.messageBody
+  
+
+    const message = this.messageBody
+    var submitForm = new FormData()
+    submitForm.append("requirementId",this.donorUpdates[this.itemIdx].itemUpdates[this.updateIdx]["reqId"])
+    submitForm.append("itemId",this.donorUpdates[this.itemIdx].itemUpdates[this.updateIdx]["itemId"])
+    submitForm.append("message",message)
+    submitForm.append("donorId",this.donorUpdates[this.itemIdx].itemUpdates[this.updateIdx]["donorId"],)
+    submitForm.append("ngoId",this.donorUpdates[this.itemIdx].itemUpdates[this.updateIdx]["ngoId"])
+    if(this.selectedImage!=null)
+    submitForm.append("image",this.selectedImage)
+  //Call API
+    this.donorService.sendMessageToNgo(submitForm).subscribe((data)=>{
+     
   var updates:DonorUpdate[];
     //get local copy of updates
         updates =  this.donorService.getDonorUpdates();
@@ -124,30 +159,23 @@ export class DonorViewUpdatesComponent implements OnInit {
       "donorId":this.donorUpdates[this.itemIdx].itemUpdates[this.updateIdx]["donorId"],
       "message":message,
       "messageFrom":"donor",
-      "updateDate":new Date().toISOString()
+      "updateDate":new Date().toISOString(),
+      "imageLink":data["imageId"]
   }
   updates[this.itemIdx].itemUpdates.push(itemUpdates)
 
   this.donorService.setDonorUpdates(updates)
-
-
-
-  //Call API
-    this.donorService.sendMessageToNgo(this.donorUpdates[this.itemIdx].itemUpdates[this.updateIdx]["reqId"],
-    this.donorUpdates[this.itemIdx].itemUpdates[this.updateIdx]["itemId"],
-    this.donorUpdates[this.itemIdx].itemUpdates[this.updateIdx]["donorId"],
-    this.donorUpdates[this.itemIdx].itemUpdates[this.updateIdx]["ngoId"],
-    message).subscribe((data)=>{
-      console.log(data)
+  this.msgMode = false;
     }
     )
 
-    this.msgMode = false;
+    
     
     
   }
   showUpdates(){
     this.msgMode = false;
+    this.imgMode=false;
   }
   setMsgIndex(itemIdx:number,updateIdx:number){
     this.itemIdx = itemIdx;

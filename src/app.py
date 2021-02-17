@@ -31,12 +31,7 @@ CORS(app) #Used to disable cross origin policy to test app in local
 #-----------Connecting to Cluster----------------
 #connecting to the elasticsearch cluster
 try: 
-    #es = Elasticsearch(
-     #          ['https://90266fa352184992b46b503574f1132e.ap-south-1.aws.elastic-cloud.com:9243/'],
-      #         http_auth=("elastic","HR9Cc5vxZXTwwU8auCrrBgJC"),
-       #         scheme = "https",
-        #        )
-
+   
 
 
     #using new db for testing functionalities
@@ -76,7 +71,7 @@ def approveRejectNGOAdmin():
 #function to create an NGO account
 @app.route("/createNgoAccount",methods=['POST'])
 def ngoAccountCreation():
-    result = createNgoAccount(request,es)
+    result = createNgoAccount(request,es,app)
     return result
 
 #function to get Ngo Details 
@@ -164,6 +159,12 @@ def deleteItemDonor():
     result = deleteItem(request,es)
     return result
 
+@app.route("/getRequirements",methods=['POST'])   
+def getAllRequirements():
+    result = getRequirements(request,es)
+    return result
+
+#function to get updates for donor
 @app.route("/getUpdatesForDonor",methods=['POST'])    
 def getUpdatesDonor():
     result = getUpdatesForDonor(request,es)
@@ -209,34 +210,7 @@ def test():
         res = es.update(index="donations",id = ID, body = {"doc": {"imageLink":json.loads(request.data)["imageLink"]}})
         return res
 
-#changing function name as this deletes the entire requirement document
-#Need to think about handling side effects too i.e how to handle updates for the requests made to these delete items/requirements    
-@app.route("/deleteRequirementDocument",methods=['POST','GET'])    
-def deleteRequirementDocument():
-    if request.method=="POST":
-        try:
-            data = json.loads(request.data)
-            reqId = data["requirementId"]
-            res = es.delete(index = "donations", id = reqId)
-            # print(res)
-        except Exception as e:
-            print(e)
-            return jsonpickle.encode(responsePackage("Error","Couldn't delete requirement"),unpicklable=False)
-        return jsonpickle.encode(responsePackage("Success","Deleted Requirement Successfully"),unpicklable=False)
-
-#function to remove document (Changine name from deleteItem to deleteDocument)
-@app.route("/deleteDocument",methods=['POST','GET'])    
-def deleteDocument():
-    if request.method=="POST":
-        try:
-            data = json.loads(request.data)
-            itemId = data["itemId"]
-            res = es.delete(index = "donations", id = itemId)
-            print(res)
-        except Exception as e:
-            print(e)
-            return jsonpickle.encode(responsePackage("Error","Couldn't delete document"),unpicklable=False)
-        return jsonpickle.encode(responsePackage("Success","Deleted document Successfully"),unpicklable=False)   
+  
         
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080, debug=True)

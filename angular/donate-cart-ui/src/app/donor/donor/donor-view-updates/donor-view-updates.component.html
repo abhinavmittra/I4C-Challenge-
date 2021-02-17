@@ -3,12 +3,36 @@
     <div class="form-floating mb-3">
       <textarea class="form-control" [(ngModel)]="messageBody" placeholder="Type your Message here" id="floatingTextarea2" style="height: 100px"></textarea>
       <label for="floatingTextarea2">Your Message</label>
+      
     </div>
+    <div class="mb-3">
+      <label for="itemImage" class="form-label">Upload an Image</label>
+      <input type="file" id="itemImage" class="form-control" (change)="onFileSelected($event)"
+      ngModel
+      name="image"
+      required
+      >
+      </div>
+    
     <button class="btn btn-outline-secondary" (click)="sendMessage()">Send</button>
     <button class="btn btn-outline-secondary" (click)="showUpdates()">Back</button>
 </div>  
 
-<div class="container" *ngIf="!msgMode">
+<div class="container" id="imgBody" *ngIf="imgMode">
+  <!--Loader for Image-->
+  <div class="d-flex justify-content-center" *ngIf="!imageLoaded">
+  <div class="spinner-border" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+  </div>
+
+  <button *ngIf="imageLoaded" class="btn btn-outline-secondary" (click)="showUpdates()" style="display:block">Back</button>
+  <div class="text-center">
+  <img src = "{{imageString}}" *ngIf="imageLoaded" height="500" width="500">
+</div>
+</div>
+
+<div class="container" *ngIf="(!msgMode)&&(!imgMode)">
     <h3 *ngIf="donorUpdates.length!=0">Donations offered by you</h3>
     <h3 *ngIf="donorUpdates.length==0">No Donations offered by you</h3>
     <ng-container *ngFor="let item of donorUpdates;index as i">  
@@ -96,6 +120,7 @@
                   <p class="card-text" *ngIf="update.messageFrom=='donor'">To: {{update.ngoName}}</p>
                 <p class="card-text" *ngIf="update.messageFrom=='NGO'">From: {{update.ngoName}}</p>
                   <p>{{update.message}}</p>
+                  <button class="btn btn-outline-secondary" *ngIf="update.imageLink!='-1'"(click)="viewMsgImage(i,j)">View Image</button>  
                 </div>
               </div>
          </div>
@@ -190,168 +215,3 @@
 
 
 
-
-
-    <!-- <table class="table">
-        <thead>
-            <tr>  
-                <th>Item Name</th> 
-                <th>Quantity</th>   
-                <th>Status</th>                             
-                <th>More Details</th>                                               
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let item of donorItemsList;let i = index;"> 
-                <td> <div class="form-group">
-                    <div class="form-group__text">
-                        <span>{{item.name}}</span>                                               
-                    </div>
-                </div>
-              </td>     
-              <td> <div class="form-group">
-                <div class="form-group__text">
-                    <span>{{item.quantity}}</span>                                               
-                </div>
-            </div>
-          </td>  
-          <td> <div class="form-group">
-            <div class="form-group__text">
-                <span>{{item.status}}</span>                                               
-            </div>
-        </div>
-      </td> 
-      <td> 
-          <div class="form-group">
-        <div class="form-group__text">
-            <button class="btn btn-secondary" (click)="viewItemDetails(i)">View</button>                                            
-            </div>
-        </div>
-    </td>   
-</tr>
-    </tbody>
-    </table> 
-</div>
-<div id = "viewItemDetail" *ngIf="!itemListMode">
-    <div id="donationDetails">
-        <h4>Donation Details</h4>
-        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-            Delete
-          </button>
-          
-           
-          <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                  You want to delete this item.
-                </div>
-                <p></p>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-                  <button type="button" class="btn btn-primary" (click)="deleteItem()">Yes</button>
-                </div>
-              </div>
-            </div>
-          </div>
-    <div class = "row">
-        <div class="col">
-            <label>Item Name:</label><span>{{selectedItem.name}}</span>
-        </div>
-        <div class="col">
-            <label>Status: </label><span>{{selectedItem.status}}</span>
-        </div>
-        
-    </div>
-    <div class = "row">
-        <div class="col">
-            <label>Category: </label><span>{{selectedItem.category}}</span>
-        </div>
-        <div class="col">
-            <label>Subcategory: </label><span>{{selectedItem.subcategory}}</span>
-        </div>
-        
-    </div>
-    <div class = "row">
-        <div class="col">
-            <label>Quantity:</label><span>{{selectedItem.quantity}}</span>
-        </div>
-        <div class="col">
-            <label>Quality: </label><span>{{selectedItem.quality}}</span>
-        </div>
-        
-    </div>
-    <div class = "row">
-        <div class="col">
-            <label>Details:</label><span>{{selectedItem.details}}</span>
-        </div>
-        <div class="col">
-            <button class="btn btn-secondary" (click)="viewImage()">View Image</button> 
-        </div>
-                    
-    </div>
-</div>
-
-
-
-    <div id="donationOfferings" *ngIf="selectedItem.status=='Available'">
-
-        <h3>Requests Made by NGOS</h3>
-        
-        
-        
-    <table class="table">
-        <thead>
-            <tr>  
-                <th>Quantity</th> 
-                <th>Details</th>                
-                <th>Donate/Reject</th>                                                  
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let item of selectedDonationRequestList;let i = index;"> 
-                <td> <div class="form-group">
-                    <div class="form-group__text">
-                        <span>{{item.quantity}}</span>                                               
-                    </div>
-                </div>
-              </td>     
-          <td> <div class="form-group">
-            <div class="form-group__text">
-                <span>{{item.details}}</span>                                               
-            </div>
-        </div>
-      </td>   
-      <td> <div class="form-group">
-        <div class="form-group__text">
-            <button class="btn btn-secondary" (click)="viewImage(i)">View</button>                                              
-        </div>
-    </div>
-    </td>                       
-              <td> <div class="form-group">
-                <div class="form-group__text">
-                    <button class="btn btn-secondary" (click)="approveRequest(i)">Accept</button> | <button class="btn btn-secondary" (click)="rejectRequest(i)">Reject</button>                                              
-                </div>
-            </div>
-          </td>  
-        </tr>
-    </tbody>
-    </table>
-    
-    
-    </div>
-    <div class="row">
-        <div class="col">
-            <button class="btn btn-secondary" (click)="viewList()">Back</button>
-        </div>
-        
-    </div>
-
-    
-
-</div>
-</div>-->

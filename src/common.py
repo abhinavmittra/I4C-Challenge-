@@ -116,4 +116,4 @@ def sendMessage(request,es, messageFrom,app):
         except Exception as e:
             print(e)
             return jsonpickle.encode(responsePackage("Error","Couldn't send message"),unpicklable=False)
-        return jsonpickle.encode(responsePackage("Success","Message sent"),unpicklable=False)        
+        return json.dumps({"status":"Success","imageId":imageId})        

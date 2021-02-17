@@ -22,7 +22,7 @@ export class AuthService {
   public loginUrl = "http://127.0.0.1:5000/authenticate";
   public registerDonorUrl = "http://127.0.0.1:5000/createUserAccount";
   public registerDoneeUrl = "http://127.0.0.1:5000/createNgoAccount";
-  public getImageTestUrl = "http://127.0.0.1:5000/getImage"
+  
   public httpHeaders = new HttpHeaders({
     'Content-Type' : 'application/json; charset=utf-8'
     
@@ -88,8 +88,6 @@ export class AuthService {
   }
 
 
-  getImageFromServer(imageId:string){
-    return this.httpClient.post<any>(this.getImageTestUrl,{"imageId":imageId},this.headerOptions)
-  }
+ 
   
 }
