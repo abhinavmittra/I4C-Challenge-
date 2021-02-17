@@ -80,6 +80,7 @@ Item
   date
   publicFlag
   quantity
+  requestLimit
 
  Image
   userId
@@ -104,6 +105,11 @@ Updates
   city ( for donate and donateRequest )
   shippingAddress ( donateRequest )
 
+SubCategory
+  category
+  subCategory
+  minimumQuantityForLimit
+  maximumRequestQuantityPercentage
 
 INDEX
 
@@ -163,6 +169,7 @@ PUT /donations
       "ngoName" : { "type" : "keyword"},
       "messageFrom" : { "type" : "keyword"},
       "city": { "type": "keyword" },
+      "requestLimit": { "type": "integer" },
       "shippingAddress": {
         "type": "text",
         "fields": { "keyword": { "type":  "keyword" } }
@@ -192,6 +199,17 @@ PUT images
   }
 }
 
+PUT /categories
+{
+  "mappings":{
+    "properties":{
+      "category":{ "type" : "keyword"},
+      "subCategory":{ "type" : "keyword"},
+      "minimumQuantityForLimit":{ "type" : "integer"},
+      "maximumRequestQuantityPercentage":{ "type" : "integer"}
+    }
+  }
+}
 
 ACCOUNT QUERIES
 
