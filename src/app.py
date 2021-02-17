@@ -71,7 +71,7 @@ def approveRejectNGOAdmin():
 #function to create an NGO account
 @app.route("/createNgoAccount",methods=['POST'])
 def ngoAccountCreation():
-    result = createNgoAccount(request,es)
+    result = createNgoAccount(request,es,app)
     return result
 
 #function to get Ngo Details 

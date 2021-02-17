@@ -8,6 +8,7 @@ from werkzeug.utils import secure_filename
 import os
 from os import listdir
 from os.path import isfile, join
+from common import saveImage
 
 class responsePackage:
     def __init__(self,status,message):
@@ -62,7 +63,7 @@ class ngoUpdate:
         self.message = message
 
 #create ngo account
-def createNgoAccount(request,es):
+def createNgoAccount(request,es,app):
     if request.method == "POST":
         try:
             # print (request.data)
@@ -79,8 +80,9 @@ def createNgoAccount(request,es):
                 result = jsonpickle.encode(result)
                 return result
             else :
-                form12aFile = request.files['ngoForm80g']
-                form80gFile = request.files['ngoForm12a']
+                form80gFile = request.files['ngoForm80g']
+                form12aFile = request.files['ngoForm12a']
+                image = request.files['image']
                 fileName12a = form12aFile.filename
                 fileName80g = form80gFile.filename
                 print("Form 12a "+fileName12a)
@@ -97,12 +99,18 @@ def createNgoAccount(request,es):
                     "userType":"NGO",
                     "pan":request.form["PAN"],
                     "description":request.form["description"]
-                   
-                    
                 }
                 #Testing endpoint so avoiding to add any data
                 #TODO SRIRAM - > Change elastic search connection String to new db and then save image in image index and save that imageId in form12aImageId, form80gImageId in accounts index
-                #res = es.index(index = "accounts", body = query)
+                res = es.index(index = "accounts", body = query)
+                ngoId = res["_id"]
+                #saving Image
+                imageId = saveImage(image,ngoId,es,app)
+                if imageId != "-1":
+                    query = {
+                        "imageLink" : imageId
+                    }
+                    res2 = es.update(index = "accounts", id = ngoId, body = (query))
                 result = responsePackage("Success","Ngo Account created successfully")
                 result = jsonpickle.encode(result,unpicklable=False)
         except Exception as e: 
