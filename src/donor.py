@@ -156,8 +156,8 @@ def getRequirements(request,es):
             res = es.search(index="donations",body = {"size": 10000,"query":{"bool":{"must": [{ "term" : { "docType" : "requirement" } },{ "term" : { "publicFlag" : "true" } },{"range" : {"quantity" : { "gt" : 0}}}],
                     "should": [
                         { "term" : { "pincode" : pincode} },
-                        { "terms" : {"category": category } },
-                        { "terms" : {"subCategory": subcategory } }
+                        { "terms" : {"category.keyword": category } },
+                        { "terms" : {"subCategory.keyword": subcategory } }
                             ]
                     }
                 }

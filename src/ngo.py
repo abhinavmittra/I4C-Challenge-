@@ -259,8 +259,8 @@ def getItems(request,es):
                     ], 
                     "should": [
                     { "term" : { "pincode" : pincode} },
-                    { "terms" : {"category": category } },
-                    { "terms" : {"subCategory": subcategory } }
+                    { "terms" : {"category.keyword": category } },
+                    { "terms" : {"subCategory.keyword": subcategory } }
                     ]
                 }
                 }

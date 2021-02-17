@@ -299,8 +299,8 @@ View Available Items:
         ], 
         "should": [
           { "term" : { "city.keyword" : "123410"} },
-          { "terms" : {"category": ["clothing", "xyz"] } },
-          { "terms" : {"subCategory": ["laptops","xyz"] } }
+          { "terms" : {"category.keyword": ["clothing", "xyz"] } },
+          { "terms" : {"subCategory.keyword": ["laptops","xyz"] } }
         ]
       }
     }
@@ -502,8 +502,8 @@ View requirements:
         ],
         "should": [
           { "term" : { "city.keyword" : ""} },
-          { "terms" : {"category": ["clothing"] } },
-          { "terms" : {"subCategory": ["laptops"] } }
+          { "terms" : {"category.keyword": ["clothing"] } },
+          { "terms" : {"subCategory.keyword": ["laptops"] } }
         ]
       }
     }
