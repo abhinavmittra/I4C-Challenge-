@@ -254,10 +254,8 @@ def getItems(request,es):
                 "bool":{
                     "must": [
                     { "term" : { "docType" : "item" } },
-                    { "term" : { "publicFlag" : "true" } }
-                    ],
-                    "must_not": [
-                    { "term" : { "donatedFlag": "true" } }
+                    { "term" : { "publicFlag" : "true" } },
+                    { "range" : {"quantity" : { "gt" : 0} } }
                     ], 
                     "should": [
                     { "term" : { "pincode" : pincode} },
@@ -332,6 +330,7 @@ def acceptDeclineDonation(request,es):
             actionToken = data["actionTaken"]
             res = es.search(index="accounts",body={"query":{"term":{"_id":ngoId}}})
             ngoName = res["hits"]["hits"][0]["_source"]["ngoName"]
+            quantity = data["quantity"]
             date = datetime.datetime.now(datetime.timezone.utc)
             if actionToken == "accept":
                 query1 = {
@@ -345,18 +344,16 @@ def acceptDeclineDonation(request,es):
                             "date":date
                         }
                 res1 = es.index(index="donations",body=(query1))
-                #updating donated flag
-                res2 = es.update(index = "donations", id = itemId, body = {"doc": {"donatedFlag": "true"}})
+        
                 #updating the quantity
-                item = es.search(index = "donations", body = {"query": {"term": {"_id": itemId}}})
-                itemQuantity = item["hits"]["hits"][0]["_source"]["quantity"]
-                source = "ctx._source.quantity -= %d"%(int(itemQuantity))
+                source = "ctx._source.quantity -= %d"%(int(quantity))
                 query = {
                     "script" : {
                         "source" : source
                     }
                 }
                 res3 = es.update(index="donations" , id = requirementId , body = (query))
+                res4 = es.update(index="donations" , id = itemId , body = (query))
                 return jsonpickle.encode(responsePackage("success","Accepted donation"),unpicklable=False)
                
             elif actionToken == "decline":

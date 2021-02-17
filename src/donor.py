@@ -153,7 +153,7 @@ def getRequirements(request,es):
                 category = []
                 subcategory = []
             # res = es.search(index="donations", body={"query":{"bool":{"must": [{"term" : {"docType" : "requirement" }},{"term":{"publicFlag":"true"}},{"range" : {"quantity" : { "gte" : 0}}}]}}})
-            res = es.search(index="donations",body = {"size": 10000,"query":{"bool":{"must": [{ "term" : { "docType" : "requirement" } },{ "term" : { "publicFlag" : "true" } },{"range" : {"quantity" : { "gte" : 0}}}],
+            res = es.search(index="donations",body = {"size": 10000,"query":{"bool":{"must": [{ "term" : { "docType" : "requirement" } },{ "term" : { "publicFlag" : "true" } },{"range" : {"quantity" : { "gt" : 0}}}],
                     "should": [
                         { "term" : { "pincode" : pincode} },
                         { "terms" : {"category": category } },
@@ -265,6 +265,7 @@ def respondToDonationRequest(request,es):
             itemId = data["itemId"]
             donorId = data["donorId"]
             reqId = data["requirementId"]
+            quantity = data["quantity"]
             actionTaken = data["actionTaken"] #Added actionTaken by Donor (accept/decline)
             # date = datetime.datetime.now(datetime.timezone.utc)
             
@@ -283,38 +284,20 @@ def respondToDonationRequest(request,es):
                 
                 #adding document with updateType "accept"
                 result1 = es.index(index = "donations", body = (query1))
-                #setting donatedFlag to true
-                result2 = es.update(index = "donations", id = itemId, body = {"doc": {"donatedFlag": "true"}})
-                #getting remaining NGOs and setting updateType "decline"
-                ngoList = es.search(index="donations" , body = {"query":{"bool":{"must": [{ "term" : { "updateType": "donateRequest" } },{ "term" : { "itemId": itemId }}]}}})
-                # print(ngoList)
-                for ngo in ngoList["hits"]["hits"]:
-                    if ngo["_source"]["ngoId"] != ngoId:
-                        query = {
-                        "docType":"update",
-                        "updateType":"decline",
-                        "ngoId":ngo["_source"]["ngoId"],
-                        "itemId" : itemId,
-                        "donorId" : donorId,
-                        "requirementId" : reqId,
-                        "date": datetime.datetime.now(datetime.timezone.utc)
-                        }
-                        if "ngoName" in ngo["_source"]:
-                            query["ngoName"] = ngo["_source"]["ngoName"]
-                        res = es.index(index = "donations", body = (query1))
+        
                 # updating the quantites
                 # print(reqId)
                 # requirement = es.search(index = "donations", body = {"query": {"term": {"_id": reqId}}})
                 # reqQuantity = requirement["hits"]["hits"][0]["_source"]["quantity"]
                 # print(reqQuantity)
-                item = es.search(index = "donations", body = {"query": {"term": {"_id": itemId}}})
-                itemQuantity = item["hits"]["hits"][0]["_source"]["quantity"]
+                #item = es.search(index = "donations", body = {"query": {"term": {"_id": itemId}}})
+                #itemQuantity = item["hits"]["hits"][0]["_source"]["quantity"]
                 # print(itemQuantity)
                 # finalQuantity = reqQuantity - itemQuantity
                 #print(finalQuantity)
                 # print(itemQuantity)
                 # print(reqId)
-                source = "ctx._source.quantity -= %d"%(int(itemQuantity))
+                source = "ctx._source.quantity -= %d"%(int(quantity))
                 # print("{\"script\" : {\"source\": %s}}"%(source))
                 query = {
                     "script" : {
@@ -322,6 +305,7 @@ def respondToDonationRequest(request,es):
                     }
                 }
                 result3 = es.update(index="donations" , id = reqId , body = (query))
+                result4 = es.update(index="donations" , id = itemId , body = (query))
                 # return result3
             elif actionTaken == "decline":
                 query1 = {
