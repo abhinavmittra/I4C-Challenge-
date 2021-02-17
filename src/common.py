@@ -116,4 +116,40 @@ def sendMessage(request,es, messageFrom,app):
         except Exception as e:
             print(e)
             return jsonpickle.encode(responsePackage("Error","Couldn't send message"),unpicklable=False)
-        return json.dumps({"status":"Success","imageId":imageId})        
+        return json.dumps({"status":"Success","imageId":imageId})    
+
+def getCategoryList(es,app):
+    try:
+        res = es.search(index = "categories", body = {
+            "size": 0,
+            "aggs": {
+                "categories": {
+                    "terms":{
+                        "field": "category",
+                         "size": 1000
+                    },
+                    "aggs":{
+                        "subcategories":{
+                            "terms": {
+                                "field": "subCategory",
+                                "size": 1000
+                            }
+                         }
+                     }
+                 }
+            }
+        })
+
+        result = {}
+
+        for catobj in res["aggregations"]['categories']["buckets"]: 
+            category = []
+            for subcatobj in catobj["subcategories"]["buckets"]:
+                category.append(subcatobj["key"])
+            result[catobj["key"]] = category
+   
+    except Exception as e:
+        print(e)
+        return jsonpickle.encode(responsePackage("Error","Couldn't fetch categories"),unpicklable=False)           
+
+    return result    

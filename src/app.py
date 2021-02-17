@@ -14,7 +14,7 @@ from donor import userAccountCreation,donateItem,getRequirements, respondToRequi
 from ngo import getNgoInfo,createNgoAccount,getNgoListUnverified,requestItem,getItems,createRequirement, acceptDeclineDonation, deleteRequirement, getUpdatesForNGO, markItem
 from admin import authenticate,approveRejectNGO
 import base64
-from common import getImage, saveImage, sendMessage
+from common import getImage, saveImage, sendMessage, getCategoryList
 app = Flask(__name__)
 
 #defining the default temporary upload folder
@@ -201,7 +201,7 @@ def uploaded_file(filename):
                                 filename)
 
 #fn to test code
-@app.route("/test",methods=['POST'])
+@app.route("/test", methods = ['POST'])
 def test():
     if request.method =='POST':
         #itemId = json.loads(request.data)["itemId"]
@@ -210,7 +210,11 @@ def test():
         res = es.update(index="donations",id = ID, body = {"doc": {"imageLink":json.loads(request.data)["imageLink"]}})
         return res
 
-  
+
+@app.route("/getCategories",methods=["GET"])
+def getCategories():
+    result = getCategoryList(es,app)
+    return result 
         
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080, debug=True)
