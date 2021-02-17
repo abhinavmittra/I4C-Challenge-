@@ -8,6 +8,7 @@ import os
 from os import listdir
 from os.path import isfile, join
 from common import saveImage
+import math
 
 class responsePackage:
     def __init__(self,status,message):
@@ -92,7 +93,7 @@ def donateItem(request,es,app):
             subcategory = request.form["subcategory"]
             itemname = request.form["name"]
             details = request.form["details"]
-            quantity = request.form["quantity"]
+            quantity = int(request.form["quantity"])
             quality = request.form["quality"]
             donorID = request.form["donorId"]
             pincode = request.form["pincode"]
@@ -106,6 +107,25 @@ def donateItem(request,es,app):
             except Exception as e:
                 print(e)
                 return jsonpickle.encode(responsePackage("Failure","Error in image upload"),unpicklable=False)
+    
+            limitQuery = {
+                "query": {
+                    "term": {
+                        "subCategory": {
+                            "value": subcategory 
+                        }
+                    }
+                }
+            }    
+
+            limitRes = es.search(index = "categories", body=limitQuery )
+
+            if quantity >= limitRes["hits"]["hits"][0]["_source"]["minimumQuantityForLimit"]:
+                percentage = limitRes["hits"]["hits"][0]["_source"]["maximumRequestQuantityPercentage"]
+                limit = percentage * quantity / 100
+                limit = math.ceil(limit)
+            else:
+                limit = quantity
 
             query = {
                         "docType":"item",
@@ -119,7 +139,8 @@ def donateItem(request,es,app):
                         "pincode":pincode,
                         "publicFlag": "true",
                         "date":date,
-                        "imageLink": imageId
+                        "imageLink": imageId,
+                        "limit": limit
                     }
                     
             res = es.index(index="donations", body=(query))
