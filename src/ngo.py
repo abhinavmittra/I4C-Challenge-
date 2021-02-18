@@ -32,7 +32,7 @@ class ngoPackage:
         self.message = message
 
 class donationItem:
-    def __init__(self,itemId,name,category,subcategory,details,quantity,quality,imglink,donorId,date,pincode):
+    def __init__(self,itemId,name,category,subcategory,details,quantity,quality,imglink,donorId,date,pincode,requestLimit):
         self.itemId = itemId
         self.name = name
         self.category = category
@@ -44,6 +44,7 @@ class donationItem:
         self.donorId = donorId
         self.date = date
         self.pincode=pincode
+        self.requestLimit = requestLimit
 class donationItemPackage:
     def __init__(self,donationItems,status,message):
         self.donationItems = donationItems
@@ -285,7 +286,8 @@ def getItems(request,es):
                 # except Exception as e:
                 #     print("error in finding file")
                 #     print(e)
-                dataList.append(donationItem(item['_id'],item['_source']['itemName'],item['_source']['category'],item['_source']['subCategory'],item['_source']['details'],item['_source']['quantity'],item['_source']['quality'],imglink,item['_source']['donorId'],item['_source']['date'],item['_source']['pincode']))
+                requestLimit = item["_source"]["requestLimit"]
+                dataList.append(donationItem(item['_id'],item['_source']['itemName'],item['_source']['category'],item['_source']['subCategory'],item['_source']['details'],item['_source']['quantity'],item['_source']['quality'],imglink,item['_source']['donorId'],item['_source']['date'],item['_source']['pincode'],requestLimit))
             for obj in dataList:
                 print(obj.name)
             result = donationItemPackage(dataList,"success","object contains list of items up for donation")
