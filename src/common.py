@@ -24,6 +24,17 @@ class image:
         self.imageName = imageName
         self.image = image
 
+class category:
+    def __init__(self,name,subcategories):
+        self.name=name
+        self.subCategories=subcategories
+
+class categoryPackage:
+    def __init__(self,categoryList,status,message):
+        self.categoryList = categoryList
+        self.status=status
+        self.message=message
+
 def getImage(request,es):
         try:
             data = json.loads(request.data)
@@ -138,20 +149,20 @@ def getCategoryList(es,app):
                  }
             }
         })
-
-        resultvalues = {}
-        result = {}
-
-
+        
+        categoryList = []
         for catobj in res["aggregations"]['categories']["buckets"]: 
-            category = []
+            subcategories = []
             for subcatobj in catobj["subcategories"]["buckets"]:
-                category.append(subcatobj["key"])
-            resultvalues[catobj["key"]] = category
+                subcategories.append(subcatobj["key"])
+            #resultvalues[catobj["key"]] = category
+            categoryList.append(category(catobj["key"],subcategories))
+            
+            
 
-        result["categoryInfo"] = resultvalues
+        #result["categoryInfo"] = resultvalues
     except Exception as e:
         print(e)
         return jsonpickle.encode(responsePackage("Error","Couldn't fetch categories"),unpicklable=False)           
 
-    return result   
+    return jsonpickle.encode(categoryPackage(categoryList,"success","Returned Category Info successfully"),unpicklable=False) 

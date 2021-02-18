@@ -11,7 +11,7 @@
         </div>
         <div class="mb-3">
             <label for="itemCategory" class="form-label">Category</label>
-            <input #itemCat class="form-control" list="itemCategories" id="itemCategory" placeholder="Type to search category" 
+           <!-- <input #itemCat class="form-control" list="itemCategories" id="itemCategory" placeholder="Type to search category" 
             ngModel 
             name="category"
             required
@@ -20,12 +20,30 @@
                 <option value="Electronics">
                 <option value="Clothes">
                 <option value="Books">
-            </datalist>
+            </datalist>-->
+            <select class="form-select form-control" aria-label="category dd" 
+            id="itemCategory" name="category" required ngModel (change)="onCategoryChange($event)" #category="ngModel">
+              
+                <option *ngFor="let category of categoryInfoList;index as i" [ngValue]="category.name">{{category.name}}</option>
+              </select>
+
+
+
+
         </div>
 
         <div class="mb-3">
             <label for="itemSubcategory" class="form-label">Sub Category</label>
-            <input class="form-control" list="itemSubcategories" id="itemSubcategory" placeholder="Type to search Sub-Category" 
+
+            <select class="form-select form-control" aria-label="subcategory dd" 
+            id="itemSubcategory" name="subcategory" required ngModel>
+           
+                <option *ngFor="let subcat of filteredSubCategories" [ngValue]="subcat">{{subcat}}</option>
+              </select>
+
+
+
+           <!-- <input class="form-control" list="itemSubcategories" id="itemSubcategory" placeholder="Type to search Sub-Category" 
             ngModel 
             name="subcategory"
             required
@@ -47,7 +65,7 @@
                 <option value="Non-Fiction">
                 <option value="Textbooks">
                 <option value="Notebooks">
-            </datalist>
+            </datalist>-->
         </div>
         <div class="mb-3">
             <label for="itemQuantity" class="form-label">Quantity</label>
@@ -60,11 +78,19 @@
         </div>
         <div class="mb-3">
             <label for="itemQuality" class="form-label">Quality</label>
-                    <input type="text" id="itemQuality" class="form-control" 
+
+            <select class="form-select form-control" aria-label="quality dd" 
+            id="itemQuality" name="quality" required ngModel>
+            <option [ngValue]="'Decent'">Decent</option>
+            <option [ngValue]="'Excellent'">Excellent</option>
+              </select>
+
+
+                  <!--  <input type="text" id="itemQuality" class="form-control" 
                     ngModel
                     name="quality"
                     required
-                    >
+                    >-->
             </div>
         <div class="mb-3">
         <label for="itemDetails" class="form-label">Details</label>

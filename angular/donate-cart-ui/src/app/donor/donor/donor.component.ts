@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
+import { UtilityService } from 'src/app/shared/utility.service';
 import {DonorService} from '../donor.service';
 
 @Component({
@@ -11,7 +12,7 @@ import {DonorService} from '../donor.service';
 })
 export class DonorComponent implements OnInit {
 
-  constructor(private donorService:DonorService,private router:Router,private route:ActivatedRoute,private authService:AuthService) { }
+  constructor(private donorService:DonorService,private router:Router,private route:ActivatedRoute,private authService:AuthService,private utilityService:UtilityService) { }
   loadingReqFlag:boolean = true;
   loadingUpdatesFlag:boolean = true;
   currentPage :string;
@@ -42,8 +43,9 @@ export class DonorComponent implements OnInit {
     this.loadingReqFlag = true;
     this.loadingUpdatesFlag=true;
   
-   
-  
+   //Add seperate loading flag for categories later
+    this.utilityService.getCategoriesFromServer().subscribe()
+
     this.donorService.getRequirementsFromServer(this.authService.getUserId()).subscribe((data)=>{
         this.loadingReqFlag=false
       });

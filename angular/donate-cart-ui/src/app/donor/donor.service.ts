@@ -105,7 +105,6 @@ export class DonorService {
 
    }
     this.donorUpdates = refList
-    
     this.donorUpdatesChanged.next(this.donorUpdates.slice());
     }));
   }

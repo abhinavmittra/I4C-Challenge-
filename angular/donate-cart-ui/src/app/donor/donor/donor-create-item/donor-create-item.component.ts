@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { AuthService } from 'src/app/auth/auth.service';
-import { DonorService } from '../../donor.service';
-import {DonorUpdate} from '../../../model/donor-update'
 import { Router } from '@angular/router';
+import { UtilityService } from 'src/app/shared/utility.service';
+import {CategoryInfo} from 'src/app/model/category-info';
+import { Subscription } from 'rxjs';
+import { DonorService } from '../../donor.service';
+import {DonorUpdate} from 'src/app/model/donor-update';
 @Component({
   selector: 'app-donor-create-item',
   templateUrl: './donor-create-item.component.html',
@@ -11,17 +14,44 @@ import { Router } from '@angular/router';
 })
 export class DonorCreateItemComponent implements OnInit {
 
-  constructor(private donorService:DonorService,private authService:AuthService,private router:Router) { }
+  constructor(private donorService:DonorService,private authService:AuthService,private utilityService:UtilityService,private router:Router) { }
   selectedImage:File = null;
-  
+  filteredSubCategories:string[]=[]; //active list set for choosing subcategory
+  categoryInfoList:CategoryInfo[]=[];
+  categoryInfoListChanged:Subscription;
+
   ngOnInit(): void {
-    
+    //get category list from service
+    this.categoryInfoList = this.utilityService.getCategoryInfo();
+    //Subcribe to categoryList Changes
+    this.categoryInfoListChanged = this.utilityService.categoryInfoListChanged.subscribe((data)=>{
+      this.categoryInfoList = data;
+      console.log(this.categoryInfoList)
+      //set filterSubCategories to 1st category's subcategories.
+
+      this.filteredSubCategories = this.categoryInfoList[0].subCategories;
+    })
 
   }
 
+  onCategoryChange(event:any){
+    var categorySelected = event.target.value.split(" ")[1]
+    for(var i =0;i<this.categoryInfoList.length;i++){
+      if(categorySelected==this.categoryInfoList[i].name){
+        this.filteredSubCategories=this.categoryInfoList[i].subCategories
+        break;
+      }
+    }
+    
+  }
+  
   onSubmit(form:NgForm){
     
     console.log(form);
+    console.log(form.value.quality)
+    console.log(form.value.subcategory)
+    console.log(form.value.category)
+    
     const submitForm = new FormData();
     submitForm.append('image',this.selectedImage,this.selectedImage.name);
     submitForm.append('name',form.value.name);
@@ -58,4 +88,7 @@ export class DonorCreateItemComponent implements OnInit {
     this.selectedImage = <File>event.target.files[0];
   }
 
+  ngOnDestroy(){
+    this.categoryInfoListChanged.unsubscribe()
+  }
 }
