@@ -104,8 +104,11 @@ def createNgoAccount(request,es,app):
                 #saving Image
                 imageId = saveImage(image,ngoId,es,app)
                 if imageId != "-1":
+                    source = "ctx._source.imageLink = %s"%(imageId)
                     query = {
-                        "imageLink" : imageId
+                        "script" : {
+                            "source" : source
+                        }
                     }
                     res2 = es.update(index = "accounts", id = ngoId, body = (query))
                 result = responsePackage("Success","Ngo Account created successfully")
