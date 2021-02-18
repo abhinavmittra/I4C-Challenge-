@@ -151,4 +151,4 @@ def getCategoryList(es,app):
         print(e)
         return jsonpickle.encode(responsePackage("Error","Couldn't fetch categories"),unpicklable=False)           
 
-    return result    
+    return result   

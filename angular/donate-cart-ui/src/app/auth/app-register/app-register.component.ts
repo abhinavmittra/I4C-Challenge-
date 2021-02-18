@@ -30,7 +30,7 @@ export class AppRegisterComponent implements OnInit {
 
   setRegisterType(regType:string){
     this.registerType = regType;
-    console.log(regType);
+    
   }
   routeToLogin(){
     this.router.navigate(['login'])
@@ -82,12 +82,12 @@ export class AppRegisterComponent implements OnInit {
     const panno = form.value.panno;
     this.ngoForm.append("PAN",panno)
     this.ngoForm.append('image',this.imageDoc,this.imageDoc.name);
-    this.ngoForm.append('comments',form.value.doneecomments)
-    console.log(this.ngoForm)
-    //var donee:Donee = new Donee(name,address,pincode,phone,panno,website,desc,email,pass);
+    this.ngoForm.append('comments',form.value.doneeComments)
+   
+    
     this.authService.registerDonee(this.ngoForm).subscribe((data)=>{
       this.router.navigate(['/login'])
-      console.log(data)
+     console.log(data)
     });
 
   }

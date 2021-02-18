@@ -5,7 +5,7 @@
         </div>
       </div>
 </div>
-<h5 *ngIf="ngoRegRequests.length==0"> No pending approvals</h5>
+<h5 *ngIf="ngoRegRequests.length==0&&(!loadingFlag)"> No pending approvals</h5>
 <div class="container mt-3" *ngIf = "!loadingFlag&&(ngoRegRequests.length!=0)">
     
     <div class="container" id="imgBody" *ngIf="imgMode">
@@ -76,7 +76,7 @@
     </tr>
 </tbody>
 </table>
-<p class="mt-3 fs-5 fw-bold lh-base">Income Tax Link for your reference is given<span class="text-muted"><a href="https://www.incometaxindia.gov.in/Pages/utilities/exempted-institutions.aspx">here</a></span></p>
+<p class="mt-3 fs-5 fw-bold lh-base">Income Tax Link for your reference is given <span class="text-muted"><a href="https://www.incometaxindia.gov.in/Pages/utilities/exempted-institutions.aspx">here</a></span></p>
 </div>
 
 

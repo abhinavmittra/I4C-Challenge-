@@ -15,8 +15,12 @@ export class UtilityService {
     headers: this.httpHeaders
        };    
   public getImageTestUrl = "http://127.0.0.1:5000/getImage"
+  public getCategoriesUrl = "http:127.0.0.1:5000/getCategories"
 
   getImageFromServer(imageId:string){
     return this.httpClient.post<any>(this.getImageTestUrl,{"imageId":imageId},this.headerOptions)
+  }
+  getCategoriesFromServer(){
+    return this.httpClient.get(this.getCategoriesUrl)
   }
 }

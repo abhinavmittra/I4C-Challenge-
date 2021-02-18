@@ -23,14 +23,16 @@ export class AdminComponent implements OnInit {
     this.adminService.viewNgoRegReqs().subscribe((data)=>{
       if(data['ngoList'].length!=0){
       for(var index in data['ngoList']){
+        
         this.ngoRegRequests.push(new DoneeApproveReq(data['ngoList'][index]['ngoId'],data['ngoList'][index]['name'],data['ngoList'][index]['email'],
-        data['ngoList'][index]['phone'],data['ngoList'][index]['pan'],data['ngoList'][index]['address'],data['ngoList'][index]['pincode'],data['imageLink']));
+        data['ngoList'][index]['phone'],data['ngoList'][index]['pan'],data['ngoList'][index]['address'],data['ngoList'][index]['pincode'],data['ngoList'][index]['imageLink']));
       }
     }
-    else{
-      console.log("empty ngo list, hide table");
-    }
 
+    else{
+      this.ngoRegRequests.length=0;//hide table
+    }
+    
       this.loadingFlag = false;
     })
 
@@ -39,7 +41,7 @@ export class AdminComponent implements OnInit {
   viewImage(index:number){
     this.imageString="";
     this.imgMode=true;
-    
+    console.log(this.ngoRegRequests[index].imageLink)
     this.utilityService.getImageFromServer(this.ngoRegRequests[index].imageLink).subscribe((data)=>{
       if(data["image"]!="-1"){
       this.imageString = "data:image/jpeg;base64,"+data["image"]
@@ -49,6 +51,7 @@ export class AdminComponent implements OnInit {
         this.imageString=="-1";
         this.imageLoaded=false;
       }
+      console.log(this.imageString)
     })
   }
 
@@ -58,7 +61,7 @@ export class AdminComponent implements OnInit {
     this.imageLoaded=false;
   }
   approveRequest(index:number){
-    console.log(index);
+   
     
     this.adminService.approveNgo(this.ngoRegRequests[index].id).subscribe((data)=>{
       console.log(data)
@@ -67,7 +70,7 @@ export class AdminComponent implements OnInit {
     );
   }
   rejectRequest(index:number){
-    console.log(index);
+    
     this.adminService.rejectNgo(this.ngoRegRequests[index].id).subscribe((data)=>{
       console.log(data);
       this.ngoRegRequests.splice(index,1);

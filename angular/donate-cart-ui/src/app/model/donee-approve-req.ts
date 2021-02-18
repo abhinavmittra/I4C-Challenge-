@@ -16,7 +16,7 @@ export class DoneeApproveReq {
         this.pan = pan;
         this.address = address;
         this.pincode = pincode;
-        this.imageLink=imageLink
+        this.imageLink=imageLink;
     }
     
 
