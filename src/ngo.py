@@ -272,18 +272,19 @@ def getItems(request,es):
             dataList = []
             for item in res["hits"]['hits']:
                 ID = item['_id']
-                imglink = ""
-                try:
-                    path = './Upload_folder'
-                    fileist = [f for f in listdir(path) if isfile(join(path, f))]
-                    for f in fileist:
-                        if f.split('.')[0] == ID:
-                            imglink = "/uploads/" + f
-                            break
-                    # print(imglink)
-                except Exception as e:
-                    print("error in finding file")
-                    print(e)
+                imglink = item["_source"]["imageLink"]
+                # Old code to get imageLink by checking if file exists
+                # try:
+                #     path = './Upload_folder'
+                #     fileist = [f for f in listdir(path) if isfile(join(path, f))]
+                #     for f in fileist:
+                #         if f.split('.')[0] == ID:
+                #             imglink = "/uploads/" + f
+                #             break
+                #     # print(imglink)
+                # except Exception as e:
+                #     print("error in finding file")
+                #     print(e)
                 dataList.append(donationItem(item['_id'],item['_source']['itemName'],item['_source']['category'],item['_source']['subCategory'],item['_source']['details'],item['_source']['quantity'],item['_source']['quality'],imglink,item['_source']['donorId'],item['_source']['date'],item['_source']['pincode']))
             for obj in dataList:
                 print(obj.name)

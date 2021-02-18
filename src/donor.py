@@ -274,7 +274,7 @@ def respondToRequirement(request,es,app):
         except Exception as e:
             print(e)
             return jsonpickle.encode(responsePackage("Failure","Error in respond to requirement"),unpicklable=False)
-        return json.dumps({"status":"Success","itemId":ID,"imageLink":imageLink})
+        return json.dumps({"status":"Success","itemId":ID,"imageLink":imageId})
 
 
 #function to respond to a donation request 
