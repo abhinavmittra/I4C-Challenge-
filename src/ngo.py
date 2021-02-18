@@ -95,7 +95,7 @@ def createNgoAccount(request,es,app):
                     "userType":"NGO",
                     "pan":request.form["PAN"],
                     "description":request.form["description"],
-                    "comments":request.form["comments"],
+                    "additionalComments":request.form["comments"],
                     "imageLink":"-1" #keeping default value as -1
                 }
            
@@ -105,12 +105,13 @@ def createNgoAccount(request,es,app):
                 #saving Image
                 imageId = saveImage(image,ngoId,es,app)
                 if imageId != "-1":
-                    source = "ctx._source.imageLink = %s"%(imageId)
+                    source = "ctx._source.imageLink = '%s'"%(imageId)
                     query = {
                         "script" : {
                             "source" : source
                         }
                     }
+                    print(query)
                     res2 = es.update(index = "accounts", id = ngoId, body = (query))
                 result = responsePackage("Success","Ngo Account created successfully")
                 result = jsonpickle.encode(result,unpicklable=False)
