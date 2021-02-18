@@ -6,7 +6,6 @@ import json
 import jsonpickle
 import datetime
 from datetime import timedelta
-from werkzeug.utils import secure_filename
 import os
 from os import listdir
 from os.path import isfile, join
