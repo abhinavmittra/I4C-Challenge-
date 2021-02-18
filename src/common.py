@@ -139,14 +139,17 @@ def getCategoryList(es,app):
             }
         })
 
+        resultvalues = {}
         result = {}
+
 
         for catobj in res["aggregations"]['categories']["buckets"]: 
             category = []
             for subcatobj in catobj["subcategories"]["buckets"]:
                 category.append(subcatobj["key"])
-            result[catobj["key"]] = category
-   
+            resultvalues[catobj["key"]] = category
+
+        result["categoryInfo"] = resultvalues
     except Exception as e:
         print(e)
         return jsonpickle.encode(responsePackage("Error","Couldn't fetch categories"),unpicklable=False)           
