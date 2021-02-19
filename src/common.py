@@ -166,3 +166,55 @@ def getCategoryList(es,app):
         return jsonpickle.encode(responsePackage("Error","Couldn't fetch categories"),unpicklable=False)           
 
     return jsonpickle.encode(categoryPackage(categoryList,"success","Returned Category Info successfully"),unpicklable=False) 
+
+def createAlert(userId,dateCreated,activationDate,message,linkedToId,action,es):
+    try:
+        query = {
+            "userId": userId,
+            "dateCreated": dateCreated,
+            "activationDate": activationDate,
+            "activeFlag": "true",
+            "alertMessage": message,
+            "linkedToId": linkedToId,
+            "acton": action,
+            "newFlag": "true"
+        }
+
+        res = es.index(index = "alerts", body = query)
+        print("alert: " + res["_id"])
+    except Exception as e:
+        print(e)
+
+def getAlerts(userId,es):
+    try:
+        query = {
+            "query":{
+                "bool":{
+                    "must":[
+                    { "term": { "userId": userId}},
+                    { "term": { "newFlag": "true"}},
+                    { "term": { "activeFlag": "true"}},
+                    { "range" : {"activationDate" : { "lte" : datetime.datetime.now(datetime.timezone.utc)} } }
+                    ]
+
+                    
+                }
+            }
+        }
+
+        print(query)
+
+        alerts = []
+        result = {}
+
+        res = es.search(index="alerts", body = query)
+        for alert in res["hits"]["hits"]:
+            alerts.append(alert["_source"])
+
+        result["alerts"] = alerts
+
+    except Exception as e:
+        print(e)    
+        return jsonpickle.encode(responsePackage("Error","Couldn't fetch alerts"),unpicklable=False)    
+
+    return result      

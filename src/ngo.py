@@ -8,7 +8,7 @@ from werkzeug.utils import secure_filename
 import os
 from os import listdir
 from os.path import isfile, join
-from common import saveImage
+from common import saveImage, createAlert
 
 class responsePackage:
     def __init__(self,status,message):
@@ -595,6 +595,11 @@ def markItem(request,es):
                 "date": date
             }
             res = es.index(index = "donations",body =(query))
+
+            message = "Remember to let the donor know how their donation is being used"
+            createAlert(ngoId,date,date,message,requirementId,"message",es)
+
+
             # print(query)
         except Exception as e:
             print (e)
