@@ -287,7 +287,11 @@ def getItems(request,es):
                 # except Exception as e:
                 #     print("error in finding file")
                 #     print(e)
-                requestLimit = item["_source"]["requestLimit"]
+                
+                if "requestLimit" in item["_source"]:
+                        requestLimit = item["_source"]["requestLimit"]
+                else:
+                    requestLimit=item["_source"]["quantity"]
                 dataList.append(donationItem(item['_id'],item['_source']['itemName'],item['_source']['category'],item['_source']['subCategory'],item['_source']['details'],item['_source']['quantity'],item['_source']['quality'],imglink,item['_source']['donorId'],item['_source']['date'],item['_source']['pincode'],requestLimit))
             for obj in dataList:
                 print(obj.name)

@@ -435,6 +435,8 @@ def getUpdatesForDonor(request,es):
                     }
                     if "requestLimit" in obj["_source"]:
                         item["requestLimit"] = obj["_source"]["requestLimit"]
+                    else:
+                        item["requestLimit"]=obj["_source"]["quantity"]
                     result.append(item)
                 if obj["_source"]["docType"] == "update":
                
