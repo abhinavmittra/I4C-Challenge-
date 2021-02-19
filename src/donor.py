@@ -479,12 +479,14 @@ def getUpdatesForDonor(request,es):
                     
                     #because message field is details in backend so check if type message then set message otherwise assign details to details var
                     message = ""
-                    details = ""
+                    imageLink="-1"
                     if updateType=="message":
                         if "details" in obj["_source"]:
                             message = obj["_source"]["details"]
                         else:
                             message = ""
+                        if "imageLink" in obj["_source"]:
+                            imageLink=obj["_source"]["imageLink"]
                     else:
                         if "details" in obj["_source"]:
                             reqDetails = obj["_source"]["details"]
@@ -505,7 +507,8 @@ def getUpdatesForDonor(request,es):
                         "messageFrom":messageFrom,
                         "message":message,
                         "pincode":pincode,
-                        "updateDate":date
+                        "updateDate":date,
+                        "imageLink":imageLink
                     }
                     # update = donorUpdatePackage(updateDetails,"success")
                     

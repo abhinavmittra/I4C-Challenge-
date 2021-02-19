@@ -13,10 +13,11 @@ export class RequirementUpdate {
     messageFrom:string;
     message:string;
     updateDate:string;
+    messageImage:string;
         
     constructor(type:string,itemId:string,requirementId:string,ngoId:string,
         donorId:string,pincode:string,ngoName:string,itemQuantity:string,quality:string,imgLink:string,itemDetails:string,
-        messageFrom:string,message:string,updateDate:string
+        messageFrom:string,message:string,updateDate:string,msgImage:string
         ){
         this.updateType=type;        
         this.itemId=itemId;
@@ -32,5 +33,6 @@ export class RequirementUpdate {
         this.updateDate = updateDate;
         this.itemQuality = quality;
         this.itemImageLink = imgLink;
+        this.messageImage = msgImage;
     }
 }

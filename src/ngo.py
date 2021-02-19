@@ -306,19 +306,19 @@ def getItems(request,es):
 def createRequirement(request,es):
     if request.method == "POST":
         try:
-            data = json.loads(request.data)
+            
               
             date = datetime.datetime.now(datetime.timezone.utc)
             query = {
                         "docType":"requirement",
-                        "category":data["category"],
-                        "subCategory":data["subcategory"],
-                        "itemName":data["name"],
-                        "details":data["details"],
-                        "quantity":data["quantity"],
-                        "ngoId":data["ngoId"],
-                        "pincode":data["pincode"],
-                        "ngoName":data["ngoName"],
+                        "category":request.form["category"],
+                        "subCategory":request.form["subcategory"],
+                        "itemName":request.form["name"],
+                        "details":request.form["details"],
+                        "quantity":request.form["quantity"],
+                        "ngoId":request.form["ngoId"],
+                        "pincode":request.form["pincode"],
+                        "ngoName":request.form["ngoName"],
                         "publicFlag": "true",
                         "date":date
                     }            
@@ -518,12 +518,13 @@ def getUpdatesForNGO(request,es):
                         date = obj["_source"]["date"]
                     #because message field is details in backend so check if type message then set message otherwise assign details to details var
                     message = ""
-                    details = ""
+                    imageLink="-1"
                     if updateType=="message":
                         if "details" in obj["_source"]:
                             message = obj["_source"]["details"]
-                        else:
-                            message = ""
+                        if "imageLink" in obj["_source"]:
+                            imageLink=obj["_source"]["imageLink"]
+                            
                     else:
                         if "details" in obj["_source"]:
                             itemDetails = obj["_source"]["details"]
@@ -545,7 +546,8 @@ def getUpdatesForNGO(request,es):
                         "messageFrom":messageFrom,
                         "message":message,
                         "pincode":pincode,
-                        "updateDate":date
+                        "updateDate":date,
+                        "imageLink":imageLink #for message Image
                     }
                     
                     

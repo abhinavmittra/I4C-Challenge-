@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
+import { UtilityService } from '../shared/utility.service';
 import { DoneeService } from './donee.service';
 
 @Component({
@@ -11,7 +12,7 @@ import { DoneeService } from './donee.service';
 })
 export class DoneeComponent implements OnInit {
 
-  constructor(private router:Router,private route: ActivatedRoute,private doneeService:DoneeService,private authService:AuthService) { }
+  constructor(private utilityService:UtilityService,private router:Router,private route: ActivatedRoute,private doneeService:DoneeService,private authService:AuthService) { }
   loadingItemsFlag:boolean = true;
   loadingUpdatesFlag = true;
   currentPage:string;
@@ -37,12 +38,15 @@ export class DoneeComponent implements OnInit {
   }
   viewMyRequirements(){
     this.doneeService.currentPageChanged.next("updates");
-    this.router.navigate(['updates'],{relativeTo:this.route})
+    this.router.navigate(['updates/list'],{relativeTo:this.route})
   }
 
   getFreshData(){
     this.loadingItemsFlag = true;
     this.loadingUpdatesFlag = true;
+    //Add seperate loading flag for categories later
+    this.utilityService.getCategoriesFromServer().subscribe()
+
     this.doneeService.getAvailableDonationsFromServer(this.authService.getUserId()).subscribe((data)=>{
         this.loadingItemsFlag=false
         

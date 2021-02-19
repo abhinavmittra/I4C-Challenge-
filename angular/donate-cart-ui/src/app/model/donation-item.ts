@@ -12,7 +12,8 @@ export class DonationItem {
     imgLink:string;
     date:string;
     pincode:string;
-    constructor(itemId:string,name:string,category:string,subcat:string,details:string,quantity:number,quality:number,donorId:string,imgLink:string,date:string,pincode:string){
+    requestLimit:string
+    constructor(itemId:string,name:string,category:string,subcat:string,details:string,quantity:number,quality:number,donorId:string,imgLink:string,date:string,pincode:string,requestLimit:string){
         this.donorId=donorId;
         this.itemId = itemId;
         this.name=name;
@@ -25,5 +26,6 @@ export class DonationItem {
         var formattedDate = new Date(date);
         this.date = formattedDate.toLocaleString();
         this.pincode=pincode;
+        this.requestLimit=requestLimit
     }
 }

@@ -68,6 +68,9 @@ public options = {
   getDoneeUpdates(){
    return this.doneeUpdates.slice();
   }
+  getDoneeUpdate(index:number){
+    return this.doneeUpdates[index];
+  }
   setDoneeUpdates(data:DoneeUpdate[]){
     
     this.doneeUpdates = data;
@@ -112,8 +115,8 @@ public options = {
     this.doneeUpdatesChanged.next(this.doneeUpdates.slice());
     }));
   }
-  createItemRequirement(item:SubmitRequirement){
-    return this.httpClient.post<any>(this.createItemRequirementItemUrl,JSON.stringify(item),this.headerOptions);
+  createItemRequirement(form:FormData){
+    return this.httpClient.post<any>(this.createItemRequirementItemUrl,form);
   }
 
   sendMessageToDonor(form:FormData){

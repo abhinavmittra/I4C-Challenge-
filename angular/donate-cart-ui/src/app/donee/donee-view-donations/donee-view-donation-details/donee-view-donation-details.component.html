@@ -16,9 +16,14 @@
               <div class="col">
                 <span class="fw-bold">Quality:</span> {{item.quality}}
             </div>
+          </div>
+          <div class="row">
             <div class="col">
               <span class="fw-bold">Pincode:</span> {{item.pincode}}
-          </div>
+            </div>
+            <div class="col">
+              Request Limit: {{item.requestLimit}}
+            </div>
           </div>
           <div class="row">
             <div class="col">
@@ -26,7 +31,7 @@
             </div>
           
           </div>
-          <div class="btn-group">
+          <div class="btn-group mt-3">
           <button class="btn btn-secondary" (click)="viewItemImage()">View Image</button>
           <button class="btn btn-secondary" *ngIf="!requestMode" (click)="toggleRequestMode()">Request Item</button>
           <button class="btn btn-secondary" (click)="toggleRequestMode()" *ngIf="requestMode">Cancel</button>
@@ -41,14 +46,14 @@
   <h5>Enter details</h5>
     <form #donateReqForm="ngForm" (ngSubmit)="onSubmit(donateReqForm)">
 
-   <!-- <div class="form-group">
+    <div class="form-group">
         <label for="itemQuantity">Quantity</label>
         <input type="number" id="itemQuantity" class="form-control" 
         ngModel
         name="quantity"
         required       
         >
-    </div>--> 
+    </div>
     <div class="mb-3">
     <label for="itemDetails">Details</label>
             <input type="text" id="itemDetails" class="form-control" 

@@ -20,6 +20,10 @@ import { DoneeViewDonationDetailsComponent } from './donee/donee-view-donations/
 import { DonorViewRequirementDetailsComponent } from './donor/donor/donor-view-requirements/donor-view-requirement-details/donor-view-requirement-details.component';
 import { DonorViewRequirementsListComponent } from './donor/donor/donor-view-requirements/donor-view-requirements-list/donor-view-requirements-list.component';
 import { DoneeViewDonationListComponent } from './donee/donee-view-donations/donee-view-donation-list/donee-view-donation-list.component';
+import { DonorViewUpdateDetailsComponent } from './donor/donor/donor-view-updates/donor-view-update-details/donor-view-update-details.component';
+import { DonorViewUpdatesListComponent } from './donor/donor/donor-view-updates/donor-view-updates-list/donor-view-updates-list.component';
+import { DoneeViewUpdateDetailsComponent } from './donee/donee-view-updates/donee-view-update-details/donee-view-update-details.component';
+import { DoneeViewUpdatesListComponent } from './donee/donee-view-updates/donee-view-update-list/donee-view-updates-list.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +42,11 @@ import { DoneeViewDonationListComponent } from './donee/donee-view-donations/don
     DoneeViewDonationDetailsComponent,
     DonorViewRequirementDetailsComponent,
     DonorViewRequirementsListComponent,
-    DoneeViewDonationListComponent
+    DoneeViewDonationListComponent,
+    DonorViewUpdateDetailsComponent,
+    DonorViewUpdatesListComponent,
+    DoneeViewUpdateDetailsComponent,
+    DoneeViewUpdatesListComponent
   ],
   imports: [
     BrowserModule,

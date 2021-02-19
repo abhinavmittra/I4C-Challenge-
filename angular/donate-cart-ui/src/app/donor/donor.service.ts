@@ -54,6 +54,9 @@ export class DonorService {
     this.donorUpdates = data;
     this.donorUpdatesChanged.next(this.donorUpdates.slice())
   }
+  getDonorUpdate(index:number){
+    return this.donorUpdates[index];
+  }
 
 
   getItemRequirements(){

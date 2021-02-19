@@ -19,6 +19,11 @@ export class DonorCreateItemComponent implements OnInit {
   filteredSubCategories:string[]=[]; //active list set for choosing subcategory
   categoryInfoList:CategoryInfo[]=[];
   categoryInfoListChanged:Subscription;
+/*test scroll
+  testScroll(el:HTMLElement){
+    el.scrollIntoView({behavior: 'smooth'});
+
+  }*/
 
   ngOnInit(): void {
     //get category list from service
@@ -46,11 +51,6 @@ export class DonorCreateItemComponent implements OnInit {
   }
   
   onSubmit(form:NgForm){
-    
-    console.log(form);
-    console.log(form.value.quality)
-    console.log(form.value.subcategory)
-    console.log(form.value.category)
     
     const submitForm = new FormData();
     submitForm.append('image',this.selectedImage,this.selectedImage.name);
@@ -81,7 +81,7 @@ export class DonorCreateItemComponent implements OnInit {
       form.reset();
       //update currentPage in service
       this.donorService.currentPageChanged.next("updates");
-      this.router.navigate(['/donor/updates'])
+      this.router.navigate(['/donor/updates/list'])
     });
   }
   onFileSelected(event){

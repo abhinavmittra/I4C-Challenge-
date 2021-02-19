@@ -28,9 +28,10 @@
             </div>
           
           </div>
-          
+          <div class="mt-3">
           <button class="btn btn-secondary" *ngIf="!donateMode" (click)="toggleDonateMode()">Offer Item</button>
           <button class="btn btn-secondary" (click)="toggleDonateMode()" *ngIf="donateMode">Cancel</button>
+        </div>
         </div>
         <div class="card-footer text-muted">
           {{item.date | date:'medium'}}

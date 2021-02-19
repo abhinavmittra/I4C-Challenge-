@@ -12,42 +12,19 @@
         </div>
         <div class="mb-3">
             <label for="itemCategory" class="form-label">Category</label>
-            <input #itemCat class="form-control" list="itemCategories" id="itemCategory" placeholder="Type to search category" 
-            ngModel 
-            name="category"
-            required
-            >
-            <datalist id="itemCategories">
-                <option value="Electronics">
-                <option value="Clothes">
-                <option value="Books">
-            </datalist>
+            <select class="form-select form-control" aria-label="category dd" 
+            id="itemCategory" name="category" required ngModel (change)="onCategoryChange($event)" #category="ngModel">
+              
+                <option *ngFor="let category of categoryInfoList;index as i" [ngValue]="category.name">{{category.name}}</option>
+              </select>
         </div>
         <div class="mb-3">
             <label for="itemSubcategory" class="form-label">Sub Category</label>
-            <input class="form-control" list="itemSubcategories" id="itemSubcategory" placeholder="Type to search Sub-Category" 
-            ngModel 
-            name="subcategory"
-            required
-            >
-            <datalist id="itemSubcategories" *ngIf="itemCat.value=='Electronics'">
-                <option value="Phones">
-                <option value="TV">
-                <option value="Computers">
-            </datalist>
-            <datalist id="itemSubcategories" *ngIf="itemCat.value=='Clothes'">
-                <option value="Men">
-                <option value="Women">
-                <option value="Children">
-                <option value="Winter">
-                <option value="Bedsheets">
-            </datalist>
-            <datalist id="itemSubcategories" *ngIf="itemCat.value=='Books'">
-                <option value="Story Books">
-                <option value="Non-Fiction">
-                <option value="Textbooks">
-                <option value="Notebooks">
-            </datalist>
+            <select class="form-select form-control" aria-label="subcategory dd" 
+            id="itemSubcategory" name="subcategory" required ngModel>
+           
+                <option *ngFor="let subcat of filteredSubCategories" [ngValue]="subcat">{{subcat}}</option>
+              </select> 
         </div>
         <div class="mb-3">
             <label for="itemQuantity" class="form-label">Quantity</label>

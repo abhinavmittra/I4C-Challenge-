@@ -1,0 +1,37 @@
+<div class="container" id="updates">
+    <h3 *ngIf="doneeUpdates.length!=0">Requirements posted by you</h3>
+    <h3 *ngIf="doneeUpdates.length==0">No Requirements posted by you</h3>
+    <ng-container *ngFor="let item of doneeUpdates;index as i">  
+            <div class="card mt-3">
+                <div class="card-body">
+                  <h5 class="card-title">{{item.reqName}}</h5>
+                  <h6 class="card-subtitle mb-2 text-muted">{{item.reqDate | date:'medium'}}</h6>
+                  <div class="row">
+                      <div class="col">
+                          Category : {{item.reqCategory}}
+                      </div>
+                      <div class="col">
+                        SubCategory : {{item.reqSubCategory}}
+                    </div>
+                    
+                  </div>
+                  <div class="row">
+                    <div class="col">
+                        Quantity : {{item.reqQuantity}}
+                    </div>
+                  </div>
+                  <div class="row">
+                      <div class="col">
+                       Details: {{item.reqDetails}}
+                    </div>
+                  </div>
+                  <div class="btn-group mt-3"  role="group" aria-label="Basic outlined example">
+                  <button class="btn btn-outline-secondary" (click)="viewReqUpdates(i)">View Updates</button>
+                  <button class="btn btn-outline-secondary" (click)="deleteReq(i)">Delete</button>
+                  </div>
+                </div>
+              </div>
+        
+  
+  </ng-container>
+  </div>

@@ -17,7 +17,7 @@ export class DonorViewRequirementDetailsComponent implements OnInit {
   item:ItemRequirement=null;
   donateMode:boolean = null;
   selectedImage:File = null;
-  baseUrl = "127.0.0.1:5000"
+  
   ngOnInit(): void {
     this.donateMode = false;
     const itemIdx = +this.route.snapshot.paramMap.get('id')-1

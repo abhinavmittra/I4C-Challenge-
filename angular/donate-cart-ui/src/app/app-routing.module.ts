@@ -16,6 +16,10 @@ import { DonorViewRequirementDetailsComponent } from './donor/donor/donor-view-r
 import { DonorViewRequirementsListComponent } from './donor/donor/donor-view-requirements/donor-view-requirements-list/donor-view-requirements-list.component';
 import { DoneeViewDonationListComponent } from './donee/donee-view-donations/donee-view-donation-list/donee-view-donation-list.component';
 import {AuthGuard} from './auth/auth.guard';
+import { DoneeViewUpdateDetailsComponent } from './donee/donee-view-updates/donee-view-update-details/donee-view-update-details.component';
+import { DoneeViewUpdatesListComponent } from './donee/donee-view-updates/donee-view-update-list/donee-view-updates-list.component';
+import { DonorViewUpdateDetailsComponent } from './donor/donor/donor-view-updates/donor-view-update-details/donor-view-update-details.component';
+import { DonorViewUpdatesListComponent } from './donor/donor/donor-view-updates/donor-view-updates-list/donor-view-updates-list.component';
 const routes: Routes = [
   
   {path:'login',component:AppLoginComponent},
@@ -23,7 +27,11 @@ const routes: Routes = [
   {path:'admin',component:AdminComponent,canActivate:[AuthGuard]},
   {path:'donor',component:DonorComponent,children:
 [
-  {path:'updates',component:DonorViewUpdatesComponent},
+  {path:'updates',component:DonorViewUpdatesComponent,children:[
+    {path:'details/:id',component:DonorViewUpdateDetailsComponent},
+    {path:'list',component:DonorViewUpdatesListComponent}
+  ]
+},
   {path:'requirements',component:DonorViewRequirementsComponent,children:[
     {path:'details/:id',component:DonorViewRequirementDetailsComponent},
     {path:'list',component:DonorViewRequirementsListComponent}
@@ -38,7 +46,12 @@ const routes: Routes = [
     {path:'list',component:DoneeViewDonationListComponent}
   ]
 },
-  {path:'updates',component:DoneeViewUpdatesComponent}
+  {
+    path:'updates',component:DoneeViewUpdatesComponent,children:[
+    {path:'details/:id',component:DoneeViewUpdateDetailsComponent},
+    {path:'list',component:DoneeViewUpdatesListComponent}
+  ]
+}
 ], canActivate:[AuthGuard]},
 {path:'',redirectTo:'/login',pathMatch:'full'},
 {path:'**',redirectTo:'/login',pathMatch:'full'}

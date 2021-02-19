@@ -32,7 +32,7 @@ export class DonorComponent implements OnInit {
 
   viewUpdates(){
     this.donorService.currentPageChanged.next("updates");
-    this.router.navigate(['updates'],{relativeTo:this.route})
+    this.router.navigate(['updates/list'],{relativeTo:this.route})
   }
   donateItem(){
     this.donorService.currentPageChanged.next("donate");

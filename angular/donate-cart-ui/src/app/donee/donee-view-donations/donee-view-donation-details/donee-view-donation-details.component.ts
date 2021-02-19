@@ -27,8 +27,16 @@ export class DoneeViewDonationDetailsComponent implements OnInit {
     this.requestMode = !this.requestMode;
   }
   onSubmit(form:NgForm){
+    console.log(this.item.requestLimit)
+    //add validation for requesting Quantity
+
+    if(form.value.quantity>this.item.requestLimit){
+      alert("You can not request a quantity larger than the request limit for this item")
+    }
+
+else{
     const submitForm = new FormData();
-    submitForm.append('quantity',this.item.quantity.toString());
+    submitForm.append('quantity',form.value.quantity);
     submitForm.append('details',form.value.details);
     if(!form.value.publicFlag)
     submitForm.append('public',"false");
@@ -63,6 +71,7 @@ export class DoneeViewDonationDetailsComponent implements OnInit {
       this.router.navigate(['/donee/updates'])
     });
   }
+}
   viewItemImage(){
    const imgPath = this.imgTestPath+this.item.imgLink;
    window.open(imgPath);
