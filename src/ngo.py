@@ -15,7 +15,7 @@ class responsePackage:
         self.status = status
         self.message = message
 class ngo:
-    def __init__(self,ngoId,name,email,phone,pan,address,pincode,imageLink):
+    def __init__(self,ngoId,name,email,phone,pan,address,pincode,imageLink,additionalComments):
         self.ngoId = ngoId
         self.name = name
         self.email = email
@@ -24,6 +24,7 @@ class ngo:
         self.address = address
         self.pincode = pincode
         self.imageLink = imageLink
+        self.additionalComments = additionalComments
 
 class ngoPackage:
     def __init__(self,ngoList,status,message):
