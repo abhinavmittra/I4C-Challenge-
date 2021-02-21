@@ -73,8 +73,8 @@ def userAccountCreation(request,es):
                         "email":data["Email"],
                         "pincode":data["Pincode"],
                         "userType":data["userType"],
-                        "numberOfRatings":data["numberOfRatings"],
-                        "averageRating":data["averageRating"]
+                        "numberOfRatings": 0,
+                        "averageRating": "0"
                         }
                 
                 res = es.index(index = "accounts", body = query)

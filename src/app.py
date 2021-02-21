@@ -14,7 +14,7 @@ from donor import userAccountCreation,donateItem,getRequirements, respondToRequi
 from ngo import getNgoInfo,createNgoAccount,getNgoListUnverified,requestItem,getItems,createRequirement, acceptDeclineDonation, deleteRequirement, getUpdatesForNGO, markItem
 from admin import authenticate,approveRejectNGO
 import base64
-from common import getImage, saveImage, sendMessage, getCategoryList, getAlerts
+from common import getImage, saveImage, sendMessage, getCategoryList, getAlerts, rateUser
 app = Flask(__name__)
 
 #defining the default temporary upload folder
@@ -222,6 +222,15 @@ def getNewAlerts():
     userId = data["userId"]
     result = getAlerts(userId,es)       
     return result 
+
+@app.route("/rateUser", methods=["POST"])
+def rateUsers():
+    data = json.loads(request.data)
+    userId = data["userId"]
+    rating = data["rating"]
+    res = rateUser(userId,rating,es)
+    return res
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080, debug=True)
     
