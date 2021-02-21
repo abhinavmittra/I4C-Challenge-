@@ -146,6 +146,10 @@
         </div>
         </form>
         <form *ngIf="ngoPanMode" #ngoAdditionalInfo="ngForm" (ngSubmit)="onSubmitNgoAdditonalInfo(ngoAdditionalInfo)"> 
+           
+           <h5 class="mt-3 mb-3">Your PAN details & the supporting documents will go through a vetting process by the admins.
+               Please wait for an approval email
+           </h5>
             <div class="mb-3">
                 <label for="doneePan">Pan No.</label>
                 <input type="text" id="doneePan" class="form-control" 

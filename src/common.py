@@ -199,7 +199,11 @@ def createAlert(userId,dateCreated,activationDate,message,linkedToId,action,es):
 def getAlerts(userId,es):
     try:
         query = {
+            "sort":{
+                    "activationDate" : "asc"
+                    },
             "query":{
+                
                 "bool":{
                     "must":[
                     { "term": { "userId": userId}},

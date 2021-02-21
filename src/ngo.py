@@ -160,9 +160,12 @@ def getNgoListUnverified(request,es):
             ngoList = []
             for item in res["hits"]['hits']:
                 imgLink="-1"
+                comments = "No Comments"
                 if "imageLink" in item['_source']:
                     imgLink=item['_source']['imageLink']
-                ngoList.append(ngo(item['_id'],item['_source']['ngoName'],item['_source']['email'],item['_source']['phone'],item['_source']['pan'],item['_source']['address'],item['_source']['pincode'],imgLink))
+                if "additionalComments" in item["_source"]:
+                    comments = item["_source"]["additionalComments"]
+                ngoList.append(ngo(item['_id'],item['_source']['ngoName'],item['_source']['email'],item['_source']['phone'],item['_source']['pan'],item['_source']['address'],item['_source']['pincode'],imgLink,comments))
             
             
             res = ngoPackage(ngoList,"Success","Fetched all items")
@@ -603,6 +606,7 @@ def markItem(request,es):
 
             message = "Remember to let the donor know how their donation is being used"
             createAlert(ngoId,date,date,message,requirementId,"message",es)
+            createAlert(ngoId,date,date,message,requirementId,"rate",es)
 
 
             # print(query)
