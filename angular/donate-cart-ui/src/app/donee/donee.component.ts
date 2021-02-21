@@ -40,13 +40,18 @@ export class DoneeComponent implements OnInit {
     this.doneeService.currentPageChanged.next("updates");
     this.router.navigate(['updates/list'],{relativeTo:this.route})
   }
-
+  viewNotifications(){
+    this.doneeService.currentPageChanged.next("notifications")
+    this.router.navigate(['notifications'],{relativeTo:this.route})
+  }
   getFreshData(){
     this.loadingItemsFlag = true;
     this.loadingUpdatesFlag = true;
-    //Add seperate loading flag for categories later
+    //Add seperate loading flag for categories & alerts later
     this.utilityService.getCategoriesFromServer().subscribe()
+    this.utilityService.getAlertsFromServer(this.authService.getUserId()).subscribe();
 
+    
     this.doneeService.getAvailableDonationsFromServer(this.authService.getUserId()).subscribe((data)=>{
         this.loadingItemsFlag=false
         

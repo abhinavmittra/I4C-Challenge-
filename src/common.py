@@ -34,7 +34,18 @@ class categoryPackage:
         self.categoryList = categoryList
         self.status=status
         self.message=message
-
+class userAlert:
+    def __init__(self,date,message,action,linkedToId):
+        self.date = date
+        self.message=message
+        self.action=action
+        self.linkedToId=linkedToId
+        
+class userAlertPackage:
+    def __init__(self,alerts,status,message):
+        self.alerts=alerts
+        self.status=status
+        self.message=message
 def getImage(request,es):
         try:
             data = json.loads(request.data)
@@ -202,22 +213,20 @@ def getAlerts(userId,es):
             }
         }
 
-        print(query)
-
         alerts = []
-        result = {}
+        
 
         res = es.search(index="alerts", body = query)
         for alert in res["hits"]["hits"]:
-            alerts.append(alert["_source"])
+            alerts.append(userAlert(alert["_source"]["activationDate"],alert["_source"]["alertMessage"],alert["_source"]["acton"],alert["_source"]["linkedToId"]))
 
-        result["alerts"] = alerts
+
 
     except Exception as e:
         print(e)    
         return jsonpickle.encode(responsePackage("Error","Couldn't fetch alerts"),unpicklable=False)    
 
-    return result   
+    return jsonpickle.encode(userAlertPackage(alerts,"Success","Returned Alerts"),unpicklable=False)
 
 def rateUser(userId,rating,es):
     try:

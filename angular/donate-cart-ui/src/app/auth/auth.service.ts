@@ -42,8 +42,13 @@ export class AuthService {
 
   registerDonor(donor:Donor){
 
-    return this.httpClient.post<any>(this.registerDonorUrl,{"Address":donor.address,"Phone":donor.phone,
-    "Email":donor.email,"PasswordHash":donor.password,"UserType":"donor","Pincode":donor.pincode,"Name":donor.name},this.headerOptions);
+    return this.httpClient.post<any>(this.registerDonorUrl,{"Address":donor.address,
+    "Phone":donor.phone,
+    "Email":donor.email,
+    "PasswordHash":donor.password,
+    "UserType":"donor",
+    "Pincode":donor.pincode,
+    "Name":donor.name},this.headerOptions);
 
   }
   registerDonee(doneeForm:FormData){

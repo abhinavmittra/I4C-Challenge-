@@ -1,0 +1,20 @@
+<div class="container" >
+    <h3 *ngIf="userNotifications.length!=0">Notifications for you</h3>
+    <h3 *ngIf="userNotifications.length==0">No Notifications for you</h3>
+    <ng-container *ngFor="let item of userNotifications;index as i">  
+            <div class="card mt-3">
+                <div class="card-body">
+                  
+                  <h5 class="card-title">{{item.date | date:'medium'}}</h5>
+                  <h6 class="card-subtitle mb-2 text-muted" *ngIf="item.action=='message'">Reminder to Track Usage</h6>
+                  <h6 class="card-subtitle mb-2 text-muted" *ngIf="item.action=='rate'">Feedback of NGO</h6>
+                  <p>{{item.message}}</p>                  
+                <button class="btn btn-outline-secondary" *ngIf="item.action=='message'">Send Message</button>  
+                <button class="btn btn-outline-secondary" *ngIf="item.action=='rate'">Give Feedback</button>  
+                
+                </div>
+              </div>
+        
+  
+  </ng-container>
+  </div>

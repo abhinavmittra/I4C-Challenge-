@@ -1,4 +1,21 @@
-<div class="container">
+<div class="container" id="imgBody" *ngIf="imgMode">
+  
+  <!--Loader for Image-->
+  <div class="d-flex justify-content-center" *ngIf="!imageLoaded">
+  <div class="spinner-border" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+  </div>
+<h4 *ngIf="imageString=='-1'">No Image found</h4>
+  <button *ngIf="imageLoaded" class="btn btn-outline-secondary" (click)="showDonations()" style="display:block">Back</button>
+  <div class="text-center">
+  <img src = "{{imageString}}" *ngIf="imageLoaded" height="500" width="500">
+</div>
+</div>
+
+
+
+<div class="container" *ngIf="!imgMode">
     <div class="mb-3">
     <button class="btn btn-secondary" (click)="routeToDonations()">Back</button>
     </div>

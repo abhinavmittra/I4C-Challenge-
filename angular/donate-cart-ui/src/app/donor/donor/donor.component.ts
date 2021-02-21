@@ -29,6 +29,10 @@ export class DonorComponent implements OnInit {
     this.donorService.currentPageChanged.next("requirements");
     this.router.navigate(['requirements/list'],{relativeTo:this.route})
   }
+  viewNotifications(){
+    this.donorService.currentPageChanged.next("notifications")
+    this.router.navigate(['notifications'],{relativeTo:this.route})
+  }
 
   viewUpdates(){
     this.donorService.currentPageChanged.next("updates");
@@ -43,8 +47,9 @@ export class DonorComponent implements OnInit {
     this.loadingReqFlag = true;
     this.loadingUpdatesFlag=true;
   
-   //Add seperate loading flag for categories later
+   //Add seperate loading flag for categories & alerts later
     this.utilityService.getCategoriesFromServer().subscribe()
+    this.utilityService.getAlertsFromServer(this.authService.getUserId()).subscribe();
 
     this.donorService.getRequirementsFromServer(this.authService.getUserId()).subscribe((data)=>{
         this.loadingReqFlag=false

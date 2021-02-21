@@ -24,6 +24,8 @@ import { DonorViewUpdateDetailsComponent } from './donor/donor/donor-view-update
 import { DonorViewUpdatesListComponent } from './donor/donor/donor-view-updates/donor-view-updates-list/donor-view-updates-list.component';
 import { DoneeViewUpdateDetailsComponent } from './donee/donee-view-updates/donee-view-update-details/donee-view-update-details.component';
 import { DoneeViewUpdatesListComponent } from './donee/donee-view-updates/donee-view-update-list/donee-view-updates-list.component';
+import { DonorViewNotificationsComponent } from './donor/donor/donor-view-notifications/donor-view-notifications.component';
+import { DoneeViewNotificationsComponent } from './donee/donee-view-notifications/donee-view-notifications.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +48,9 @@ import { DoneeViewUpdatesListComponent } from './donee/donee-view-updates/donee-
     DonorViewUpdateDetailsComponent,
     DonorViewUpdatesListComponent,
     DoneeViewUpdateDetailsComponent,
-    DoneeViewUpdatesListComponent
+    DoneeViewUpdatesListComponent,
+    DonorViewNotificationsComponent,
+    DoneeViewNotificationsComponent
   ],
   imports: [
     BrowserModule,

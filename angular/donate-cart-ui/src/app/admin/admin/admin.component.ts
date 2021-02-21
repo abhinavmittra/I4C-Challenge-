@@ -25,7 +25,7 @@ export class AdminComponent implements OnInit {
       for(var index in data['ngoList']){
         
         this.ngoRegRequests.push(new DoneeApproveReq(data['ngoList'][index]['ngoId'],data['ngoList'][index]['name'],data['ngoList'][index]['email'],
-        data['ngoList'][index]['phone'],data['ngoList'][index]['pan'],data['ngoList'][index]['address'],data['ngoList'][index]['pincode'],data['ngoList'][index]['imageLink']));
+        data['ngoList'][index]['phone'],data['ngoList'][index]['pan'],data['ngoList'][index]['address'],data['ngoList'][index]['pincode'],data['ngoList'][index]['imageLink'],data['ngoList'][index]['additionalComments']));
       }
     }
 

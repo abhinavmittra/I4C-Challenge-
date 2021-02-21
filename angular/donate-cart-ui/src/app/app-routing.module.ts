@@ -20,6 +20,8 @@ import { DoneeViewUpdateDetailsComponent } from './donee/donee-view-updates/done
 import { DoneeViewUpdatesListComponent } from './donee/donee-view-updates/donee-view-update-list/donee-view-updates-list.component';
 import { DonorViewUpdateDetailsComponent } from './donor/donor/donor-view-updates/donor-view-update-details/donor-view-update-details.component';
 import { DonorViewUpdatesListComponent } from './donor/donor/donor-view-updates/donor-view-updates-list/donor-view-updates-list.component';
+import { DoneeViewNotificationsComponent } from './donee/donee-view-notifications/donee-view-notifications.component';
+import { DonorViewNotificationsComponent } from './donor/donor/donor-view-notifications/donor-view-notifications.component';
 const routes: Routes = [
   
   {path:'login',component:AppLoginComponent},
@@ -36,7 +38,8 @@ const routes: Routes = [
     {path:'details/:id',component:DonorViewRequirementDetailsComponent},
     {path:'list',component:DonorViewRequirementsListComponent}
   ]},
-  {path:'donate',component:DonorCreateItemComponent}
+  {path:'donate',component:DonorCreateItemComponent},
+  {path:'notifications',component:DonorViewNotificationsComponent}
 ],canActivate:[AuthGuard]
 },
 {path:'donee',component:DoneeComponent,children:[
@@ -51,7 +54,8 @@ const routes: Routes = [
     {path:'details/:id',component:DoneeViewUpdateDetailsComponent},
     {path:'list',component:DoneeViewUpdatesListComponent}
   ]
-}
+},
+{path:'notifications',component:DoneeViewNotificationsComponent}
 ], canActivate:[AuthGuard]},
 {path:'',redirectTo:'/login',pathMatch:'full'},
 {path:'**',redirectTo:'/login',pathMatch:'full'}

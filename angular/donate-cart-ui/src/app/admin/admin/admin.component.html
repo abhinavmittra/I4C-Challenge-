@@ -18,8 +18,58 @@
         <button *ngIf="imageLoaded" class="btn btn-outline-secondary" (click)="showRequests()" style="display:block">Back</button>
         <div class="text-center">
         <img src = "{{imageString}}" *ngIf="imageLoaded" height="500" width="500">
+        </div>
       </div>
+
+      <!--Approve Request Details
+<div class="container" id = "approveReqDetails">
+  <div class="mb-3">
+    <button class="btn btn-secondary">Back</button>
+    </div>
+    <div class="card text-center">
+        <div class="card-header">
+          {{item.name}}
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">{{item.category}}</h5>
+          <h6 class="card-subtitle mb-2 text-muted">{{item.subcategory}}</h6>
+          <div class="row">
+              <div class="col">
+                  <span class="fw-bold">Quantity:</span> {{item.quantity}}
+              </div>
+              <div class="col">
+                <span class="fw-bold">Quality:</span> {{item.quality}}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <span class="fw-bold">Pincode:</span> {{item.pincode}}
+            </div>
+            <div class="col">
+              Request Limit: {{item.requestLimit}}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <p class="card-text">{{item.details}}</p>
+            </div>
+          
+          </div>
+          <div class="btn-group mt-3">
+          <button class="btn btn-secondary" (click)="viewItemImage()">View Image</button>
+          <button class="btn btn-secondary" *ngIf="!requestMode" (click)="toggleRequestMode()">Request Item</button>
+          <button class="btn btn-secondary" (click)="toggleRequestMode()" *ngIf="requestMode">Cancel</button>
+            </div>
+        </div>
+        <div class="card-footer text-muted">
+          {{item.date | date:'medium'}}
+        </div>
       </div>
+</div>
+-->
+
+
+
     <div id="ngoReqs" *ngIf="!imgMode">
     <h3>NGO Registrations waiting for Approval</h3>
 <table class="table">

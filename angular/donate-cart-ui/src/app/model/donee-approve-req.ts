@@ -7,8 +7,9 @@ export class DoneeApproveReq {
     public address:string;
     public pincode:string;
     public imageLink:string;
+    public additionalComments:string;
     constructor(id:string,name:string,email:string,phone:string,pan:string,address:string,pincode:string,
-        imageLink:string){
+        imageLink:string,comments:string){
         this.id = id;
         this.name = name;
         this.email = email;
@@ -17,6 +18,7 @@ export class DoneeApproveReq {
         this.address = address;
         this.pincode = pincode;
         this.imageLink=imageLink;
+        this.additionalComments=comments
     }
     
 

@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/auth/auth.service';
 import { DonationItem } from 'src/app/model/donation-item';
 import { DoneeUpdate } from 'src/app/model/donee-update';
+import { UtilityService } from 'src/app/shared/utility.service';
 import { DoneeService } from '../../donee.service';
 
 @Component({
@@ -13,10 +14,13 @@ import { DoneeService } from '../../donee.service';
 })
 export class DoneeViewDonationDetailsComponent implements OnInit {
 
-  constructor(private router:Router,private route:ActivatedRoute,private doneeService:DoneeService,private authService:AuthService) { }
+  constructor(private utilityService:UtilityService,private router:Router,private route:ActivatedRoute,private doneeService:DoneeService,private authService:AuthService) { }
   item:DonationItem = null;
   requestMode:boolean = null;
-  imgTestPath = "http://127.0.0.1:5000"
+  imgMode:boolean=false;
+  imageLoaded:boolean=false;
+  imageString:string;
+  selectedImage:File=null;
   ngOnInit(): void {
     this.requestMode = false;
     const index = +this.route.snapshot.paramMap.get('id')-1;
@@ -73,9 +77,30 @@ else{
   }
 }
   viewItemImage(){
-   const imgPath = this.imgTestPath+this.item.imgLink;
-   window.open(imgPath);
+  
 
+   this.imageString="";
+    this.imgMode=true;
+    this.utilityService.getImageFromServer(this.item.imgLink).subscribe((data)=>{
+      if(data["image"]!="-1"){
+      this.imageString = "data:image/jpeg;base64,"+data["image"]
+      this.imageLoaded=true;
+      }
+      else{
+        this.imageString=="-1";
+        this.imageLoaded=false;
+      }
+    })
+    // const imgPath = this.imgTestPath+this.item.imgLink;
+  // window.open(imgPath);
+
+  }
+
+
+
+  showDonations(){
+    this.imgMode=false;
+    this.imageLoaded = false;
   }
   routeToDonations(){
     this.doneeService.setCurrentPage("donations")
