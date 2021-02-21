@@ -217,4 +217,46 @@ def getAlerts(userId,es):
         print(e)    
         return jsonpickle.encode(responsePackage("Error","Couldn't fetch alerts"),unpicklable=False)    
 
-    return result      
+    return result   
+
+def rateUser(userId,rating,es):
+    try:
+
+        res = es.search(index="accounts", body = {
+            "query" : {
+                "term":{
+                    "_id":{
+                        "value": userId
+                    }
+                }
+            }
+            })
+
+        numberOfRatings = res["hits"]["hits"][0]["_source"]["numberOfRatings"]
+        oldRating = float(res["hits"]["hits"][0]["_source"]["averageRating"])
+
+        newRating =   ( ( numberOfRatings * oldRating ) + rating ) / ( numberOfRatings + 1 )
+
+        source = "ctx._source.numberOfRatings += 1"
+
+        query = {
+            "script" : {
+                "source" : source
+                }
+            }
+
+        es.update(index="accounts" , id = userId , body = (query))
+
+        source = "ctx._source.averageRating = '%s'"%(newRating)
+
+        query = {
+            "script" : {
+                "source" : source
+                }
+            }
+        es.update(index="accounts" , id = userId , body = (query))    
+
+    except Exception as e:
+        print(e)
+        return jsonpickle.encode(responsePackage("Error","Couldn't rate user"),unpicklable=False)
+    return jsonpickle.encode(responsePackage("Success","Rated user, new rating is " + str(newRating)),unpicklable=False)

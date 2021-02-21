@@ -97,7 +97,9 @@ def createNgoAccount(request,es,app):
                     "pan":request.form["PAN"],
                     "description":request.form["description"],
                     "additionalComments":request.form["comments"],
-                    "imageLink":"-1" #keeping default value as -1
+                    "imageLink":"-1", #keeping default value as -1
+                    "numberOfRatings" : 0,
+                    "averageRating": "0"
                 }
            
                 
