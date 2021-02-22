@@ -605,8 +605,9 @@ def markItem(request,es):
             res = es.index(index = "donations",body =(query))
 
             message = "Remember to let the donor know how their donation is being used"
-            createAlert(ngoId,date,date,message,requirementId,"message",es)
-            createAlert(ngoId,date,date,message,requirementId,"rate",es)
+            createAlert(ngoId,date,date,message,donorId,ngoId,itemId,requirementId,"message",es)
+            messaage= "Rate the donor"
+            createAlert(ngoId,date,date,message,donorId,ngoId,itemId,requirementId,"rate",es)
 
 
             # print(query)

@@ -178,7 +178,7 @@ def getCategoryList(es,app):
 
     return jsonpickle.encode(categoryPackage(categoryList,"success","Returned Category Info successfully"),unpicklable=False) 
 
-def createAlert(userId,dateCreated,activationDate,message,linkedToId,action,es):
+def createAlert(userId,dateCreated,activationDate,message,donorId,ngoId,itemId,requirementId,action,es):
     try:
         query = {
             "userId": userId,
@@ -186,7 +186,10 @@ def createAlert(userId,dateCreated,activationDate,message,linkedToId,action,es):
             "activationDate": activationDate,
             "activeFlag": "true",
             "alertMessage": message,
-            "linkedToId": linkedToId,
+            "donorId": donorId,
+            "ngoId": ngoId,
+            "itemId": itemId,
+            "requirementId": requirementId,
             "acton": action,
             "newFlag": "true"
         }
