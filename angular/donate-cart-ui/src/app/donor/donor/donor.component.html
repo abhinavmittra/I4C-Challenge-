@@ -1,11 +1,11 @@
 
-<div class="d-flex justify-content-center" *ngIf="loadingReqFlag||loadingUpdatesFlag">
+<div class="d-flex justify-content-center" *ngIf="loadingReqFlag||loadingUpdatesFlag || loadingCategoriesFlag || loadingAlertsFlag">
     <div class="spinner-border" role="status">
       <span class="visually-hidden">Loading...</span>
     </div>
   </div>
 
-<div class="container mt-3" *ngIf="(!loadingUpdatesFlag)&&(!loadingReqFlag)">
+<div class="container mt-3" *ngIf="(!loadingUpdatesFlag)&&(!loadingReqFlag)&&(!loadingCategoriesFlag)&&(!loadingAlertsFlag)">
 
   <div class="row mt-3 mb-3">
     <div class="col">
@@ -25,4 +25,4 @@
 
 </div>
 
-<router-outlet *ngIf="(!loadingUpdatesFlag)&&(!loadingReqFlag)"></router-outlet>
+<router-outlet *ngIf="(!loadingUpdatesFlag)&&(!loadingReqFlag)&&(!loadingCategoriesFlag)&&(!loadingAlertsFlag)"></router-outlet>

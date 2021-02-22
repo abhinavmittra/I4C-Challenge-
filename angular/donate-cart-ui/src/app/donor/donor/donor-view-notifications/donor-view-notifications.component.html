@@ -25,7 +25,7 @@
                   
                   <h5 class="card-title">{{item.date | date:'medium'}}</h5>
                   <h6 class="card-subtitle mb-2 text-muted" *ngIf="item.action=='message'">Reminder to Track Usage</h6>
-                  <h6 class="card-subtitle mb-2 text-muted" *ngIf="item.action=='rate'">Feedback of NGO</h6>
+                  <h6 class="card-subtitle mb-2 text-muted" *ngIf="item.action=='rate'">Feedback of NGO {{ngoName}}</h6>
                   <p>{{item.message}}</p>                  
                 <button class="btn btn-outline-secondary" *ngIf="item.action=='message'">Send Message</button>  
                 <button class="btn btn-outline-secondary" *ngIf="item.action=='rate'" (click)="performAction(i)">Give Feedback</button>  

@@ -7,7 +7,8 @@
                 <th>#</th>
                 <th>NGO</th> 
                 <th>Item</th>
-                <th>Quantity</th>                 
+                <th>Quantity</th>
+                <th>Pincode</th>                 
                 <th></th>                                               
             </tr>
         </thead>
@@ -36,7 +37,13 @@
                 <span>{{item.quantity}}</span>                                               
             </div>
         </div>
-      </td>                          
+      </td> 
+      <td> <div class="form-group">
+        <div class="form-group__text">
+            <span>{{item.pincode}}</span>                                               
+        </div>
+    </div>
+  </td>                          
               <td> <div class="form-group">
                 <div class="form-group__text">
                     <button class="btn btn-outline-dark" (click)="viewDetails(i)">View</button>                                               

@@ -94,7 +94,7 @@ export class DoneeViewNotificationsComponent implements OnInit {
 
 
 
-    this.router.navigate(['../updates/detail'+(reqIndex+1)],{relativeTo:this.route})
+    this.router.navigate(['donee/updates/details/'+(reqIndex+1)])
   }
   showNotifications(){
     this.msgMode=false;

@@ -227,7 +227,7 @@ def getNewAlerts():
 def rateUsers():
     data = json.loads(request.data)
     userId = data["userId"]
-    rating = data["rating"]
+    rating = int(data["rating"])
     res = rateUser(userId,rating,es)
     return res
 

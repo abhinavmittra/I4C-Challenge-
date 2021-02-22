@@ -15,6 +15,8 @@ export class DoneeComponent implements OnInit {
   constructor(private utilityService:UtilityService,private router:Router,private route: ActivatedRoute,private doneeService:DoneeService,private authService:AuthService) { }
   loadingItemsFlag:boolean = true;
   loadingUpdatesFlag = true;
+  loadingCategoriesFlag = true;
+  loadingAlertsFlag=true;
   currentPage:string;
   currentPageChangedSub:Subscription;
   ngOnInit(): void {
@@ -47,9 +49,15 @@ export class DoneeComponent implements OnInit {
   getFreshData(){
     this.loadingItemsFlag = true;
     this.loadingUpdatesFlag = true;
+    this.loadingCategoriesFlag = true;
+    this.loadingAlertsFlag=true;
     //Add seperate loading flag for categories & alerts later
-    this.utilityService.getCategoriesFromServer().subscribe()
-    this.utilityService.getAlertsFromServer(this.authService.getUserId()).subscribe();
+    this.utilityService.getCategoriesFromServer().subscribe((data)=>{
+      this.loadingCategoriesFlag=false;
+    })
+    this.utilityService.getAlertsFromServer(this.authService.getUserId()).subscribe((data)=>{
+      this.loadingAlertsFlag=false;
+    });
 
     
     this.doneeService.getAvailableDonationsFromServer(this.authService.getUserId()).subscribe((data)=>{

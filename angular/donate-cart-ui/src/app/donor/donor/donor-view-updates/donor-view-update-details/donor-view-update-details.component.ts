@@ -227,7 +227,7 @@ showUpdates(){
       this.selectedItemUpdates[updateIdx].itemId,this.selectedItemUpdates[updateIdx].donorId,
       this.selectedItemUpdates[updateIdx].ngoId,    
     this.selectedItemUpdates[updateIdx].ngoName,
-    actionTaken).subscribe((data)=>{
+    actionTaken,this.selectedItemUpdates[updateIdx].reqQuantity).subscribe((data)=>{
      console.log(data)
     });
   }

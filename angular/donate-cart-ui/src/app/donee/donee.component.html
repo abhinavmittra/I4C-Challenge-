@@ -1,12 +1,12 @@
 
-<div class="d-flex justify-content-center" *ngIf="loadingItemsFlag||loadingUpdatesFlag">
+<div class="d-flex justify-content-center" *ngIf="loadingItemsFlag||loadingUpdatesFlag || loadingAlertsFlag || loadingCategoriesFlag">
     <div class="spinner-border" role="status">
       <span class="visually-hidden">Loading...</span>
     </div>
   </div>
 
 
-<div class="container mt-3" *ngIf="(!loadingUpdatesFlag)&&(!loadingItemsFlag)">
+<div class="container mt-3" *ngIf="(!loadingUpdatesFlag)&&(!loadingItemsFlag) &&(!loadingCategoriesFlag)&&(!loadingAlertsFlag)">
   <div class="row mt-3 mb-3">
     <div class="col">
      <button class="btn btn-outline-dark btn-sm" (click)="getFreshData()"> Refresh Data </button>
@@ -22,4 +22,4 @@
   <div id="seperator" style="height:30px">
 
   </div>
-<router-outlet *ngIf="(!loadingUpdatesFlag)&&(!loadingItemsFlag)"></router-outlet>
+<router-outlet *ngIf="(!loadingUpdatesFlag)&&(!loadingItemsFlag) &&(!loadingCategoriesFlag)&&(!loadingAlertsFlag)"></router-outlet>

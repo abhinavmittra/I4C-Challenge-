@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { timestamp } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
 import { UtilityService } from 'src/app/shared/utility.service';
 import {DonorService} from '../donor.service';
@@ -15,6 +16,8 @@ export class DonorComponent implements OnInit {
   constructor(private donorService:DonorService,private router:Router,private route:ActivatedRoute,private authService:AuthService,private utilityService:UtilityService) { }
   loadingReqFlag:boolean = true;
   loadingUpdatesFlag:boolean = true;
+  loadingCategoriesFlag:boolean=true;
+  loadingAlertsFlag:boolean=true;
   currentPage :string;
   currentPageChangedSub:Subscription;
   ngOnInit(): void {
@@ -46,10 +49,15 @@ export class DonorComponent implements OnInit {
   getFreshData(){
     this.loadingReqFlag = true;
     this.loadingUpdatesFlag=true;
-  
-   //Add seperate loading flag for categories & alerts later
-    this.utilityService.getCategoriesFromServer().subscribe()
-    this.utilityService.getAlertsFromServer(this.authService.getUserId()).subscribe();
+    this.loadingAlertsFlag=true;
+    this.loadingCategoriesFlag=true;
+   
+    this.utilityService.getCategoriesFromServer().subscribe((data)=>{
+      this.loadingCategoriesFlag=false;
+    })
+    this.utilityService.getAlertsFromServer(this.authService.getUserId()).subscribe((data)=>{
+      this.loadingAlertsFlag=false;
+    });
 
     this.donorService.getRequirementsFromServer(this.authService.getUserId()).subscribe((data)=>{
         this.loadingReqFlag=false

@@ -66,13 +66,13 @@ else{
         "updateDate":new Date().toISOString()
     }]
       doneeUpdates.push(new DoneeUpdate(data["requirementId"],this.item.name,this.item.category,
-      this.item.subcategory,this.item.quantity.toString(),form.value.details,new Date().toISOString(),reqUpdates))
+      this.item.subcategory,form.value.quantity,form.value.details,new Date().toISOString(),reqUpdates))
       this.doneeService.setDoneeUpdates(doneeUpdates);
 
       form.reset();
       this.toggleRequestMode();
       this.doneeService.setCurrentPage("updates")
-      this.router.navigate(['/donee/updates'])
+      this.router.navigate(['/donee/updates/list'])
     });
   }
 }

@@ -124,14 +124,15 @@ export class DonorService {
   }
 
 
-  acceptOrReject(reqId:string,itemId:string,donorId:string,ngoId:string,ngoName:string,actionTaken:string){
+  acceptOrReject(reqId:string,itemId:string,donorId:string,ngoId:string,ngoName:string,actionTaken:string,quantity:string){
     return this.httpClient.post<any>(this.acceptOrRejectUrl,JSON.stringify({
       'requirementId':reqId,
       'itemId':itemId,
       'ngoId':ngoId,
       'donorId':donorId,
       'actionTaken':actionTaken,
-      'ngoName':ngoName
+      'ngoName':ngoName,
+      'quantity':quantity
     
     }),this.headerOptions);
   }

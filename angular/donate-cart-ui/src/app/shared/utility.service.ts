@@ -63,7 +63,7 @@ setUserNotifications(data:UserNotification[]){
     }));
   }
 
-  rateUser(userId:string,rating:number){
+  rateUser(userId:string,rating:string){
     return this.httpClient.post<any>(this.rateUserUrl,JSON.stringify({"userId":userId,"rating":rating}),this.headerOptions)
   }
 }
