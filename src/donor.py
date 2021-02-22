@@ -215,7 +215,7 @@ def respondToRequirement(request,es,app):
             itemname = request.form['name']
             requirementID = request.form['requirementId']
             NGOID = request.form['ngoId']
-            quantity = request.form['quantity']
+            quantity = int(request.form['quantity'])
             quality = request.form['quality']
             pincode = request.form['pincode']
             details = request.form['details']
