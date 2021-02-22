@@ -21,7 +21,7 @@ export class UtilityService {
   public getImageTestUrl = "http://127.0.0.1:5000/getImage"
   public getCategoriesUrl = "http://127.0.0.1:5000/getCategories"
   public getAlertsUrl = "http://127.0.0.1:5000/getAlerts"
-
+  public rateUserUrl = "http://127.0.0.1:5000/rateUser"
   categoryInfoList:CategoryInfo[];
   categoryInfoListChanged = new Subject<CategoryInfo[]>();
   userNotifications:UserNotification[]=[];
@@ -60,5 +60,9 @@ setUserNotifications(data:UserNotification[]){
     return this.httpClient.post<any>(this.getAlertsUrl,JSON.stringify({"userId":"TymNuXcBnssMJ-PIUb9Y"}),this.headerOptions).pipe(tap((data)=>{
       this.setUserNotifications(data['alerts'])
     }));
+  }
+
+  rateUser(userId:string,rating:number){
+    return this.httpClient.post<any>(this.rateUserUrl,JSON.stringify({"userId":userId,"rating":rating}),this.headerOptions)
   }
 }

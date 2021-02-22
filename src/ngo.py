@@ -606,7 +606,7 @@ def markItem(request,es):
 
             message = "Remember to let the donor know how their donation is being used"
             createAlert(ngoId,date,date,message,requirementId,"message",es)
-            createAlert(ngoId,date,date,message,requirementId,"rate",es)
+            createAlert(ngoId,date,date,message,itemId,"rate",es)
 
 
             # print(query)
