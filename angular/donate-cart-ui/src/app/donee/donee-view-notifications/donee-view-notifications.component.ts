@@ -21,6 +21,7 @@ export class DoneeViewNotificationsComponent implements OnInit {
   reqId:string=""
   donorId:string=""
   itemId:string=""
+  reqName:string=""
   constructor(private authService:AuthService,private utilityService:UtilityService,private doneeService:DoneeService,private router:Router,private route:ActivatedRoute) { }
 
   ngOnInit(): void {
@@ -43,7 +44,22 @@ export class DoneeViewNotificationsComponent implements OnInit {
       this.reqId = this.userNotifications[index].requirementId;
       this.itemId = this.userNotifications[index].itemId;
       this.donorId = this.userNotifications[index].donorId;
+      var updates:DoneeUpdate[];
+        updates = this.doneeService.getDoneeUpdates()
+        
+        for(var i = 0;i<updates.length;i++){
+          if(updates[i].reqId==this.reqId){
+            this.reqName = updates[i].reqName;
+          }
+        }
+
+
+
+
       this.msgMode=true;
+
+
+
     }
   }
   sendMessage(){

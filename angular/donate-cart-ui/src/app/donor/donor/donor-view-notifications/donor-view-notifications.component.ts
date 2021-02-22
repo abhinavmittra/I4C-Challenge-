@@ -23,7 +23,9 @@ export class DonorViewNotificationsComponent implements OnInit {
   reqId:string=""
   ngoId:string=""
   ngoName:string="" //display which ngo user is rating
-  constructor(private router:Router,private donorService:DonorService,private utilityService:UtilityService,private authService:AuthService) { }
+
+  
+  constructor(private donorService:DonorService,private utilityService:UtilityService,private authService:AuthService) { }
 
   ngOnInit(): void {
     this.getUserNotifications()
@@ -42,14 +44,15 @@ export class DonorViewNotificationsComponent implements OnInit {
 
     performAction(i:number){
       if(this.userNotifications[i].action=='rate'){
-        this.ratingMode=true;
-        this.itemId = this.userNotifications[i].requirementId;
+        
+        this.reqId = this.userNotifications[i].requirementId;
         this.ngoId = this.userNotifications[i].ngoId;
         this.itemId=this.userNotifications[i].itemId;
 
         
         var updates:DonorUpdate[];
         updates = this.donorService.getDonorUpdates()
+        
         for(var i = 0;i<updates.length;i++){
           if(updates[i].itemId==this.itemId){
             for(var j=0;j<updates[i].itemUpdates.length;j++){
@@ -59,6 +62,7 @@ export class DonorViewNotificationsComponent implements OnInit {
             }
           }
         }
+        this.ratingMode=true;
       }
     }
     rateUser(){
