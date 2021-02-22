@@ -200,7 +200,7 @@ def requestItem(request,es):
                         "subCategory":subCategory,
                         "itemName":name,
                         "details":details,
-                        "quantity":quantity,
+                        "quantity":int(request.form["quantity"])
                         "ngoId":ngoId,
                         "ngoName":ngoName,
                         "pincode":pincode,
@@ -321,7 +321,7 @@ def createRequirement(request,es):
                         "subCategory":request.form["subcategory"],
                         "itemName":request.form["name"],
                         "details":request.form["details"],
-                        "quantity":request.form["quantity"],
+                        "quantity":int(request.form["quantity"])
                         "ngoId":request.form["ngoId"],
                         "pincode":request.form["pincode"],
                         "ngoName":request.form["ngoName"],
