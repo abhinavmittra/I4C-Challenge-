@@ -55,6 +55,7 @@ export class DonorViewRequirementDetailsComponent implements OnInit {
         "itemId":data["itemId"],
         "reqId":this.item.requirementId,
         "ngoId":this.item.ngoId,
+        "ngoName":"NGO",
         "donorId":this.authService.getUserId(),
         "updateDate":new Date().toISOString()
       }]
@@ -68,7 +69,7 @@ export class DonorViewRequirementDetailsComponent implements OnInit {
 
       this.toggleDonateMode();
       this.donorService.currentPageChanged.next("updates");
-      this.router.navigate(['/donor/updates'])
+      this.router.navigate(['/donor/updates/list'])
     });
   }
 

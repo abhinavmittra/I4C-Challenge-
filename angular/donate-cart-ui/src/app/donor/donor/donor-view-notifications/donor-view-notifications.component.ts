@@ -41,8 +41,8 @@ export class DonorViewNotificationsComponent implements OnInit {
     performAction(i:number){
       if(this.userNotifications[i].action=='rate'){
         this.ratingMode=true;
-        this.itemId = this.userNotifications[i].linkedToId;
-        //get ngoId,reqId as well
+        this.itemId = this.userNotifications[i].requirementId;
+
 
         
         var updates:DonorUpdate[];

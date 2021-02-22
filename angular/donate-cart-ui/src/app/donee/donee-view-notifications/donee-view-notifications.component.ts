@@ -40,8 +40,9 @@ export class DoneeViewNotificationsComponent implements OnInit {
   }
   performAction(index:number){
     if(this.userNotifications[index].action=='message'){
-      this.reqId = this.userNotifications[index].linkedToId;
-      //assign itemId,ngoId & donorId as well
+      this.reqId = this.userNotifications[index].requirementId;
+      this.itemId = this.userNotifications[index].itemId;
+      this.donorId = this.userNotifications[index].donorId;
       this.msgMode=true;
     }
   }
@@ -93,7 +94,7 @@ export class DoneeViewNotificationsComponent implements OnInit {
 
 
 
-    this.router.navigate(['updates/detail/'+(reqIndex+1)],{relativeTo:this.route})
+    this.router.navigate(['../updates/detail'+(reqIndex+1)],{relativeTo:this.route})
   }
   showNotifications(){
     this.msgMode=false;

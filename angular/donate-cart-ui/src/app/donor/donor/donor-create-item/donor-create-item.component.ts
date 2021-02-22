@@ -51,7 +51,8 @@ export class DonorCreateItemComponent implements OnInit {
   }
   
   onSubmit(form:NgForm){
-    
+    console.log(form.value.quality)
+    console.log(form.value.quantity)
     const submitForm = new FormData();
     submitForm.append('image',this.selectedImage,this.selectedImage.name);
     submitForm.append('name',form.value.name);

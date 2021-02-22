@@ -2,7 +2,7 @@
 <div class="mb-3">
     <button class="btn btn-secondary" (click)="routeToRequirements()">Back</button>
     </div>
-    <h5>Enter quantity & details</h5>
+    
     <div class="card text-center">
         <div class="card-header">
           {{item.name}}
@@ -51,13 +51,15 @@
         >
     </div>
     <div class="mb-3">
-        <label for="itemQuality">Quality</label>
-                <input type="text" id="itemQuality" class="form-control" 
-                ngModel
-                name="quality"
-                required
-                >
-        </div>
+      <label for="itemQuality" class="form-label">Quality</label>
+
+      <select class="form-select form-control" aria-label="quality dd" 
+      id="itemQuality" name="quality" required ngModel>
+     
+          <option  [ngValue]="'Usable'">Usable</option>
+          <option  [ngValue]="'Excellent'">Excellent</option>
+        </select>          
+  </div>
     <div class="mb-3">
     <label for="itemDetails">Details</label>
             <input type="text" id="itemDetails" class="form-control" 

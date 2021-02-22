@@ -101,7 +101,7 @@ export class DoneeViewUpdateDetailsComponent implements OnInit {
 
 else if(serviceType=='item'){
 
-  this.utilityService.getImageFromServer(this.selectedReqUpdates[updateIndex].messageImage).subscribe((data)=>{
+  this.utilityService.getImageFromServer(this.selectedReqUpdates[updateIndex].itemImageLink).subscribe((data)=>{
     if(data["image"]!="-1"){
     this.imageString = "data:image/jpeg;base64,"+data["image"]
     this.imageLoaded=true;
@@ -261,6 +261,7 @@ else if(serviceType=='item'){
     if(!actionPerformed){
       //Add Updates to local copy
       var updates:DoneeUpdate[];
+      var quantity = this.selectedReqUpdates[updateIdx].itemQuantity
       updates =  this.doneeService.getDoneeUpdates();
       var reqUpdates = {};
       if(actionTaken=="accept"){
@@ -292,7 +293,7 @@ else if(serviceType=='item'){
       this.selectedReqUpdates[updateIdx].itemId,
       this.selectedReqUpdates[updateIdx].donorId,
       this.selectedReqUpdates[updateIdx].ngoId,
-    actionTaken).subscribe((data)=>{
+    actionTaken,quantity).subscribe((data)=>{
      console.log(data)
     });
   }

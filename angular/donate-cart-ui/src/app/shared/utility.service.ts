@@ -32,6 +32,7 @@ getUserNotifications(){
 setUserNotifications(data:UserNotification[]){
   this.userNotifications=data;
   this.userNotifications=this.userNotifications.reverse() //desc order of date
+  console.log(this.userNotifications)
   this.userNotificationChanged.next(this.userNotifications.slice())
   
 }

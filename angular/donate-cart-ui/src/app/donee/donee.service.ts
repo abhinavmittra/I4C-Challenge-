@@ -144,13 +144,14 @@ public options = {
   }
 
 
-  acceptOrReject(reqId:string,itemId:string,donorId:string,ngoId:string,actionTaken:string){
+  acceptOrReject(reqId:string,itemId:string,donorId:string,ngoId:string,actionTaken:string,quantity:string){
     return this.httpClient.post<any>(this.acceptOrRejectUrl,JSON.stringify({
       'requirementId':reqId,
       'itemId':itemId,
       'ngoId':ngoId,
       'donorId':donorId,
-      'actionTaken':actionTaken
+      'actionTaken':actionTaken,
+      'quantity':quantity
     
     }),this.headerOptions);
   }
