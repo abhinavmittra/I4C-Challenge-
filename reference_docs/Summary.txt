@@ -132,7 +132,8 @@ PUT /accounts
       "numberOfRatings" : { "type" : "integer"},
       "averageRating" : { "type" : "keyword"},
       "imageLink" : { "type": "keyword" },
-      "additionalComments" : { "type": "keyword" }	
+      "additionalComments" : { "type": "keyword" },
+      "pincode" : { "type": "keyword" }	
     }
   }
 }
@@ -173,7 +174,8 @@ PUT /donations
       "shippingAddress": {
         "type": "text",
         "fields": { "keyword": { "type":  "keyword" } }
-        }
+        },
+      "pincode" : { "type": "keyword" } 
     }
   }
 }
@@ -207,6 +209,47 @@ PUT /categories
       "subCategory":{ "type" : "keyword"},
       "minimumQuantityForLimit":{ "type" : "integer"},
       "maximumRequestQuantityPercentage":{ "type" : "integer"}
+    }
+  }
+}
+
+PUT alerts
+{
+  "mappings": {
+    "properties": {
+      "userId": {
+        "type": "keyword"
+      },
+      "dateCreated":{
+        "type": "date"
+      },
+      "activationDate":{
+        "type": "date"
+      },
+      "activeFlag":{
+        "type": "boolean"
+      },
+      "alertMessage":{
+        "type": "text"
+      },
+      "requirementId":{
+        "type": "keyword"
+      },
+      "itemId":{
+        "type": "keyword"
+      },
+      "donorId":{
+        "type": "keyword"
+      },
+      "ngoId":{
+        "type": "keyword"
+      },
+      "action":{
+        "type": "keyword"
+      },
+      "newFlag":{
+        "type": "keyword"
+      }
     }
   }
 }
