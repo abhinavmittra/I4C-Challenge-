@@ -36,8 +36,8 @@ try:
 
     #using new db for testing functionalities
     es = Elasticsearch(
-               ['https://afd0050243e24ef7a14f2f29d8c109d2.ap-south-1.aws.elastic-cloud.com:9243'],
-               http_auth=("elastic","eNL7CixjMY4owQlRmiHjvCi6"),
+               ['https://73e54f2eb97f44ba959e2c0bd98adba8.us-central1.gcp.cloud.es.io:9243'],
+               http_auth=("elastic","dWgbk8HyBk2BDtWyZltaNFkt"),
                 scheme = "https",
                 )
     print("Connected")
