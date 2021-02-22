@@ -1,0 +1,59 @@
+<div class="container">
+    <h3>Available Donations</h3>
+    
+    <table class="table table-striped">
+        <thead>
+            <tr>  
+                <th>#</th>
+                <th>Name</th>   
+                <th>Quantity</th>                
+                <th>Quality</th> 
+                <th>Pincode</th>
+                <th></th>                                               
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of donationItemsList;let i = index;"> 
+                <td> <div class="form-group">
+                    <div class="form-group__text">
+                        <span>{{i+1}}</span>                                               
+                    </div>
+                </div>
+              </td>
+                <td> <div class="form-group">
+                    <div class="form-group__text">
+                        <span>{{item.name}}</span>                                               
+                    </div>
+                </div>
+              </td>     
+              
+     
+        <td> <div class="form-group">
+            <div class="form-group__text">
+                <span>{{item.quantity}}</span>                                               
+            </div>
+            </div>
+            </td>  
+            <td> <div class="form-group">
+                <div class="form-group__text">
+                    <span>{{item.quality}}</span>                                               
+                </div>
+                </div>
+                </td>
+                <td> <div class="form-group">
+                    <div class="form-group__text">
+                        <span>{{item.pincode}}</span>                                               
+                    </div>
+                    </div>
+                    </td>                       
+              <td> <div class="form-group">
+                <div class="form-group__text">
+                    <button class="btn btn-outline-dark" (click)="viewItem(i)">View</button>                                               
+                </div>
+            </div>
+          </td>  
+        </tr>
+    </tbody>
+    </table>
+    
+    </div>

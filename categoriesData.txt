@@ -1,0 +1,16 @@
+{ "index" : { "_index" : "categories", "_id" : "1" } }
+{ "category" : "Electronics", "subCategory": "Phones", "minimumQuantityForLimit": 5, "maximumRequestQuantityPercentage": 25 }
+{ "index" : { "_index" : "categories", "_id" : "2" } }
+{ "category" : "Electronics", "subCategory": "Computers", "minimumQuantityForLimit": 2, "maximumRequestQuantityPercentage": 25 }
+{ "index" : { "_index" : "categories", "_id" : "3" } }
+{ "category" : "Clothes", "subCategory": "Men", "minimumQuantityForLimit": 20, "maximumRequestQuantityPercentage": 50 }
+{ "index" : { "_index" : "categories", "_id" : "4" } }
+{ "category" : "Clothes", "subCategory": "Women", "minimumQuantityForLimit": 20, "maximumRequestQuantityPercentage": 50 }
+{ "index" : { "_index" : "categories", "_id" : "5" } }
+{ "category" : "Clothes", "subCategory": "Children", "minimumQuantityForLimit": 20, "maximumRequestQuantityPercentage": 50 }
+{ "index" : { "_index" : "categories", "_id" : "6" } }
+{ "category" : "Books", "subCategory": "Storybooks", "minimumQuantityForLimit": 50, "maximumRequestQuantityPercentage": 25 }
+{ "index" : { "_index" : "categories", "_id" : "7" } }
+{ "category" : "Books", "subCategory": "Textbooks", "minimumQuantityForLimit": 100, "maximumRequestQuantityPercentage": 50 }
+{ "index" : { "_index" : "categories", "_id" : "8" } }
+{ "category" : "Books", "subCategory": "Notebooks", "minimumQuantityForLimit": 200, "maximumRequestQuantityPercentage": 25 }

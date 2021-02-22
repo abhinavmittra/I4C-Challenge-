@@ -1,0 +1,40 @@
+
+<div class="container" id="msgBody" *ngIf="msgMode">
+        
+  <div class="form-floating mb-3">
+    <textarea class="form-control" [(ngModel)]="messageBody" placeholder="Type your Message here" id="floatingTextarea2" style="height: 100px"></textarea>
+    <label for="floatingTextarea2">Share usage for {{reqName}}</label>
+    
+  </div>
+  <div class="mb-3">
+    <label for="usageImage" class="form-label">Upload an Image</label>
+    <input type="file" id="usageImage" class="form-control" (change)="onFileSelected($event)"
+    ngModel
+    name="image"
+    required
+    >
+    </div>
+  
+  <button class="btn btn-outline-secondary" (click)="sendMessage()">Send</button>
+  <button class="btn btn-outline-secondary" (click)="showNotifications()">Back</button>
+</div> 
+<div class="container" *ngIf="!msgMode" id="notifBody">
+    <h3 *ngIf="userNotifications.length!=0">Notifications for you</h3>
+    <h3 *ngIf="userNotifications.length==0">No Notifications for you</h3>
+    <ng-container *ngFor="let item of userNotifications;index as i">  
+            <div class="card mt-3">
+                <div class="card-body">
+                  
+                  <h5 class="card-title">{{item.date | date:'medium'}}</h5>
+                  <h6 class="card-subtitle mb-2 text-muted" *ngIf="item.action=='message'">Reminder to Track Usage</h6>
+                  <h6 class="card-subtitle mb-2 text-muted" *ngIf="item.action=='rate'">Feedback of NGO</h6>
+                  <p>{{item.message}}</p>                  
+                <button class="btn btn-outline-secondary" *ngIf="item.action=='message'" (click)="performAction(i)">Send Message</button>  
+                <button class="btn btn-outline-secondary" *ngIf="item.action=='rate'" (click)="performAction(i)">Give Feedback</button>  
+                
+                </div>
+              </div>
+        
+  
+  </ng-container>
+  </div>

@@ -1,24 +1,22 @@
 
 <div class="container">
-<div class="row">
-    <div class="col-lg-6">
-    <button class="btn btn-secondary" *ngIf="registerType=='none'" (click)="setRegisterType('donor')">Donor</button> 
-    <span *ngIf="registerType=='none'"> | </span>
-    <button class="btn btn-secondary" *ngIf="registerType=='none'" (click)="setRegisterType('donee')">NGO</button>  
-    
-    <button class="btn btn-secondary" *ngIf="registerType!='none'" (click)="routeToLogin()">Back to Login</button>
-    <h3 *ngIf="registerType=='donor'">Donor Registration</h3>   
-<h3 *ngIf="registerType=='donee'">NGO Registration</h3> 
+<div class="mt-3 row">
+    <div class="btn-group col">
+    <button class="btn btn-outline-dark btn-lg" *ngIf="registerType=='none'" (click)="setRegisterType('donor')">Donor</button> 
+    <button class="btn btn-outline-dark btn-lg" *ngIf="registerType=='none'" (click)="setRegisterType('donee')">NGO</button>  
+    </div>   
 
-</div>
 
 </div>
 
 <div class="row">
     <div class="col-lg-6">
+        
+        <h3 *ngIf="registerType=='donor'">Donor Registration Form</h3>   
+        <h3 *ngIf="registerType=='donee'">NGO Registration Form</h3> 
         <div *ngIf="registerType=='donor'">
 <form #donorRegForm="ngForm" (ngSubmit)="onSubmit(donorRegForm)">
-    <div class="form-group">
+    <div class="mb-3">
         <label for="donorName">Name</label>
         <input type="text" id="donorName" class="form-control" 
         ngModel
@@ -26,7 +24,7 @@
         required
         >
     </div>
-    <div class="form-group">
+    <div class="mb-3">
         <label for="donorAddress">Address</label>
         <input type="text" id="donorAddress" class="form-control" 
         ngModel
@@ -34,7 +32,7 @@
         required
         >
     </div>
-    <div class="form-group">
+    <div class="mb-3">
         <label for="donorPincode">Pincode</label>
         <input type="number" id="donorPincode" class="form-control" 
         ngModel
@@ -42,7 +40,7 @@
         required
         >
     </div>
-    <div class="form-group">
+    <div class="mb-3">
         <label for="donorPhone">Contact No.</label>
         <input type="number" id="donorPhone" class="form-control" 
         ngModel
@@ -51,7 +49,7 @@
         pattern=".{10,}"
         >
     </div>
-    <div class="form-group">
+    <div class="mb-3">
     <label for="donorEmail">E-mail</label>
             <input type="email" id="donorEmail" class="form-control" 
             ngModel
@@ -59,7 +57,7 @@
             required
             email>
     </div>
-    <div class="form-group">
+    <div class="mb-3">
         <label for="donorPassword">Password</label>
         <input type="password" id="donorPassword" class="form-control"
         ngModel
@@ -67,15 +65,16 @@
         required
         pattern=".{6,}">
     </div>
-    <div>
-        <button class="btn btn-secondary" type="submit" [disabled]="!donorRegForm.valid">Register</button> 
+    <div class="btn-group mb-3">
+        <button class="btn btn-outline-dark" *ngIf="registerType=='donor'" (click)="routeToLogin()">Back</button>
         
+        <button class="btn btn-outline-dark" type="submit" [disabled]="!donorRegForm.valid">Register</button>
     </div>
     </form>
 </div>
     <div *ngIf="registerType=='donee'">
-    <form #doneeRegForm="ngForm" (ngSubmit)="onSubmit(doneeRegForm)" >
-        <div class="form-group">
+    <form #doneeRegForm="ngForm" (ngSubmit)="onSubmit(doneeRegForm)" *ngIf="!this.ngoPanMode" >
+        <div class="mb-3">
             <label for="doneeName">NGO Name</label>
             <input type="text" id="doneeName" class="form-control" 
             ngModel
@@ -83,15 +82,21 @@
             required
             >
         </div>
-        <div class="form-group">
+        <div class="mb-3">
             <label for="doneeWebsite">Website Link</label>
             <input type="text" id="doneeWebsite" class="form-control" 
             ngModel
-            name="name"
-            
+            name="website"            
             >
         </div>
-        <div class="form-group">
+        <div class="mb-3">
+            <label for="doneeDescription">Description</label>
+            <input type="text" id="doneeDescription" class="form-control" 
+            ngModel
+            name="description"            
+            >
+        </div>
+        <div class="mb-3">
             <label for="doneeAddress">Address</label>
             <input type="text" id="doneeAddress" class="form-control" 
             ngModel
@@ -99,7 +104,7 @@
             required
             >
         </div>
-        <div class="form-group">
+        <div class="mb-3">
             <label for="doneePincode">Pincode</label>
             <input type="number" id="doneePincode" class="form-control" 
             ngModel
@@ -107,7 +112,7 @@
             required
             >
         </div>
-        <div class="form-group">
+        <div class="mb-3">
             <label for="doneePhone">Contact No.</label>
             <input type="number" id="doneePhone" class="form-control" 
             ngModel
@@ -116,16 +121,9 @@
             pattern=".{10,}"
             >
         </div>
-        <div class="form-group">
-            <label for="doneePan">Pan No.</label>
-            <input type="text" id="doneePan" class="form-control" 
-            ngModel
-            name="panno"
-            required
-            pattern=".{10}"
-            >
-        </div>
-        <div class="form-group">
+       
+
+        <div class="mb-3">
             <label for="doneeEmail">E-mail</label>
             <input type="email" id="doneeEmail" class="form-control" 
             ngModel
@@ -133,7 +131,7 @@
             required
             email>
         </div>
-        <div class="form-group">
+        <div class="mb-3">
             <label for="doneePassword">Password</label>
             <input type="password" id="doneePassword" class="form-control"
             ngModel
@@ -141,14 +139,55 @@
             required
             pattern=".{6,}">
         </div>
-        <div>
-            <button class="btn btn-secondary" type="submit" [disabled]="!doneeRegForm.valid">Register</button> 
+        <div class="btn-group mb-3">
+            <button class="btn btn-outline-dark" (click)="routeToLogin()">Back</button>
+            <button class="btn btn-outline-dark" type="submit" *ngIf="!ngoPanMode" [disabled]="!doneeRegForm.valid">Next</button>     
             
         </div>
         </form>
+        <form *ngIf="ngoPanMode" #ngoAdditionalInfo="ngForm" (ngSubmit)="onSubmitNgoAdditonalInfo(ngoAdditionalInfo)"> 
+           
+           <h5 class="mt-3 mb-3">Your PAN details & the supporting documents will go through a vetting process by the admins.
+               Please wait for an approval email
+           </h5>
+            <div class="mb-3">
+                <label for="doneePan">Pan No.</label>
+                <input type="text" id="doneePan" class="form-control" 
+                ngModel
+                name="panno"
+                required
+                
+                >
+            </div>
+            <div class="mb-3">
+                <label for="doneeForm12">Upload any supporting document (Form12a or Form80g) </label>
+                <input type="file" id="doneeForm" class="form-control" 
+                ngModel
+                name="supportDocument"
+                (change)="onDocSelected($event)"
+                required
+                
+                >
+                
+            </div>
+            
+                <div class="mb-3">
+                    <label for="doneeComments" class="form-label">Comments</label>
+                    <textarea class="form-control" id="doneeComments" rows="3"
+                    required
+                    ngModel
+                    name="doneeComments"></textarea>
+                  </div>
+            
+            <div class="btn-group">
+                <button class="btn btn-outline-dark" (click)="switchToNgoPanMode(false)">Back</button>  
+                <button class="btn btn-outline-dark" type="submit" [disabled]="!ngoAdditionalInfo.valid">Register</button> 
+               
+            </div>
+        </form>
     </div>
 
-
+    
 </div>
 </div>
 </div>

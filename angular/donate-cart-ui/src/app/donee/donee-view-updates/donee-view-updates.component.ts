@@ -8,8 +8,20 @@ import { Component, OnInit } from '@angular/core';
 export class DoneeViewUpdatesComponent implements OnInit {
 
   constructor() { }
+  
+ 
+ 
+ 
+  
+  
 
   ngOnInit(): void {
+    
+    
+  
   }
+  
 
+    
+  
 }

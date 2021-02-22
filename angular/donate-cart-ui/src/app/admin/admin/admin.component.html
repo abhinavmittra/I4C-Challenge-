@@ -1,11 +1,77 @@
-<div class="container">
-    <h3>Registrations waiting for Approval</h3>
+<div id = "loader" *ngIf="loadingFlag">
+    <div class="d-flex justify-content-center">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+</div>
+<h5 *ngIf="ngoRegRequests.length==0&&(!loadingFlag)"> No pending approvals</h5>
+<div class="container mt-3" *ngIf = "!loadingFlag&&(ngoRegRequests.length!=0)">
+    
+    <div class="container" id="imgBody" *ngIf="imgMode">
+        <!--Loader for Image-->
+        <div class="d-flex justify-content-center" *ngIf="!imageLoaded">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        </div>
+        <button *ngIf="imageLoaded" class="btn btn-outline-secondary" (click)="showRequests()" style="display:block">Back</button>
+        <div class="text-center">
+        <img src = "{{imageString}}" *ngIf="imageLoaded" height="500" width="500">
+        </div>
+      </div>
+
+
+<!--NGO LIST-->
+    <div class="container" id="ngoReqs" *ngIf="!imgMode">
+    <h3>NGO Registrations waiting for Approval</h3>
+    <hr>
+        <div class="card" *ngFor="let item of ngoRegRequests;let i = index;">
+            
+            <div class="card-body">
+              <h5 class="card-title">{{item.name}}</h5>
+              <h6 class="card-subtitle mb-2 text-muted">{{item.pan}}</h6>
+              
+              <div class="row">
+                <div class="col">
+                  <span class="fw-bold">Email:</span> {{item.email}}
+              </div>
+              <div class="col">
+                <span class="fw-bold">Contact: </span>{{item.phone}}
+              </div>
+              <div class="col">
+                <span class="fw-bold">Pincode:</span> {{item.pincode}}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                  <span class="fw-bold">Address:</span> {{item.address}}
+              </div>              
+          </div>
+              <div class="row">
+                <div class="col">
+                  <span class="fw-bold">Comments</span>{{item.additionalComments}}
+                </div>              
+              </div>
+              <div class="btn-group mt-3">
+              <button class="btn btn-outline-secondary" (click)="viewImage(i)" *ngIf="item.imageLink!='-1'">View Image</button>
+              <button class="btn btn-outline-secondary" (click)="approveRequest(i)">Accept</button> 
+              <button class="btn btn-outline-secondary" (click)="rejectRequest(i)">Reject</button>                                              
+              
+                </div>
+            </div>
+            
+          </div>
+  
+    <!--
 <table class="table">
     <thead>
         <tr>  
             <th>NGO</th> 
             <th>PAN No.</th>
-            <th>Contact No.</th>                
+            <th>Address</th>
+            <th>Contact No.</th>
+            <th>Document</th>                
             <th>Accept/Reject</th>                                                  
         </tr>
     </thead>
@@ -19,16 +85,30 @@
           </td>     
           <td> <div class="form-group">
             <div class="form-group__text">
-                <span>{{item.panno}}</span>                                               
+                <span>{{item.pan}}</span>                                               
             </div>
         </div>
       </td>  
       <td> <div class="form-group">
         <div class="form-group__text">
+            <span>{{item.address}}</span>                                               
+        </div>
+    </div>
+  </td>  
+   
+      <td> <div class="form-group">
+        <div class="form-group__text">
             <span>{{item.phone}}</span>                                               
         </div>
     </div>
-  </td>                       
+  </td>     
+  <td> <div class="form-group">
+    <div class="form-group__text">
+        <span *ngIf="item.imageLink=='-1'">No Document</span>
+        <button class="btn btn-outline-secondary" (click)="viewImage(i)" *ngIf="item.imageLink!='-1'">View Image</button>                         
+    </div>
+    </div>
+    </td>                  
           <td> <div class="form-group">
             <div class="form-group__text">
                 <button class="btn btn-secondary" (click)="approveRequest(i)">Accept</button> | <button class="btn btn-secondary" (click)="rejectRequest(i)">Reject</button>                                              
@@ -37,5 +117,12 @@
       </td>  
     </tr>
 </tbody>
-</table>
+</table>-->
+
+
+<p class="mt-3 fs-5 fw-bold lh-base">Income Tax Link for your reference is given <span class="text-muted"><a href="https://www.incometaxindia.gov.in/Pages/utilities/exempted-institutions.aspx">here</a></span></p>
+</div>
+
+
+
 </div>

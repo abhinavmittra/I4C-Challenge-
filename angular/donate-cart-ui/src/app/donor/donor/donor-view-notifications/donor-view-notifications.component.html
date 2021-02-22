@@ -1,0 +1,39 @@
+<div class="container" *ngIf="ratingMode">
+<h6>Please provide a valuable feedback for the NGO {{ngoName}} based on the communication, logistics and their purpose</h6>
+<div class="mb-3">
+<label for="userRating" class="form-label">Rating</label>
+           
+<select class="form-select form-control" aria-label="rating dd" 
+            id="userRating" name="rating" required [(ngModel)]="ratingProvided">
+              
+<option *ngFor="let rating of ratingValues" [value]="rating">{{rating}}</option>
+</select>
+</div>
+<div class="form-floating mb-3">
+  <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea" [(ngModel)]="userComments"></textarea>
+  <label for="floatingTextarea">Comments</label>
+</div>
+<button class="btn btn-outline-secondary mb-3" (click)="rateUser()">Submit</button>
+<button class="btn btn-outline-secondary mb-3" (click)="showNotifications()">Back</button>
+</div>
+
+<div class="container" *ngIf="!ratingMode">
+    <h3 *ngIf="userNotifications.length!=0">Notifications for you</h3>
+    <h3 *ngIf="userNotifications.length==0">No Notifications for you</h3>
+    <ng-container *ngFor="let item of userNotifications;index as i">  
+            <div class="card mt-3">
+                <div class="card-body">
+                  
+                  <h5 class="card-title">{{item.date | date:'medium'}}</h5>
+                  <h6 class="card-subtitle mb-2 text-muted" *ngIf="item.action=='message'">Reminder to Track Usage</h6>
+                  <h6 class="card-subtitle mb-2 text-muted" *ngIf="item.action=='rate'">Feedback of NGO {{ngoName}}</h6>
+                  <p>{{item.message}}</p>                  
+                <button class="btn btn-outline-secondary" *ngIf="item.action=='message'">Send Message</button>  
+                <button class="btn btn-outline-secondary" *ngIf="item.action=='rate'" (click)="performAction(i)">Give Feedback</button>  
+                
+                </div>
+              </div>
+        
+  
+  </ng-container>
+  </div>

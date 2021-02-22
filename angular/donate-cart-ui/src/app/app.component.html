@@ -1,29 +1,29 @@
 <header class="bd-header bg-dark py-3 d-flex align-items-stretch border-bottom border-dark">
-  <div class="container-fluid d-flex align-items-center">
+  <div class="container-fluid d-flex align-items-center justify-content-between">
+    <div class="col-4 text-center">
     <h1 class="d-flex align-items-center fs-4 text-white mb-0">
      
       <img src="https://i.pinimg.com/originals/13/e7/c8/13e7c85b438ae96ab1a4f66f2ee719ca.jpg" width="38" height="30" class="me-3" alt="Bootstrap">
       Donate Cart
     </h1>
-    
-   
-  <!--  <a routerLink="/login">Log out</a>-->
+  </div>
+   <div class="col-4 text-center">
+     <span class="fs-5 text-white align-middle" *ngIf="showLogOut">Welcome {{userName}}</span>
+   </div>
+   <div class="ms-3 pt-1 text-center col-4"><span *ngIf="showLogOut" style="cursor:pointer" class="text-white border border-white" (click)="routeToLogin()">Log out</span></div>
     
   </div>
 </header>
-<div class="container">
-  <div class="row">
-    <div class="col-lg-12">
+
 <router-outlet></router-outlet>
-    </div>
-    </div>
     
-</div>
 <div id="seperator" style="height:60px">
 
 </div>
-<footer class="footer mt-auto py-3 bg-dark">
+<footer class="bd-footer py-2 mt-5 text-center text-sm-start bg-dark">
   <div class="container" style="text-align: center;">
-    <span class="text-muted"><a href="https://www.uandifoundation.com/">Contact Us</a></span>
+    <span class="text-muted"><a href="mailto:abmittra@cisco.com?&cc=tnrao@cisco.com&bcc=srirv@cisco.com" class="link-light">Contact Us</a></span>
+    
+    
   </div>
 </footer>

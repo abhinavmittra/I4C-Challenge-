@@ -1,1 +1,190 @@
-<p>donor-view-updates works!</p>
+
+
+
+<!--
+
+<div class="container" *ngIf="(!msgMode)&&(!imgMode)">
+    <h3 *ngIf="donorUpdates.length!=0">Donations offered by you</h3>
+    <h3 *ngIf="donorUpdates.length==0">No Donations offered by you</h3>
+    <ng-container *ngFor="let item of donorUpdates;index as i">  
+            <div class="card mt-3">
+                <div class="card-body">
+                  <h5 class="card-title">{{item.itemName}}</h5>
+                  <h6 class="card-subtitle mb-2 text-muted">{{item.itemDate | date:'medium'}}</h6>
+                  <div class="row">
+                      <div class="col">
+                          Category : {{item.itemCategory}}
+                      </div>
+                      <div class="col">
+                        SubCategory : {{item.itemSubCategory}}
+                    </div>
+                    <div class="col">
+                        Quantity : {{item.itemQuantity}}
+                    </div>
+                  </div>
+                  <div class="row">
+                      <div class="col">
+                        Quality: {{item.itemQuality}}
+                      </div>
+                      <div class="col">
+                       Details: {{item.itemDetails}}
+                    </div>
+                  </div>
+                  <div class="btn-group"  role="group" aria-label="Basic outlined example">
+                  <button class="btn btn-outline-secondary" (click)="viewItemImage(i)">View Image</button>
+                  <button class="btn btn-outline-secondary" (click)="viewItemUpdates(i)">View Updates</button>
+                  <button class="btn btn-outline-secondary" (click)="deleteItem(i)">Delete</button>
+                  </div>
+                </div>
+              </div>
+        
+<ng-container *ngIf="visibleItemUpdate[i]">
+    <h5>Updates for selected Item </h5>
+<div id="itemUpdates" *ngFor ="let update of selectedItemUpdates;index as j;">
+    
+    <div [ngSwitch]="update.updateType">
+        <div *ngSwitchCase = "'donateRequest'" id="donateReqUpdate">
+            <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">{{update.updateDate | date:'medium'}}</h5>
+                  <h6 class="card-subtitle mb-2 text-muted">{{update.updateType}}</h6>
+                  <div class="row">
+                      <div class="col">
+                      NGOName: {{update.ngoName}} 
+                     </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            Details: {{update.reqDetails}}
+                        </div>
+                    </div>
+                    <div class="btn-group"  role="group" aria-label="Basic outlined example">
+                        <button class="btn btn-outline-secondary" (click)="acceptOrReject(i,j,'accept')">Accept</button>
+                        <button class="btn btn-outline-secondary" (click)="acceptOrReject(i,j,'decline')">Decline</button>
+                    </div>
+                </div>
+              </div>
+        </div>
+        <div *ngSwitchCase = "'donate'" id="donateUpdate">
+            <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">{{update.updateDate | date:'medium'}}</h5>
+                  <h6 class="card-subtitle mb-2 text-muted">{{update.updateType}}</h6>
+                  <p class="card-text">Waiting for {{update.ngoName}}'s Approval</p>
+                </div>
+              </div>
+        </div>
+        <div *ngSwitchCase = "'received'" id="receivedUpdate">
+            <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">{{update.updateDate | date:'medium'}}</h5>
+                  <h6 class="card-subtitle mb-2 text-muted">{{update.updateType}}</h6>
+                  <p class="card-text">{{update.ngoName}} has received your item</p>
+                </div>
+              </div>
+        </div>
+        <div *ngSwitchCase = "'message'" id="messageUpdate">
+            <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">{{update.updateDate | date:'medium'}}</h5>
+                  <h6 class="card-subtitle mb-2 text-muted">{{update.updateType}}</h6>
+                  <p class="card-text" *ngIf="update.messageFrom=='donor'">To: {{update.ngoName}}</p>
+                <p class="card-text" *ngIf="update.messageFrom=='NGO'">From: {{update.ngoName}}</p>
+                  <p>{{update.message}}</p>
+                  <button class="btn btn-outline-secondary" *ngIf="update.imageLink!='-1'"(click)="viewMsgImage(i,j)">View Image</button>  
+                </div>
+              </div>
+         </div>
+        <div *ngSwitchCase = "'accept'" id="acceptUpdate">
+            <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">{{update.updateDate | date:'medium'}}</h5>
+                  <h6 class="card-subtitle mb-2 text-muted">{{update.updateType}}</h6>
+                  <p class="card-text">You have accepted {{update.ngoName}}'s request</p>
+                  <button class="btn btn-outline-secondary" (click)="setMsgIndex(i,j)">Send Message</button>  
+                </div>
+              </div>
+        </div>
+        <div *ngSwitchCase = "'decline'" id="declineUpdate">
+            <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">{{update.updateDate | date:'medium'}}</h5>
+                  <h6 class="card-subtitle mb-2 text-muted">{{update.updateType}}</h6>
+                  <p class="card-text">You declined {{update.ngoName}}'s request</p>
+                </div>
+              </div>
+        </div>
+        <div *ngSwitchCase = "'acceptDonation'" id="acceptDonationUpdate">
+            <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">{{update.updateDate | date:'medium'}}</h5>
+                  <h6 class="card-subtitle mb-2 text-muted">{{update.updateType}}</h6>
+                  <p class="card-text">{{update.ngoName}} accepted your offer</p>
+                  <button class="btn btn-outline-secondary" (click)="setMsgIndex(i,j)">Send Message</button>  
+                </div>
+              </div>
+        </div>
+        <div *ngSwitchCase = "'declineDonation'" id="rejectDonationUpdate">
+            <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">{{update.updateDate | date:'medium'}}</h5>
+                  <h6 class="card-subtitle mb-2 text-muted">{{update.updateType}}</h6>
+                  <p class="card-text">{{update.ngoName}} rejected your offer</p>
+                </div>
+              </div>
+        </div>
+        <div *ngSwitchCase = "'itemDeleted'" id="rejectDonationUpdate">
+            <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">{{update.updateDate | date:'medium'}}</h5>
+                  <h6 class="card-subtitle mb-2 text-muted">{{update.updateType}}</h6>
+                  <p class="card-text">This item has been deleted</p>
+                </div>
+              </div>
+        </div>
+        <div *ngSwitchCase = "'requirementDeleted'" id="requirementDeletedUpdate">
+            <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">{{update.updateDate | date:'medium'}}</h5>
+                  <h6 class="card-subtitle mb-2 text-muted">{{update.updateType}}</h6>
+                  <p class="card-text">{{update.ngoName}} deleted this requirement</p>
+                </div>
+              </div>
+        </div>
+        <div *ngSwitchCase = "'noupdate'" id="noupdateUpdate">
+            <h5> No Updates for this Item</h5>
+         </div>
+        <div *ngSwitchDefault>
+            New updateType not handled: {{update.updateType}}
+        </div>
+    </div>
+</div>
+</ng-container>
+</ng-container>
+</div>
+<div class="seperator" style="height:60px">
+
+</div>
+-->
+<router-outlet></router-outlet>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

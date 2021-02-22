@@ -11,23 +11,55 @@ import{DoneeComponent} from './donee/donee.component';
 import {DoneeCreateItemComponent} from './donee/donee-create-item/donee-create-item.component';
 import {DoneeViewDonationsComponent} from './donee/donee-view-donations/donee-view-donations.component';
 import {DoneeViewUpdatesComponent} from './donee/donee-view-updates/donee-view-updates.component';
+import { DoneeViewDonationDetailsComponent } from './donee/donee-view-donations/donee-view-donation-details/donee-view-donation-details.component';
+import { DonorViewRequirementDetailsComponent } from './donor/donor/donor-view-requirements/donor-view-requirement-details/donor-view-requirement-details.component';
+import { DonorViewRequirementsListComponent } from './donor/donor/donor-view-requirements/donor-view-requirements-list/donor-view-requirements-list.component';
+import { DoneeViewDonationListComponent } from './donee/donee-view-donations/donee-view-donation-list/donee-view-donation-list.component';
+import {AuthGuard} from './auth/auth.guard';
+import { DoneeViewUpdateDetailsComponent } from './donee/donee-view-updates/donee-view-update-details/donee-view-update-details.component';
+import { DoneeViewUpdatesListComponent } from './donee/donee-view-updates/donee-view-update-list/donee-view-updates-list.component';
+import { DonorViewUpdateDetailsComponent } from './donor/donor/donor-view-updates/donor-view-update-details/donor-view-update-details.component';
+import { DonorViewUpdatesListComponent } from './donor/donor/donor-view-updates/donor-view-updates-list/donor-view-updates-list.component';
+import { DoneeViewNotificationsComponent } from './donee/donee-view-notifications/donee-view-notifications.component';
+import { DonorViewNotificationsComponent } from './donor/donor/donor-view-notifications/donor-view-notifications.component';
 const routes: Routes = [
+  
   {path:'login',component:AppLoginComponent},
   {path:'register',component:AppRegisterComponent},
-  {path:'admin',component:AdminComponent},
+  {path:'admin',component:AdminComponent,canActivate:[AuthGuard]},
   {path:'donor',component:DonorComponent,children:
 [
-  {path:'updates',component:DonorViewUpdatesComponent},
-  {path:'requirements',component:DonorViewRequirementsComponent},
-  {path:'donate',component:DonorCreateItemComponent}
-]
+  {path:'updates',component:DonorViewUpdatesComponent,children:[
+    {path:'details/:id',component:DonorViewUpdateDetailsComponent},
+    {path:'list',component:DonorViewUpdatesListComponent}
+  ]
+},
+  {path:'requirements',component:DonorViewRequirementsComponent,children:[
+    {path:'details/:id',component:DonorViewRequirementDetailsComponent},
+    {path:'list',component:DonorViewRequirementsListComponent}
+  ]},
+  {path:'donate',component:DonorCreateItemComponent},
+  {path:'notifications',component:DonorViewNotificationsComponent}
+],canActivate:[AuthGuard]
 },
 {path:'donee',component:DoneeComponent,children:[
   {path:'create',component:DoneeCreateItemComponent},
-  {path:'requirements',component:DoneeViewUpdatesComponent},
-  {path:'allrequirements',component:DoneeViewDonationsComponent}
-]},
-{path:'',redirectTo:'login',pathMatch:'full'}];
+  {path:'donations',component:DoneeViewDonationsComponent,children:[
+    {path:'details/:id',component:DoneeViewDonationDetailsComponent},
+    {path:'list',component:DoneeViewDonationListComponent}
+  ]
+},
+  {
+    path:'updates',component:DoneeViewUpdatesComponent,children:[
+    {path:'details/:id',component:DoneeViewUpdateDetailsComponent},
+    {path:'list',component:DoneeViewUpdatesListComponent}
+  ]
+},
+{path:'notifications',component:DoneeViewNotificationsComponent}
+], canActivate:[AuthGuard]},
+{path:'',redirectTo:'/login',pathMatch:'full'},
+{path:'**',redirectTo:'/login',pathMatch:'full'}
+];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

@@ -1,0 +1,43 @@
+
+<div class="container" >
+    <h3 *ngIf="donorUpdates.length!=0">Donations offered by you</h3>
+    <h3 *ngIf="donorUpdates.length==0">No Donations offered by you</h3>
+    <ng-container *ngFor="let item of donorUpdates;index as i">  
+            <div class="card mt-3">
+                <div class="card-body">
+                  <h5 class="card-title">{{item.itemName}}</h5>
+                  <h6 class="card-subtitle mb-2 text-muted">{{item.itemDate | date:'medium'}}</h6>
+                  <div class="row">
+                      <div class="col">
+                          Category : {{item.itemCategory}}
+                      </div>
+                      <div class="col">
+                        SubCategory : {{item.itemSubCategory}}
+                    </div>
+                    
+                  </div>
+                  <div class="row">
+                    <div class="col">
+                      Quantity : {{item.itemQuantity}}
+                  </div>
+                      <div class="col">
+                        Quality: {{item.itemQuality}}
+                      </div>
+                     
+                  </div>
+                  <div class="row">
+                    <div class="col">
+                      Details: {{item.itemDetails}}
+                    </div>
+                  </div>
+                  <div class="btn-group mt-3"  role="group" aria-label="Basic outlined example">
+                  
+                  <button class="btn btn-outline-secondary" (click)="viewItemUpdates(i)">View Updates</button>
+                  <button class="btn btn-outline-secondary" (click)="deleteItem(i)">Delete</button>
+                  </div>
+                </div>
+              </div>
+        
+  
+  </ng-container>
+  </div>

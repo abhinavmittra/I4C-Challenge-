@@ -9,7 +9,28 @@ export class DonorViewUpdatesComponent implements OnInit {
 
   constructor() { }
 
+ 
+  
+  
+ 
+  
+  
   ngOnInit(): void {
+       
   }
+
+  
+
+ 
+
+  
+  
+  
+
+  
+
+
+
+  
 
 }

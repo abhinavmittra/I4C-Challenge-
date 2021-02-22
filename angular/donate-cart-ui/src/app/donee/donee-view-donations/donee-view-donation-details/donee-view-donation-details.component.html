@@ -1,0 +1,97 @@
+<div class="container" id="imgBody" *ngIf="imgMode">
+  
+  <!--Loader for Image-->
+  <div class="d-flex justify-content-center" *ngIf="!imageLoaded">
+  <div class="spinner-border" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+  </div>
+<h4 *ngIf="imageString=='-1'">No Image found</h4>
+  <button *ngIf="imageLoaded" class="btn btn-outline-secondary" (click)="showDonations()" style="display:block">Back</button>
+  <div class="text-center">
+  <img src = "{{imageString}}" *ngIf="imageLoaded" height="500" width="500">
+</div>
+</div>
+
+
+
+<div class="container" *ngIf="!imgMode">
+    <div class="mb-3">
+    <button class="btn btn-secondary" (click)="routeToDonations()">Back</button>
+    </div>
+    <div class="card text-center">
+        <div class="card-header">
+          {{item.name}}
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">{{item.category}}</h5>
+          <h6 class="card-subtitle mb-2 text-muted">{{item.subcategory}}</h6>
+          <div class="row">
+              <div class="col">
+                  <span class="fw-bold">Quantity:</span> {{item.quantity}}
+              </div>
+              <div class="col">
+                <span class="fw-bold">Quality:</span> {{item.quality}}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <span class="fw-bold">Pincode:</span> {{item.pincode}}
+            </div>
+            <div class="col">
+              <span class="fw-bold">Request Limit:</span> {{item.requestLimit}}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <p class="card-text">{{item.details}}</p>
+            </div>
+          
+          </div>
+          <div class="btn-group mt-3">
+          <button class="btn btn-secondary" (click)="viewItemImage()">View Image</button>
+          <button class="btn btn-secondary" *ngIf="!requestMode" (click)="toggleRequestMode()">Request Item</button>
+          <button class="btn btn-secondary" (click)="toggleRequestMode()" *ngIf="requestMode">Cancel</button>
+            </div>
+        </div>
+        <div class="card-footer text-muted">
+          {{item.date | date:'medium'}}
+        </div>
+      </div>
+
+<div id="donateRequestFormContainer" class="container" *ngIf="requestMode">
+  <h5>Enter details</h5>
+    <form #donateReqForm="ngForm" (ngSubmit)="onSubmit(donateReqForm)">
+
+    <div class="form-group">
+        <label for="itemQuantity">Quantity</label>
+        <input type="number" id="itemQuantity" class="form-control" 
+        ngModel
+        name="quantity"
+        required       
+        >
+    </div>
+    <div class="mb-3">
+    <label for="itemDetails">Details</label>
+            <input type="text" id="itemDetails" class="form-control" 
+            ngModel
+            name="details"
+            required
+            >
+    </div>
+    <div class="mb-3">
+        <input class="form-check-input" type="checkbox" value="" aria-label="Checkbox for making item public"
+        ngModel 
+        name="publicFlag"
+        
+        >
+       <label> Check this box to make this requirement <b>public</b></label>
+        
+    </div>
+    <div class="mb-3">
+        <button class="btn btn-secondary" type="submit" [disabled]="!donateReqForm.valid">Request</button>        
+    </div>
+</form>
+</div>
+</div>
+            
