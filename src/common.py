@@ -35,11 +35,14 @@ class categoryPackage:
         self.status=status
         self.message=message
 class userAlert:
-    def __init__(self,date,message,action,linkedToId):
+    def __init__(self,date,message,action,reqId,donorId,itemId,ngoId):
         self.date = date
         self.message=message
         self.action=action
-        self.linkedToId=linkedToId
+        self.requirementId=reqId
+        self.donorId=donorId
+        self.itemId=itemId
+        self.ngoId=ngoId
         
 class userAlertPackage:
     def __init__(self,alerts,status,message):
@@ -225,7 +228,8 @@ def getAlerts(userId,es):
 
         res = es.search(index="alerts", body = query)
         for alert in res["hits"]["hits"]:
-            alerts.append(userAlert(alert["_source"]["activationDate"],alert["_source"]["alertMessage"],alert["_source"]["acton"],alert["_source"]["linkedToId"]))
+            alerts.append(userAlert(alert["_source"]["activationDate"],alert["_source"]["alertMessage"],alert["_source"]["acton"],alert["_source"]["requirementId"],
+            alert["_source"]["donorId"],alert["_source"]["itemId"],alert["_source"]["ngoId"]))
 
 
 

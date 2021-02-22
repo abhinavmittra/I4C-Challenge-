@@ -211,6 +211,15 @@ showUpdates(){
         
         this.donorService.setDonorUpdates(updates);
   
+
+        //update local copy
+        this.selectedItemUpdates.push(new ItemUpdate(actionTaken,this.selectedItemUpdates[updateIdx].itemId,
+  this.selectedItemUpdates[updateIdx].requirementId,this.selectedItemUpdates[updateIdx].ngoId
+  ,this.selectedItemUpdates[updateIdx].donorId,
+  this.selectedItemUpdates[updateIdx].ngoName,
+  "",
+  "",
+  "","",new Date().toISOString(),"-1"));
   
   
     this.donorService.acceptOrReject(

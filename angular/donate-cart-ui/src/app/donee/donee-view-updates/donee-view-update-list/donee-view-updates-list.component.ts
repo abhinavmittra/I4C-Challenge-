@@ -72,7 +72,8 @@ viewReqUpdates(index:number){
       console.log(updates)
       this.doneeService.setDoneeUpdates(updates);
 
-
+      //update local copy
+      
 
     //Call API
    this.doneeService.deleteRequirement(this.doneeUpdates[reqIndex].reqId,

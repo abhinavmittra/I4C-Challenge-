@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import {Router} from '@angular/router';
+import { DoneeService } from 'src/app/donee/donee.service';
+import { DonorService } from 'src/app/donor/donor.service';
 import { AuthService } from '../auth.service';
 @Component({
   selector: 'app-app-login',
@@ -9,7 +11,7 @@ import { AuthService } from '../auth.service';
 })
 export class AppLoginComponent implements OnInit {
 
-  constructor(private router: Router,private authService:AuthService) { }
+  constructor(private router: Router,private authService:AuthService,private doneeService:DoneeService,private donorService:DonorService) { }
 
   ngOnInit(): void {
   }
@@ -24,6 +26,7 @@ export class AppLoginComponent implements OnInit {
           this.authService.setPincode(data['pincode']);
           this.authService.setName(data['name'])
           this.authService.showLogout.next(true);
+          this.donorService.currentPageChanged.next("requirements");
           this.router.navigate(['donor/requirements/list']);
           
         }
@@ -36,6 +39,7 @@ export class AppLoginComponent implements OnInit {
           this.authService.setPincode(data['pincode']);
           this.authService.setName(data['ngoName']);
           this.authService.showLogout.next(true);
+          this.doneeService.currentPageChanged.next("donations");
           this.router.navigate(['donee/donations/list']);
         }
         else if(data['pass']==true&&data['verified']!=true){

@@ -189,6 +189,8 @@ else if(serviceType=='item'){
     
     var receivedFlag = false;
     const itemId = this.selectedReqUpdates[updateIdx].itemId
+    const reqIndex = +this.route.snapshot.paramMap.get('id')-1
+
     for(var i =0;i<this.selectedReqUpdates.length;i++){
       if(this.selectedReqUpdates[i].updateType=="received"&&itemId==this.selectedReqUpdates[i].itemId){
         receivedFlag = true;
@@ -213,22 +215,22 @@ else if(serviceType=='item'){
         "donorId":this.selectedReqUpdates[updateIdx].donorId,
         "updateDate":new Date().toISOString()
     }
-    
-    updates[itemId].reqUpdates.push(reqUpdates)
+
+    updates[reqIndex].reqUpdates.push(reqUpdates)
   //update copy in service
     this.doneeService.setDoneeUpdates(updates)
 
 
     //update local copy
-    this.selectedReqUpdates.push(new RequirementUpdate("received",this.selectedReqUpdates[this.updateIdx].itemId,
-  this.selectedReqUpdates[this.updateIdx].requirementId,this.selectedReqUpdates[this.updateIdx].ngoId,
-  this.selectedReqUpdates[this.updateIdx].donorId,this.selectedReqUpdates[this.updateIdx].pincode,
-  this.selectedReqUpdates[this.updateIdx].ngoName,
+    this.selectedReqUpdates.push(new RequirementUpdate("received",this.selectedReqUpdates[updateIdx].itemId,
+  this.selectedReqUpdates[updateIdx].requirementId,this.selectedReqUpdates[updateIdx].ngoId,
+  this.selectedReqUpdates[updateIdx].donorId,this.selectedReqUpdates[updateIdx].pincode,
+  this.selectedReqUpdates[updateIdx].ngoName,
   "",
   "",
-  this.selectedReqUpdates[this.updateIdx].itemImageLink,
-  this.selectedReqUpdates[this.updateIdx].itemDetails,
-  "NGO","-1",new Date().toISOString(),"-1"));
+  this.selectedReqUpdates[updateIdx].itemImageLink,
+  this.selectedReqUpdates[updateIdx].itemDetails,
+  "","",new Date().toISOString(),"-1"));
 
     //Call API
     this.doneeService.markReceived(this.selectedReqUpdates[updateIdx].requirementId,
@@ -287,6 +289,20 @@ else if(serviceType=='item'){
     updates[itemIndex].reqUpdates.push(reqUpdates)
     
     this.doneeService.setDoneeUpdates(updates);
+
+
+  //update local copy
+
+  this.selectedReqUpdates.push(new RequirementUpdate(actionTaken+"Donation",this.selectedReqUpdates[updateIdx].itemId,
+  this.selectedReqUpdates[updateIdx].requirementId,this.selectedReqUpdates[updateIdx].ngoId,
+  this.selectedReqUpdates[updateIdx].donorId,this.selectedReqUpdates[updateIdx].pincode,
+  this.selectedReqUpdates[updateIdx].ngoName,
+  "",
+  "",
+  this.selectedReqUpdates[updateIdx].itemImageLink,
+  this.selectedReqUpdates[updateIdx].itemDetails,
+  "","",new Date().toISOString(),"-1"));
+
 
     this.doneeService.acceptOrReject(
       this.selectedReqUpdates[updateIdx].requirementId,

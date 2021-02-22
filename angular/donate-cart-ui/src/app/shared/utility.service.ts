@@ -58,7 +58,7 @@ setUserNotifications(data:UserNotification[]){
   }
 
   getAlertsFromServer(id:string){
-    return this.httpClient.post<any>(this.getAlertsUrl,JSON.stringify({"userId":"TymNuXcBnssMJ-PIUb9Y"}),this.headerOptions).pipe(tap((data)=>{
+    return this.httpClient.post<any>(this.getAlertsUrl,JSON.stringify({"userId":id}),this.headerOptions).pipe(tap((data)=>{
       this.setUserNotifications(data['alerts'])
     }));
   }

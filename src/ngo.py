@@ -608,7 +608,8 @@ def markItem(request,es):
 
             createAlert(ngoId,date,date,message,donorId,ngoId,itemId,requirementId,"message",es)
             messaage= "Rate the donor"
-            createAlert(ngoId,date,date,message,donorId,ngoId,itemId,requirementId,"rate",es)
+            #createAlert(ngoId,date,date,message,donorId,ngoId,itemId,requirementId,"rate",es)
+            createAlert(donorId,date,date,message,donorId,ngoId,itemId,requirementId,"rate",es)
 
 
 
