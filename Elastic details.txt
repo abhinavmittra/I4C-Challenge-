@@ -1,16 +1,12 @@
 Credentials
 
 Username: elastic
-Password : aRmYqD3NViBVdO8FWAaz55Ok
+Password : dWgbk8HyBk2BDtWyZltaNFkt
 
-API (For backend to connect) :  https://719f614d8e0d43d3b93ee3061d569f85.ap-south-1.aws.elastic-cloud.com:9243
+API (For backend to connect) :  https://73e54f2eb97f44ba959e2c0bd98adba8.us-central1.gcp.cloud.es.io:9243
 
-GUI : https://ba8a16debdf642679567b89f3c40e591.ap-south-1.aws.elastic-cloud.com:9243/app/home
+GUI : https://05ba888bea7b4567a1199f9faa3acf90.us-central1.gcp.cloud.es.io:9243
 
-
-NOTE: DO NOT USE EMAIL ID as DONORID AND NGOID
-ALL UPDATES SHOULD HAVE NGOID, DONORID, REQUIREMENTID, ITEMID, NGONAME ( NO NGOID, NGONAME, AND REQUIREMENT ID IN DELETES), DATE
-ALL REQUIREMENTS SHOULD HAVE NGONAME
 
 DATA STRUCTURES
 
