@@ -2,6 +2,15 @@ This repository contains all the code for the website we came up with as part of
 The Challenge requires a platform that connects donors to donate their used items with NGO’s directly thereby enabling resource sharing.
 We came up with a dashboard to address the forementioned challenge requirement.
 
+Documentation: 
+Summary: has all the key features, the way we offer solutions to each of the requirements asked by the NGO U&I and also information about our application usage.
+Endpoints: has all information for all our endpoints in Flask
+Elastic: has all the db information i.e the way we designed our db and the different indexes we have.
+categoriesData: has all the information related to categories and their subcategories and the information about requestLimit imposed for each of them as of now. 
+applicationDemo: It has the recorded demo of our application showcasing all the use cases we try to solve
+
+
+
 Tools used:
 Angular Framework 
 Flask
